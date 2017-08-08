@@ -25,7 +25,7 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 # ***************************** appointment ***************************** #
 # 代码添加 完成
 # 代码测试 完成
-@appointment_app.route('/appointment', methods=['PUT'])  # test complete
+@appointment_app.route('/', methods=['PUT'])  # test complete
 def add_appointment():
     data = request.get_json()
     appointment = appointment_service.add(**data)
@@ -34,8 +34,8 @@ def add_appointment():
     pass
 
 
-@appointment_app.route('/appointment', methods=['GET'])
-@appointment_app.route('/appointment/<string:appointment_id>',
+@appointment_app.route('/', methods=['GET'])
+@appointment_app.route('/<string:appointment_id>',
                        methods=['GET'])  # test complete
 def get_appointment(appointment_id=None):
     if appointment_id is None:
@@ -49,7 +49,7 @@ def get_appointment(appointment_id=None):
     pass
 
 
-@appointment_app.route('/appointment/<string:appointment_id>/<string:status>',
+@appointment_app.route('/<string:appointment_id>/<string:status>',
                        methods=['POST'])  # test complete
 def modify_appointment_status(appointment_id, status):
     # data = request.get_json()
@@ -62,7 +62,7 @@ def modify_appointment_status(appointment_id, status):
     pass
 
 
-@appointment_app.route('/appointment/<string:appointment_id>',
+@appointment_app.route('/<string:appointment_id>',
                        methods=['DELETE'])  # test complete
 def remove_appointment(appointment_id):
     result = appointment_service.remove_by_id(appointment_id)
@@ -74,3 +74,13 @@ def remove_appointment(appointment_id):
 
 
 # ***************************** unit test ***************************** #
+# 生成预约单
+# localhost:5000/appointment  PUT
+# json = {
+#     "user": "bingwei",
+#     "e_bike_model": "E101小龟",
+#     "color": "蓝",
+#     "type": "小龟",
+#     "date": datetime.now(),
+#     "note": "xx"
+# }

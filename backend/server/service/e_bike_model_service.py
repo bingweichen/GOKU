@@ -13,6 +13,7 @@
 from playhouse.shortcuts import model_to_dict
 
 from server.database.model import EBikeModel
+from server.utility.json_utility import models_to_json
 
 
 def add(**kwargs):
@@ -43,14 +44,16 @@ def get(*query, **kwargs):
 
 def get_all():
     e_bike_models = EBikeModel.select()
-    new_e_bike_models = []
-    for e_bike_model in e_bike_models:
-        new_e_bike_models.append(model_to_dict(e_bike_model))
-    return new_e_bike_models
+    return models_to_json(e_bike_models)
 
 
 def get_by_name(name):
     return model_to_dict(EBikeModel.get(EBikeModel.name == name))
+
+
+def get_by_category(category):
+    e_bike_models = EBikeModel.select().where(EBikeModel.category == category)
+    return models_to_json(e_bike_models)
 
 
 def modify_by_name(name, modify_json):

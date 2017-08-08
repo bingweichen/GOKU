@@ -17,7 +17,8 @@ from flask_jwt_extended import get_jwt_claims
 from playhouse.shortcuts import model_to_dict
 
 from server.database.db import database
-from server.route import user_route, resource_route
+from server.route import user_route, resource_route,\
+    e_bike_model_route, appointment_route
 
 app = Flask(__name__, static_url_path='')
 
@@ -25,6 +26,8 @@ CORS(app, supports_credentials=True)
 
 app.register_blueprint(user_route.user_app)
 app.register_blueprint(resource_route.resource_app)
+app.register_blueprint(e_bike_model_route.e_bike_model_app)
+app.register_blueprint(appointment_route.appointment_app)
 
 app.secret_key = 'super-super-secret'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)

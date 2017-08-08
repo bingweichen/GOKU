@@ -11,6 +11,15 @@ import json
 from bson import ObjectId
 from datetime import datetime
 
+from playhouse.shortcuts import model_to_dict
+
+
+def models_to_json(models):
+    new_models = []
+    for model in models:
+        new_models.append(model_to_dict(model))
+    return new_models
+
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
