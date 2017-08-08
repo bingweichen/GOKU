@@ -6,6 +6,8 @@
 
 @desc: models
 
+每个field 生效是要重新删表，建表
+
 """
 from peewee import *
 
@@ -18,77 +20,147 @@ class BaseModel(Model):
 
 
 class Store(BaseModel):
+    name = CharField(unique=True, primary_key=True)
     address = CharField(unique=True)
-    id = CharField(primary_key=True)
-    name = CharField(unique=True)
-
-    class Meta:
-        db_table = 'store'
 
 
 class School(BaseModel):
+    name = CharField(unique=True, primary_key=True)
     address = CharField(unique=True)
-    id = CharField(primary_key=True)
-    name = CharField(unique=True)
-    store = ForeignKeyField(db_column='store_id', rel_model=Store,
-                            to_field='id')
-
-    class Meta:
-        db_table = 'school'
+    store = ForeignKeyField(Store, related_name="schools")
 
 
+# status default empty, when the e_bike is used change to full
 class User(BaseModel):
     username = CharField(primary_key=True)
-    password = CharField()
-
+    password = CharField()  # change
     name = CharField()
-    phone = IntegerField(null=True)
-
+    phone = BigIntegerField(null=True)
     school = ForeignKeyField(School, related_name='users')
-    status = CharField()
     student_id = CharField(db_column='student_id')
 
-    class Meta:
-        db_table = 'user'
+    status = CharField(default="empty")
 
 
 class VirtualCard(BaseModel):
     deposit = FloatField(null=True)
-    id = CharField(primary_key=True)
     security = IntegerField()
 
     owner = ForeignKeyField(User, related_name="virtual_cards")
 
-    class Meta:
-        db_table = 'virtual_card'
+
+EBikeModelDICT = {
+    "0": "小龟",
+    "1": "酷车",
+    "2": "闪租",
+    "3": "迷你租",
+}
 
 
+# from playhouse.postgres_ext import ArrayField
+# 颜色应该是数组
 class EBikeModel(BaseModel):
-    color = CharField(null=True)
-    id = CharField(primary_key=True)
-    introduction = CharField(null=True)
-    num_sold = IntegerField()
-    num_view = IntegerField()
-    pics = CharField(null=True)
-    price = FloatField()
-    type = CharField()
-    left = IntegerField()
+    # 电动车型号 model string
+    name = CharField(primary_key=True)
+    # 电动车类型 小龟、酷车，闪租，迷你租
     category = CharField()
+    price = FloatField()
+    colors = CharField()  # 红，蓝，绿。。。
+    # 续航
+    distance = IntegerField()
+    introduction = CharField(null=True)
 
-    class Meta:
-        db_table = 'bike_model'
+    # 剩余电动车数量
+    left = IntegerField(default=0)
+    # 销售量
+    num_sold = IntegerField(default=0)
+    # 浏览量
+    num_view = IntegerField(default=0)
+
+    # TODO 不懂什么意思
+    # pics = CharField(null=True)
 
 
+# TODO 思考完模式决定一下
+# 1. 车不进行录入，当生成订单时生成
+# 2. 录入车辆
+# 不需要 primary key, 自动生成递增id
 class EBike(BaseModel):
-    id = CharField(primary_key=True)
+    # 属于什么型号
     model = ForeignKeyField(EBikeModel, related_name='e_bikes')
-    state = CharField()
+    # 属于哪个用户
     user = ForeignKeyField(User, related_name='e_bikes', null=True)
+    color = CharField()
+    # 电动车状态 空闲，被租用
+    status = CharField(default="空闲")
 
-    class Meta:
-        db_table = 'ebike'
+
+# 订单针对车型和颜色
+class Appointment(BaseModel):
+    user = ForeignKeyField(User, related_name='appointments')
+    e_bike_model = ForeignKeyField(EBikeModel, related_name='appointments')
+    color = CharField()
+
+    date = DateTimeField()
+    # 备注
+    note = CharField(null=True)
+    # 属于什么订单 小龟、酷车，闪租，迷你租
+    type = CharField(null=True)
+    # 订单状态 已下单，已付款，已提车
+    # 等待到款, 等待审核, 等待提货，交易成功, 已取消
+    status = CharField(default="等待到款")
+
+
+table_list = [User, School, Store, VirtualCard, EBikeModel, EBike, Appointment]
 
 
 def create_tables():
-    return database.create_tables([User, School, Store, VirtualCard,
-                                   EBike, EBikeModel], safe=True)
+    """
+
+    :return: None
+    :rtype:
+    """
+    return database.create_tables([
+                                   EBike, Appointment], safe=True)
+
+
+def drop_tables():
+    """
+
+    :return: None
+    :rtype:
+    """
+    return database.drop_tables([
+                                 EBike, Appointment], safe=True)
+
+
+def create_table(model):
+    """
+
+    :param model:
+    :type model:
+    :return: <pymysql.cursors.Cursor object at 0x108d00828>
+    :rtype:
+    """
+    return database.create_table(model)
+
+
+def drop_table(model):
+    """
+
+    :param model:
+    :type model:
+    :return: the cursor of the drop model
+    :rtype:
+    """
+    return database.drop_table(model)
+
+
+def recreate_tables():
+    drop_tables()
+    create_tables()
+
+
+if __name__ == '__main__':
+    pass
+    print(recreate_tables())

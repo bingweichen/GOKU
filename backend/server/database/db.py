@@ -9,6 +9,7 @@
 """
 from peewee import *
 
-database = MySQLDatabase('Zeus', **{'host': '122.227.52.114', 'port': 53306,
-                                    'user': 'root',
-                                    'password': '123456'})
+database = MySQLDatabase('Zeus', charset='utf8',
+                         **{'host': '122.227.52.114', 'port': 53306,
+                            'user': 'root',
+                            'password': '123456'})

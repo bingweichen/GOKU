@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 """
 
 @author: Bingwei Chen
@@ -7,14 +6,20 @@
 
 @desc: service for user
 
+1. user Add/Get/Modify/Remove
+
+
 """
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
+from playhouse.shortcuts import model_to_dict
+
+from server.utility.exception import PasswordError
 
 from server.database.model import User
 
 
-def add(username, password, kwargs):
+def add(username, password, **kwargs):
     """
 
     eg = {
@@ -37,23 +42,71 @@ def add(username, password, kwargs):
     :rtype:
     """
     hashed_password = generate_password_hash(password)
-    user = User(username=username, password=hashed_password, **kwargs)
-    return user.save()
+    user = User.create(username=username, password=hashed_password, **kwargs)
+    return model_to_dict(user)
 
 
-def add_user(username, password, kwargs):
-    user = User(username=username, password=password, **kwargs)
-    return user.save()
+def get(*query, **kwargs):
+    user = User.get(*query, **kwargs)
+    return model_to_dict(user)
 
 
-def get_users_list():
+def get_all():
     users = User.select()
+    new_users = []
     for user in users:
-        print(user.username)
+        new_users.append(model_to_dict(user))
+    return new_users
 
-# def authenticate(user_ID, password):
-#     user = user_business.get_by_user_ID(user_ID)
-#     if user and check_password_hash(user.password, password):
-#         user.id = str(user.id)
-#         return user
-#     return False
+
+def get_by_username(username):
+    return model_to_dict(User.get(User.username == username))
+
+
+def login(username, password):
+    user = User.get(User.username == username)
+    if check_password_hash(user.password, password):
+        return model_to_dict(user)
+    raise PasswordError("error password")
+
+
+# ***************************** test ***************************** #
+def add_test():
+    result = add(username="bingwei111", password="123456",
+                 name='陈炳蔚', phone=15988731660,
+                 school="2",
+                 student_id="123434")
+    print(result)
+
+
+def add_test1():
+    result = User.create(username="bingwei111", password="123456",
+                         name='陈炳蔚', phone=15988731660,
+                         school="2",
+                         student_id="123434")
+    print(result)
+
+
+def remove_test():
+    pass
+
+
+def add_template():
+    template_json = [
+        {
+            "username": 'bingwei',
+            "password": "123456",
+            "name": "陈炳蔚",
+            "phone": 15988731660,
+            "school": "浙江大学",
+            "student_id": "12358"
+        }
+    ]
+    for json in template_json:
+        result = add(**json)
+        print(result)
+
+# ***************************** unit test ***************************** #
+if __name__ == '__main__':
+    pass
+    print(get_all())
