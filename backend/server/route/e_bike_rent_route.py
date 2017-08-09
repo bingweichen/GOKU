@@ -41,3 +41,11 @@ def get_available_e_bike_models():
     else:
         return jsonify({"response": "No e-bike found"})
 
+
+@e_bike_rent.route('/<string:name>', method=['GET'])
+def get_e_bike_model_information(name):
+    info = e_bike_rent_service.get_e_bike_model_information(name)
+    if info:
+        return jsonify({"response": info}), 200
+    else:
+        return jsonify({"response": "No information found"})

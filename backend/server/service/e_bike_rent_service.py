@@ -9,9 +9,7 @@
 from playhouse.shortcuts import model_to_dict
 
 from server.database.model import EBike
-# from server.database.model import EBikeModel
 # from server.utility.json_utility import models_to_json
-from server.utility.json_utility import models_to_json
 
 
 def add(**kwargs):
@@ -44,6 +42,12 @@ def get_available_e_bike_models():
     return result
 
 
+def get_e_bike_model_information(name):
+    info = EBike.get(name=name)
+    return model_to_dict(info)
+
+
+# ----------------for test----------------
 def add_template():
     template_json = [
         {
