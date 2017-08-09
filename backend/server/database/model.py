@@ -86,12 +86,15 @@ class EBikeModel(BaseModel):
 
 
 # 新增库存表
-class StoreList(BaseModel):
+class Storage(BaseModel):
     # 属于什么型号
-    model = ForeignKeyField(EBikeModel, related_name='e_bikes')
+    model = ForeignKeyField(EBikeModel, related_name='storage')
     color = CharField()
     # 库存量
     num = IntegerField()
+
+    class Meta:
+        primary_key = CompositeKey('model', 'color')
 
 
 # TODO 思考完模式决定一下
@@ -124,7 +127,8 @@ class Appointment(BaseModel):
     status = CharField(default="等待到款")
 
 
-table_list = [User, School, Store, VirtualCard, EBikeModel, EBike, Appointment]
+table_list = [User, School, Store, VirtualCard, EBikeModel,
+              Storage, EBike, Appointment]
 
 
 def create_tables():
@@ -134,7 +138,7 @@ def create_tables():
     :rtype:
     """
     return database.create_tables([
-                                   EBike, Appointment], safe=True)
+        Storage], safe=True)
 
 
 def drop_tables():
@@ -144,7 +148,7 @@ def drop_tables():
     :rtype:
     """
     return database.drop_tables([
-                                 EBike, Appointment], safe=True)
+        Storage], safe=True)
 
 
 def create_table(model):
