@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 """
 
 @author: Bingwei Chen
@@ -67,6 +69,14 @@ def modify_by_name(name, modify_json):
     :rtype: int
     """
     query = EBikeModel.update(**modify_json).where(EBikeModel.name == name)
+    return query.execute()
+
+
+def num_view_increment(name):
+    # 获取num_view
+    # 递增num_view
+    query = EBikeModel.update(num_view=EBikeModel.num_view-1)\
+        .where(EBikeModel.name == name)
     return query.execute()
 
 

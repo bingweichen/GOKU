@@ -23,8 +23,7 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 
 
 # ***************************** appointment ***************************** #
-# 代码添加 完成
-# 代码测试 完成
+# 生成预约单
 @appointment_app.route('/', methods=['PUT'])  # test complete
 def add_appointment():
     data = request.get_json()
@@ -49,8 +48,9 @@ def get_appointment(appointment_id=None):
     pass
 
 
-@appointment_app.route('/<string:appointment_id>/<string:status>',
-                       methods=['POST'])  # test complete
+# 更改预约单状态
+@appointment_app.route('/modify_status/<string:appointment_id>/<string:status>',
+                       methods=['POST'])
 def modify_appointment_status(appointment_id, status):
     # data = request.get_json()
     # status = data

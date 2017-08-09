@@ -14,11 +14,15 @@ from flask_jwt_extended import JWTManager
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_claims
 
-from playhouse.shortcuts import model_to_dict
-
 from server.database.db import database
 from server.route import user_route, resource_route,\
     e_bike_model_route, appointment_route
+
+# Print all queries to stderr.
+# import logging
+# logger = logging.getLogger('peewee')
+# logger.setLevel(logging.DEBUG)
+# logger.addHandler(logging.StreamHandler())
 
 app = Flask(__name__, static_url_path='')
 

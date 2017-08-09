@@ -5,7 +5,7 @@
 
 @time: 8/4/17
 
-@desc: resource route
+@desc: e_bike_model route
 
 1. e_bike_model Add/Get/Modify/Remove
 
@@ -15,7 +15,7 @@ from flask import jsonify
 from flask import request
 
 from server.service import e_bike_model_service
-
+from server.utility.logger import logger
 PREFIX = '/e_bike_model'
 
 e_bike_model_app = Blueprint("e_bike_model_app", __name__, url_prefix=PREFIX)
@@ -31,14 +31,19 @@ def add_e_bike_model():
     pass
 
 
-# # 单独获取一个
-# @e_bike_model_app.route('/<string:name>', methods=['GET'])
-# def get_e_bike_model_one(name):
-#     e_bike_model = e_bike_model_service.get_by_name(name)
-#     if e_bike_model:
-#         return jsonify({'response': {"e_bike_model": e_bike_model}}), 200
-#     else:
-#         return jsonify({'response': "no e_bike_model find"}), 404
+# 单独获取一个
+# 当调用这个api时该车型浏览量加一
+@e_bike_model_app.route('/<string:name>', methods=['GET'])
+def get_e_bike_model_one(name):
+    e_bike_model = e_bike_model_service.get_by_name(name)
+    if e_bike_model:
+        # 递增
+        result = e_bike_model_service.num_view_increment(name)
+        logger.debug("increment", result)
+
+        return jsonify({'response': {"e_bike_model": e_bike_model}}), 200
+    else:
+        return jsonify({'response': "no e_bike_model find"}), 404
 
 
 @e_bike_model_app.route('/', methods=['GET'])

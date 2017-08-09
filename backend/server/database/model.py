@@ -41,6 +41,10 @@ class User(BaseModel):
 
     status = CharField(default="empty")
 
+    # 什么效果？
+    def __unicode__(self):
+        return self.username
+
 
 class VirtualCard(BaseModel):
     deposit = FloatField(null=True)
@@ -81,6 +85,18 @@ class EBikeModel(BaseModel):
     # pics = CharField(null=True)
 
 
+# 新增库存表
+class Storage(BaseModel):
+    # 属于什么型号
+    model = ForeignKeyField(EBikeModel, related_name='storage')
+    color = CharField()
+    # 库存量
+    num = IntegerField()
+
+    class Meta:
+        primary_key = CompositeKey('model', 'color')
+
+
 # TODO 思考完模式决定一下
 # 1. 车不进行录入，当生成订单时生成
 # 2. 录入车辆
@@ -113,7 +129,8 @@ class Appointment(BaseModel):
     status = CharField(default="等待到款")
 
 
-table_list = [User, School, Store, VirtualCard, EBikeModel, EBike, Appointment]
+table_list = [User, School, Store, VirtualCard, EBikeModel,
+              Storage, EBike, Appointment]
 table_temp = [EBike]
 
 
