@@ -5,7 +5,7 @@
 
 @time: 8/4/17
 
-@desc: resource route
+@desc: e_bike_model route
 
 1. e_bike_model Add/Get/Modify/Remove
 

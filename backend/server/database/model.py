@@ -41,6 +41,10 @@ class User(BaseModel):
 
     status = CharField(default="empty")
 
+    # 什么效果？
+    def __unicode__(self):
+        return self.username
+
 
 class VirtualCard(BaseModel):
     deposit = FloatField(null=True)
@@ -79,6 +83,15 @@ class EBikeModel(BaseModel):
 
     # TODO 不懂什么意思
     # pics = CharField(null=True)
+
+
+# 新增库存表
+class StoreList(BaseModel):
+    # 属于什么型号
+    model = ForeignKeyField(EBikeModel, related_name='e_bikes')
+    color = CharField()
+    # 库存量
+    num = IntegerField()
 
 
 # TODO 思考完模式决定一下
