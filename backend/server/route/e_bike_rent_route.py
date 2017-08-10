@@ -25,7 +25,7 @@ def add_e_bike():
 
 
 @e_bike_rent.route('/<int:plate_no>/<string:user>', methods=['POST'])
-def add_e_bike(plate_no, user):
+def modify_user(plate_no, user):
     result = e_bike_rent_service.modify_user(plate_no, user)
     if result:
         return jsonify({'response': "modify success"}), 200

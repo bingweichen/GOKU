@@ -129,6 +129,18 @@ class Appointment(BaseModel):
     status = CharField(default="等待到款")
 
 
+# 闪充电池出租
+class Battery(BaseModel):
+    # 电池id
+    b_id = CharField(unique=True, primary_key=True)
+    # 是否被租
+    on_loan = BooleanField(default=False)
+    # 电池信息，比如电压、电流
+    desc = CharField()
+    # 租用人
+    user = ForeignKeyField(User, related_name='battery', null=True)
+
+
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment]
 table_temp = [EBike]
