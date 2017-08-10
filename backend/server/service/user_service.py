@@ -93,13 +93,21 @@ def remove_test():
 
 def add_template():
     template_json = [
+        # {
+        #     "username": 'bingwei',
+        #     "password": "123456",
+        #     "name": "陈炳蔚",
+        #     "phone": 15988731660,
+        #     "school": "浙江大学",
+        #     "student_id": "12358"
+        # },
         {
-            "username": 'bingwei',
+            "username": 'Shuo_Ren',
             "password": "123456",
-            "name": "陈炳蔚",
-            "phone": 15988731660,
+            "name": "Ren",
+            "phone": 15701683747,
             "school": "浙江大学",
-            "student_id": "12358"
+            "student_id": "00001"
         }
     ]
     for json in template_json:
@@ -109,4 +117,5 @@ def add_template():
 # ***************************** unit test ***************************** #
 if __name__ == '__main__':
     pass
+    add_template()
     print(get_all())

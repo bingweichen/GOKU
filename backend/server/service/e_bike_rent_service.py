@@ -9,22 +9,27 @@
 from playhouse.shortcuts import model_to_dict
 
 from server.database.model import EBike
+from server.database.model import EBikeModel
 # from server.utility.json_utility import models_to_json
 
 
 def add(**kwargs):
     """
-
-    :param kwargs:
-    :type kwargs:
-    :return: the added json
-    :rtype: json
+    add new virtual card
+    :param kwargs: parameters to insert in database
+    :return:
     """
     e_bike = EBike.create(**kwargs)
     return model_to_dict(e_bike)
 
 
 def modify_user(plate_no, user):
+    """
+    modify the user of e-bike
+    :param plate_no: plate number of e-bike
+    :param user: user of e-bike
+    :return:
+    """
     if not user:
         status = "空闲"
     else:
@@ -34,6 +39,10 @@ def modify_user(plate_no, user):
 
 
 def get_available_e_bike_models():
+    """
+    get available e-bike models
+    :return: available e-bike models
+    """
     e_bikes = EBike.select(EBike.model, EBike.color).distinct().where(EBike.status == "空闲")
     query = e_bikes.execute()
     result = []
@@ -43,13 +52,24 @@ def get_available_e_bike_models():
 
 
 def get_e_bike_model_information(name):
-    info = EBike.get(model_id=name)
+    """
+    get information of an e-bike model
+    :param name: name of the e-bike model
+    :return: information
+    """
+    info = EBikeModel.get(name=name)
     return model_to_dict(info)
 
 
 def get_storage(name, color):
+    """
+    get storage of a certain e-bike model with a certain color
+    :param name: name of the e-bike model
+    :param color: color
+    :return: storage
+    """
     storage = EBike.select().where(
-        EBike.model_id == name, EBike.color == color, EBike.status == "空闲"
+        EBike.model == name, EBike.color == color, EBike.status == "空闲"
     ).count()
     return storage
 

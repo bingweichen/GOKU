@@ -47,10 +47,16 @@ class User(BaseModel):
 
 
 class VirtualCard(BaseModel):
-    deposit = FloatField(null=True)
-    security = IntegerField()
+    card_no = ForeignKeyField(User, primary_key=True, related_name="virtual_cards")
+    deposit = FloatField(default=0.0)
+    balance = FloatField(default=0.0)
 
-    owner = ForeignKeyField(User, related_name="virtual_cards")
+
+class ConsumeRecord(BaseModel):
+    card = ForeignKeyField(VirtualCard, related_name="consume_record")
+    consume_event = CharField()
+    consume_date_time = DateTimeField()
+    consume_fee = FloatField()
 
 
 EBikeModelDICT = {
@@ -144,7 +150,7 @@ class Battery(BaseModel):
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment]
-table_temp = [EBike]
+table_temp = [VirtualCard]
 
 
 def create_tables():

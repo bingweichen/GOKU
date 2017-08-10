@@ -13,6 +13,12 @@ from server.database.model import Battery
 
 
 def get_battery_rent_info(b_id):
+    """
+    get battery rent information
+    :param b_id: battery id
+    :return: information
+    """
+    # FIXME
     info = Battery.select().where(Battery.b_id == b_id)
     return model_to_dict(info)
 
