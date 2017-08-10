@@ -103,6 +103,8 @@ class Storage(BaseModel):
 # 2. 录入车辆
 # 不需要 primary key, 自动生成递增id
 class EBike(BaseModel):
+    # 车牌号
+    plate_no = CharField(primary_key=True)
     # 属于什么型号
     model = ForeignKeyField(EBikeModel, related_name='e_bikes')
     # 属于哪个用户
@@ -130,6 +132,7 @@ class Appointment(BaseModel):
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment]
+table_temp = [EBike]
 
 
 def create_tables():
@@ -138,8 +141,7 @@ def create_tables():
     :return: None
     :rtype:
     """
-    return database.create_tables([
-        Storage], safe=True)
+    return database.create_tables(table_temp, safe=True)
 
 
 def drop_tables():
@@ -148,8 +150,7 @@ def drop_tables():
     :return: None
     :rtype:
     """
-    return database.drop_tables([
-        Storage], safe=True)
+    return database.drop_tables(table_temp, safe=True)
 
 
 def create_table(model):
