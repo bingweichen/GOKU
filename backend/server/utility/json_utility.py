@@ -21,6 +21,11 @@ def models_to_json(models):
     return new_models
 
 
+def print_array(array):
+    for i in array:
+        print(i)
+
+
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, ObjectId):
