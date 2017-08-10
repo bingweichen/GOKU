@@ -89,14 +89,77 @@ def remove_by_name(name):
 def add_template():
     template_json = [
         {
-            "name": "E101小龟",
-            "category": "小龟",
-            "price": 2000,
-            "colors": "红，蓝，绿",
-            "distance": 20,
-            "introduction": "小龟电动车",
-
-        }
+            "name": "酷车 小猴子 72V、20A",
+            "category": "酷车",
+            "price": "4200RMB",
+            "distance": "60KM以上",
+            "colors": "磨砂、镀金",
+            "configure": "配置任选",
+            "battery": "72V、20A"
+        },
+        {
+            "name": "酷车 地平线 72V、20A",
+            "category": "酷车",
+            "price": "4200RMB",
+            "distance": "60KM以上",
+            "colors": "炫红、酷蓝",
+            "configure": "跑车配置",
+            "battery": "72V、20A"
+        },
+        {
+            "name": "酷车 小怪兽 72V、20A",
+            "category": "酷车",
+            "price": "4200RMB",
+            "distance": "60KM以上",
+            "colors": "拼色、酷黑",
+            "configure": "配置任选",
+            "battery": "72V、20A"
+        },
+        {
+            "name": "酷车 祖马 72V、20A",
+            "category": "酷车",
+            "price": "3200RMB",
+            "distance": "60KM以上",
+            "colors": "黑",
+            "configure": "配置任选",
+            "battery": "72V、20A"
+        },
+        {
+            "name": "酷车 路虎 72V、20A",
+            "category": "酷车",
+            "price": "4000RMB",
+            "distance": "60KM以上",
+            "colors": "任选",
+            "configure": "配置任选",
+            "battery": "72V、20A"
+        },
+        {
+            "name": "租车 闪租 48V、20A",
+            "category": "租车",
+            "price": "588/学期；998/年",
+            "distance": "40~45KM",
+            "colors": "黑、白、银、迷彩",
+            "configure": "高配",
+            "battery": "48V、20A"
+        },
+        {
+            "name": "租车 闪租 60V、20A",
+            "category": "租车",
+            "price": "588/学期；999/年",
+            "distance": "55~60KM",
+            "colors": "黑、白、银、迷彩",
+            "configure": "高配",
+            "battery": "60V、20A"
+        },
+        {
+            "name": "租车 MINI 48V、20A",
+            "category": "租车",
+            "price": "298/学期；588/年",
+            "distance": "35KM",
+            "colors": "红、紫、蓝、白",
+            "configure": "高配",
+            "battery": "48V、20A"
+        },
     ]
     for json in template_json:
         result = add(**json)
