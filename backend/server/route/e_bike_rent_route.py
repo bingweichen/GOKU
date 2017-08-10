@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 """
-@author: Shuo Ren
+@author: larry.shuoren@outlook.com
 @time: 8/9/17
 @desc: e-bike rent route
 """
@@ -49,3 +49,12 @@ def get_e_bike_model_information(name):
         return jsonify({"response": info}), 200
     else:
         return jsonify({"response": "No information found"})
+
+
+@e_bike_rent.route('/<string:name>/<string:color>', method=['GET'])
+def get_storage(name, color):
+    storage = e_bike_rent_service.get_storage(name, color)
+    if storage:
+        return jsonify({"response": storage}), 200
+    else:
+        return jsonify({"response": "No storage"})

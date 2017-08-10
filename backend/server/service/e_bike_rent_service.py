@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-@author: Shuo Ren
+@author: larry.shuoren@outlook.com
 @time: 8/9/17
 @desc: e-bike rent service
 """
@@ -43,11 +43,18 @@ def get_available_e_bike_models():
 
 
 def get_e_bike_model_information(name):
-    info = EBike.get(name=name)
+    info = EBike.get(model_id=name)
     return model_to_dict(info)
 
 
-# ----------------for test----------------
+def get_storage(name, color):
+    storage = EBike.select().where(
+        EBike.model_id == name, EBike.color == color, EBike.status == "空闲"
+    ).count()
+    return storage
+
+
+# ***************************** for test ***************************** #
 def add_template():
     template_json = [
         {
@@ -74,4 +81,5 @@ def add_template():
 if __name__ == '__main__':
     # add_template()
     # modify_user("001", "hahaha")
-    print(get_available_e_bike_models())
+    # print(get_available_e_bike_models())
+    print(get_storage("E100小龟", "黄"))
