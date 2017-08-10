@@ -12,7 +12,7 @@
 from peewee import *
 
 from server.database.db import database
-
+from server.utility.constant import *
 
 class BaseModel(Model):
     class Meta:
@@ -129,9 +129,8 @@ class Appointment(BaseModel):
     note = CharField(null=True)
     # 属于什么订单 小龟、酷车，闪租，迷你租
     type = CharField(null=True)
-    # 订单状态 已下单，已付款，已提车
-    # 等待到款, 等待审核, 等待提货，交易成功, 已取消
-    status = CharField(default="等待到款")
+
+    status = CharField(default=APPOINTMENT_STATUS["0"])
 
 
 # 闪充电池出租
@@ -148,7 +147,8 @@ class Battery(BaseModel):
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment]
-table_temp = [EBike]
+
+table_temp = [EBikeModel]
 
 
 def create_tables():

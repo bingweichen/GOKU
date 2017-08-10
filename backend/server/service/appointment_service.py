@@ -21,9 +21,9 @@ from playhouse.shortcuts import model_to_dict
 from datetime import datetime
 
 from server.database.model import Appointment
-from server.service.storage_service import check_storage, decrement_num
-
-
+from server.service import storage_service
+from server.utility.exception import NoStorageError
+from server.utility.constant import *
 def add(**kwargs):
     """
     add appointment
@@ -47,16 +47,47 @@ def add(**kwargs):
     return model_to_dict(appointment)
 
 
+# 1.生成订单
 def add_appointment(**kwargs):
     e_bike_model = kwargs["e_bike_model"]
     color = kwargs["color"]
-
     # 检查库存量，虽然库存不足时前端会生不成订单
-    if not check_storage(model=e_bike_model, color=color):
-        return
+    if not storage_service.check_storage(model=e_bike_model, color=color):
+        raise NoStorageError("not enough storage")
     appointment = Appointment.create(**kwargs)
-    decrement_num(e_bike_model)
+    # 库存-1
+    storage_service.decrement_num(e_bike_model, color)
     return model_to_dict(appointment)
+
+
+# 2. 预付款成功
+def appointment_payment_success(appointment_id):
+    status = APPOINTMENT_STATUS["1"]
+    return modify_status(appointment_id, status)
+
+
+# 3. 提车码
+def upload_code(appointment_id, code):
+    if check_code(code):
+        status = APPOINTMENT_STATUS["2"]
+        return modify_status(appointment_id, status)
+
+
+# 4. 付款成功
+def total_payment_success(appointment_id):
+    status = APPOINTMENT_STATUS["3"]
+    return modify_status(appointment_id, status)
+
+
+# 取消订单
+def cancel_appointment(appointment_id):
+    status = APPOINTMENT_STATUS["-1"]
+    return modify_status(appointment_id, status)
+
+
+# 检查提车码 TODO
+def check_code(code):
+    return True
 
 
 def get(*query, **kwargs):

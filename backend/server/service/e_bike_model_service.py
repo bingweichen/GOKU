@@ -75,7 +75,7 @@ def modify_by_name(name, modify_json):
 def num_view_increment(name):
     # 获取num_view
     # 递增num_view
-    query = EBikeModel.update(num_view=EBikeModel.num_view-1)\
+    query = EBikeModel.update(num_view=EBikeModel.num_view - 1) \
         .where(EBikeModel.name == name)
     return query.execute()
 
@@ -88,6 +88,144 @@ def remove_by_name(name):
 # ***************************** unit test ***************************** #
 def add_template():
     template_json = [
+        # 小龟
+        {
+            "name": "小龟电动车 爆款 48V、12A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "低配",
+            "battery": "48V、12A",
+            "distance": "30KM",
+            "price": "1699RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 GB 48V、12A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "中高配",
+            "battery": "48V、12A",
+            "distance": "30KM",
+            "price": "1980RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 GC 48V、12A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "高配",
+            "battery": "48V、12A",
+            "distance": "30KM",
+            "price": "2080RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 OA 48V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "低配",
+            "battery": "48V、20A   ",
+            "distance": "40~45KM",
+            "price": "2080RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 OB 48V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "中高配",
+            "battery": "48V、20A     ",
+            "distance": "40~45KM",
+            "price": "2180RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 OC 48V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "高配",
+            "battery": "48V、20A     ",
+            "distance": "40~45KM",
+            "price": "2280RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 KA 60V、12A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "低配",
+            "battery": "60V、12A  ",
+            "distance": "30KM",
+            "price": "1980RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 KB 60V、12A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "中高配",
+            "battery": "60V、12A     ",
+            "distance": "30KM",
+            "price": "2080RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 KC 60V、12A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "高配",
+            "battery": "60V、12A     ",
+            "distance": "30KM",
+            "price": "2180RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 GA 60V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "低配",
+            "battery": "60V、20A",
+            "distance": "55~60KM",
+            "price": "2280RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 GB 60V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "中高配",
+            "battery": "60V、20A",
+            "distance": "55~60KM",
+            "price": "2380RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 GC 60V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "高配",
+            "battery": "60V、20A",
+            "distance": "55~60KM",
+            "price": "2480RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 PA 72V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "低配",
+            "battery": "72V、20A   ",
+            "distance": "60~70KM",
+            "price": "2480RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 PB 72V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "中高配",
+            "battery": "72V、20A     ",
+            "distance": "60~70KM",
+            "price": "2580RMB",
+            "category": "小龟"
+        },
+        {
+            "name": "小龟电动车 PC 72V、20A",
+            "colors": "黑、白、蓝、紫、迷彩",
+            "configure": "高配",
+            "battery": "72V、20A     ",
+            "distance": "60~70KM",
+            "price": "2680RMB",
+            "category": "小龟"
+        },
+
+        # 酷车
         {
             "name": "酷车 小猴子 72V、20A",
             "category": "酷车",
@@ -133,6 +271,8 @@ def add_template():
             "configure": "配置任选",
             "battery": "72V、20A"
         },
+
+        # 租车
         {
             "name": "租车 闪租 48V、20A",
             "category": "租车",
@@ -168,5 +308,4 @@ def add_template():
 
 if __name__ == '__main__':
     pass
-    print(get_all())
-
+    print(add_template())
