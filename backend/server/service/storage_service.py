@@ -120,6 +120,7 @@ def check_storage(model, color):
     else:
         return False
 
+
 # ***************************** test ***************************** #
 def decrement_test():  # complete
     logger.debug(decrement_num(model="E100小龟",

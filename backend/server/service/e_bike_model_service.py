@@ -87,17 +87,7 @@ def remove_by_name(name):
 
 # ***************************** unit test ***************************** #
 def add_template():
-    template_json = [
-        {
-            "name": "E101小龟",
-            "category": "小龟",
-            "price": 2000,
-            "colors": "红，蓝，绿",
-            "distance": 20,
-            "introduction": "小龟电动车",
-
-        }
-    ]
+    template_json = []
     for json in template_json:
         result = add(**json)
         print(result)
@@ -107,3 +97,5 @@ if __name__ == '__main__':
     pass
     print(get_all())
 
+
+const =

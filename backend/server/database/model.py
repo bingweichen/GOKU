@@ -68,14 +68,16 @@ class EBikeModel(BaseModel):
     name = CharField(primary_key=True)
     # 电动车类型 小龟、酷车，闪租，迷你租
     category = CharField()
-    price = FloatField()
+    price = CharField()
     colors = CharField()  # 红，蓝，绿。。。
     # 续航
-    distance = IntegerField()
-    introduction = CharField(null=True)
+    distance = CharField()
+    configure = CharField(),
+    battery = CharField()
 
-    # 剩余电动车数量
-    left = IntegerField(default=0)
+    introduction = CharField(default="物品简介")
+    image_url = CharField(default=None, null=True)
+
     # 销售量
     num_sold = IntegerField(default=0)
     # 浏览量
@@ -83,6 +85,8 @@ class EBikeModel(BaseModel):
 
     # TODO 不懂什么意思
     # pics = CharField(null=True)
+    # 剩余电动车数量
+    # left = IntegerField(default=0)
 
 
 # 新增库存表
