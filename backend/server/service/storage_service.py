@@ -17,7 +17,7 @@
 from playhouse.shortcuts import model_to_dict
 
 from server.database.model import Storage
-from server.utility.json_utility import models_to_json
+from server.utility.json_utility import models_to_json, print_array
 
 from server.utility.logger import logger
 
@@ -46,8 +46,8 @@ def get(*query, **kwargs):
 
 
 def get_all():
-    store_lists = Storage.select()
-    return models_to_json(store_lists)
+    storage = Storage.select()
+    return models_to_json(storage)
 
 
 def get_by_id(store_list_id):
@@ -55,70 +55,80 @@ def get_by_id(store_list_id):
 
 
 def get_by_model_color(model, color):
-    store_lists = Storage.select().where(
+    storage = Storage.select().where(
         Storage.model == model, color == color)
-    return models_to_json(store_lists)
+    return models_to_json(storage)
 
 
-def get_by_model(model):
-    """通过车型获取 该车型所有库存
+def get_storage(model):
+    """通过车型获取 该车型所有库存分类
 
     :param model:
     :type model:
     :return: 该车型所有库存
     :rtype: json
     """
-    store_lists = Storage.select().where(
+    storage = Storage.select().where(
         Storage.model == model)
-    return models_to_json(store_lists)
+    return models_to_json(storage)
 
 
-def modify_num_by_id(storage_id, num):
+def get_storage_total(model):
+    """通过车型获取 该车型库存总数
+
+    :param model:
+    :type model:
+    :return:
+    :rtype:
+    """
+    storage = Storage.select().where(
+        Storage.model == model)
+    count = 0
+    for one in storage:
+        count += one.num
+    return count
+
+
+def modify_num(model, color, num):
     """
 
-    :param storage_id:
-    :type storage_id:
+    :param model:
+    :type model:
+    :param color:
+    :type color:
     :param num:
     :type num:
     :return: number of row update, 0 if not find, error if modify_json is wrong
     :rtype: int
     """
-    query = Storage.update(num=num).where(Storage.id == storage_id)
+    query = Storage.update(num=num).where(
+        Storage.model == model, Storage.color == color)
     return query.execute()
 
 
 def decrement_num(model, color):
     query = Storage.update(num=Storage.num - 1) \
-        .where(Storage.model == model, color == color)
-    logger.debug("increment".encode('utf-8'))
+        .where(Storage.model == model, Storage.color == color)
     return query.execute()
 
 
-# def modify_by_name(name, modify_json):
-#     """
-#
-#     :param name:
-#     :type name:
-#     :param modify_json:
-#     :type modify_json:
-#     :return: number of row update, 0 if not find, error if modify_json is wrong
-#     :rtype: int
-#     """
-#     query = Storage.update(**modify_json).where(Storage.name == name)
-#     return query.execute()
-#
-#
-# def remove_by_name(name):
-#     query = Storage.delete().where(Storage.name == name)
-#     return query.execute()
-
+def check_storage(model, color):
+    storage = Storage.select().where(
+        Storage.model == model, Storage.color == color)
+    if storage.num > 0:
+        return True
+    else:
+        return False
 
 # ***************************** test ***************************** #
 def decrement_test():  # complete
-    print(decrement_num(model="E100小龟",
-                        color="红"))
+    logger.debug(decrement_num(model="E100小龟",
+                               color="红"))
 
 
+def modify_num_test():  # complete
+    logger.debug(modify_num(model="E100小龟",
+                            color="红", num=10))
 
 
 # ***************************** unit test ***************************** #
@@ -126,15 +136,26 @@ def add_template():
     template_json = [
         {
             "model": "E100小龟",
+            "color": "蓝",
+            "num": 50
+        },
+        {
+            "model": "E100小龟",
+            "color": "红",
+            "num": 50
+        },
+        {
+            "model": "E101小龟",
             "color": "红",
             "num": 50
         }
     ]
     for json in template_json:
         result = add(**json)
-        print(result)
+        logger.debug(result)
 
 
 if __name__ == '__main__':
     pass
-    print(get_all())
+    # add_template()
+    print(get_storage_total("E101小龟"))

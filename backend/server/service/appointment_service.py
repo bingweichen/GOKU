@@ -21,6 +21,7 @@ from playhouse.shortcuts import model_to_dict
 from datetime import datetime
 
 from server.database.model import Appointment
+from server.service.storage_service import check_storage, decrement_num
 
 
 def add(**kwargs):
@@ -43,6 +44,18 @@ def add(**kwargs):
     :rtype: json
     """
     appointment = Appointment.create(**kwargs)
+    return model_to_dict(appointment)
+
+
+def add_appointment(**kwargs):
+    e_bike_model = kwargs["e_bike_model"]
+    color = kwargs["color"]
+
+    # 检查库存量，虽然库存不足时前端会生不成订单
+    if not check_storage(model=e_bike_model, color=color):
+        return
+    appointment = Appointment.create(**kwargs)
+    decrement_num(e_bike_model)
     return model_to_dict(appointment)
 
 
@@ -94,6 +107,27 @@ def remove_by_id(appointment_id):
     return query.execute()
 
 
+# def test():
+#
+#     def tt2(user, *args, **kwargs):
+#         print("1", user)
+#
+#     def tt(**data1):
+#         print("xx", data1)
+#         tt2(data1)
+#         # print(**data1)
+#         # print("1", data1["user"])
+#
+#     data = {
+#         "user": "bingwei",
+#         "e_bike_model": "E101小龟",
+#         "color": "蓝",
+#         "date": "datetime.now()",
+#         "note": "小龟电动车",
+#         "type": "小龟"
+#     }
+#     tt(**data)
+
 # ***************************** unit test ***************************** #
 def add_template():
     template_json = [
@@ -114,5 +148,5 @@ def add_template():
 
 if __name__ == '__main__':
     pass
-    print(get_all_paginate(1, 2))
+    test()
 

@@ -88,13 +88,14 @@ class EBikeModel(BaseModel):
 # 新增库存表
 class Storage(BaseModel):
     # 属于什么型号
-    model = ForeignKeyField(EBikeModel, related_name='storage')
-    color = CharField()
+    model = ForeignKeyField(rel_model=EBikeModel,
+                            related_name="storage")
+    color = CharField(max_length=5)
     # 库存量
     num = IntegerField()
 
     class Meta:
-        primary_key = CompositeKey('model', 'color')
+        primary_key = CompositeKey('model', 'color',)
 
 
 # TODO 思考完模式决定一下
@@ -117,7 +118,7 @@ class EBike(BaseModel):
 class Appointment(BaseModel):
     user = ForeignKeyField(User, related_name='appointments')
     e_bike_model = ForeignKeyField(EBikeModel, related_name='appointments')
-    color = CharField()
+    color = CharField(max_length=5)
 
     date = DateTimeField()
     # 备注
@@ -193,4 +194,6 @@ def recreate_tables():
 
 if __name__ == '__main__':
     pass
+    # create_table(Storage)
     print(recreate_tables())
+    #
