@@ -145,22 +145,39 @@ class Battery(BaseModel):
     # 是否被租
     on_loan = BooleanField(default=False)
     # 电池信息，比如电压、电流
-    desc = CharField()
+    desc = CharField(null=True)
     # 租用人
     user = ForeignKeyField(User, related_name='battery', null=True)
 
 
 # 闪充电池报修记录
 class BatteryReport(BaseModel):
-    battery_id = ForeignKeyField(Battery, related_name='battery_report', null=True)
+    # 电池id
+    battery = ForeignKeyField(Battery, related_name='battery_report', null=True)
+    # 当前使用人
     current_owner = ForeignKeyField(User, related_name='battery_report', null=True)
+    # 保修单生成时间
     report_time = DateTimeField()
 
 
-table_list = [User, School, Store, VirtualCard, EBikeModel,
-              Storage, EBike, Appointment]
+# 优惠券
+class Coupon(BaseModel):
+    # 用户
+    user = ForeignKeyField(User, related_name='coupon', null=True)
+    # 使用条件
+    situation = FloatField(null=True)
+    # 面值
+    value = FloatField(null=True)
+    # 到期日期
+    expired = DateTimeField(null=True)
+    # 状态: 可用，已使用，过期
+    status = CharField(default="可用")
 
-table_temp = [EBikeModel]
+
+table_list = [User, School, Store, VirtualCard, EBikeModel,
+              Storage, EBike, Appointment, BatteryReport, Battery]
+
+table_temp = [Battery]
 
 
 def create_tables():

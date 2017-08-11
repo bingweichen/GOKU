@@ -24,19 +24,17 @@ def add_e_bike():
     """
     data = request.get_json()
     e_bike = e_bike_rent_service.add(**data)
-    if e_bike:
-        return jsonify({'response': e_bike}), 200
+    return jsonify({'response': e_bike}), 200
 
 
-@e_bike_rent.route('/<int:plate_no>/<string:user>', methods=['POST'])
-def modify_user(plate_no, user):
+@e_bike_rent.route('/', methods=['POST'])
+def modify_user():
     """
     modify user of e-bike
-    :param plate_no: plate no of e-bike
-    :param user: user of e-bike
     :return:
     """
-    result = e_bike_rent_service.modify_user(plate_no, user)
+    data = request.get_json()
+    result = e_bike_rent_service.modify_user(data)
     if result:
         return jsonify({'response': "modify success"}), 200
     else:

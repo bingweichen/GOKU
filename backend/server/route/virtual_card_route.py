@@ -27,27 +27,25 @@ def get_deposit_status(card_no):
     return jsonify({'response': deposit}), 200
 
 
-@virtual_card.route('/<string:card_no>/<float:deposit>', methods=['POST'])
-def pay_deposit(card_no, deposit):
+@virtual_card.route('/', methods=['POST'])
+def pay_deposit():
     """
     pay deposit
-    :param card_no: card no
-    :param deposit: deposit amount
     :return:
     """
-    result = virtual_card_service.pay_deposit(card_no, deposit)
+    data = request.get_json()
+    result = virtual_card_service.pay_deposit(data)
     return jsonify({'response': result}), 200
 
 
-@virtual_card.route('/<string:card_no>/<float:top_up_fee>', methods=['POST'])
-def top_up(card_no, top_up_fee):
+@virtual_card.route('/', methods=['POST'])
+def top_up():
     """
     top up virtual card
-    :param card_no: card no
-    :param top_up_fee: top up amount
     :return:
     """
-    result = virtual_card_service.top_up(card_no, top_up_fee)
+    data = request.get_json()
+    result = virtual_card_service.top_up(data)
     return jsonify({'response': result}), 200
 
 
@@ -79,24 +77,23 @@ def get_consume_record(card_no):
         return jsonify({'response': 'No record found'}), 404
 
 
-@virtual_card.route('/<string:card_no>', methods=['POST'])
-def return_deposit(card_no):
+@virtual_card.route('/', methods=['POST'])
+def return_deposit():
     """
     return deposit
-    :param card_no: card number
     :return:
     """
-    result = virtual_card_service.return_deposit(card_no)
+    data = request.get_json()
+    result = virtual_card_service.return_deposit(data)
     return jsonify({'response': result}), 200
 
 
-@virtual_card.route('/<string:card_no>', methods=['POST'])
-def consume_virtual_card(card_no, amount):
+@virtual_card.route('/', methods=['POST'])
+def consume_virtual_card():
     """
     consume virtual card
-    :param card_no: card number
-    :param amount: consume amount
     :return:
     """
-    result = virtual_card_service.consume_virtual_card(card_no, amount)
+    data = request.get_json()
+    result = virtual_card_service.consume_virtual_card(data)
     return jsonify({'response': result}), 200

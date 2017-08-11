@@ -23,13 +23,16 @@ def add(**kwargs):
     return model_to_dict(e_bike)
 
 
-def modify_user(plate_no, user):
+def modify_user(data):
     """
     modify the user of e-bike
-    :param plate_no: plate number of e-bike
-    :param user: user of e-bike
+    :param data:
+        plate_no: plate number of e-bike
+        user: user of e-bike
     :return:
     """
+    user = data["user"]
+    plate_no = data["plate_no"]
     if not user:
         status = "空闲"
     else:

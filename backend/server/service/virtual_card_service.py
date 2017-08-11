@@ -10,9 +10,8 @@ from playhouse.shortcuts import model_to_dict
 
 from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
-# from server.utility.json_utility import models_to_json
-
-DEFAULT_DEPOSIT = 199.0
+from server.utility.constant import DEFAULT_DEPOSIT
+from server.utility.json_utility import models_to_json
 
 
 def add(**kwargs):
@@ -39,42 +38,51 @@ def get_deposit_status(card_no):
         return "No deposit found"
 
 
-def pay_deposit(card_no, deposit_fee):
+def pay_deposit(data):
     """
     pay deposit
-    :param card_no: card number
-    :param deposit_fee: deposit amount
+    :param data:
+        card_no: card number
+        deposit_fee: deposit amount
     :return:
     """
+    card_no = data["card_no"]
+    deposit_fee = float(data["deposit_fee"])
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
     if deposit < DEFAULT_DEPOSIT:
-        result = VirtualCard.update(deposit=deposit_fee).where(VirtualCard.card_no == card_no)
+        result = VirtualCard.update(deposit=deposit_fee
+                                    ).where(VirtualCard.card_no == card_no)
         result.execute()
         ConsumeRecord.create(card=card_no, consume_event="deposit",
-                             consume_date_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                             consume_date_time=datetime.now(),
                              consume_fee=deposit_fee, balance=balance)
         return "Deposit succeed"
     else:
         return "You need not pay deposit"
 
 
-def top_up(card_no, top_up_fee):
+def top_up(data):
     """
     top up virtual card
-    :param card_no: card number
-    :param top_up_fee: top up amount
+    :param data:
+        card_no: card number
+        top_up_fee: top up amount
     :return:
     """
+    card_no = data["card_no"]
+    top_up_fee = float(data["top_up_fee"])
     deposit = get_deposit_status(card_no)
     if not deposit:
         return "No deposit"
-    result = VirtualCard.update(balance=VirtualCard.balance+top_up_fee).where(VirtualCard.card_no == card_no)
+    result = VirtualCard.update(balance=VirtualCard.balance+top_up_fee
+                                ).where(VirtualCard.card_no == card_no)
     balance = get_card_balance(card_no)
     result.execute()
     ConsumeRecord.create(card=card_no, consume_event="top up",
-                         consume_date_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                         consume_fee=top_up_fee, balance=balance+top_up_fee)
+                         consume_date_time=datetime.now(),
+                         consume_fee=top_up_fee,
+                         balance=balance+top_up_fee)
     return "Top up succeed"
 
 
@@ -88,19 +96,21 @@ def get_card_balance(card_no):
     return balance.balance
 
 
-def return_deposit(card_no):
+def return_deposit(data):
     """
     return deposit
-    :param card_no: card number
+    :param data:
+        card_no: card number
     :return:
     """
+    card_no = data["card_no"]
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
     if deposit:
         result = VirtualCard.update(deposit=0).where(VirtualCard.card_no == card_no)
         result.execute()
         ConsumeRecord.create(card=card_no, consume_event="return deposit",
-                             consume_date_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                             consume_date_time=datetime.now(),
                              consume_fee=-deposit, balance=balance)
         return "Return deposit succeed"
     else:
@@ -114,17 +124,21 @@ def get_consume_record(card_no):
     :return: consume record
     """
     record = ConsumeRecord.select().where(ConsumeRecord.card == card_no)
-    return model_to_dict(record)
+    return models_to_json(record)
 
 
-def consume_virtual_card(card_no, consume_event, amount):
+def consume_virtual_card(data):
     """
     consume virtual card
-    :param card_no: card number
-    :param consume_event: consume event
-    :param amount: consume amount
+    :param data:
+        card_no: card number
+        consume_event: consume event
+        amount: consume amount
     :return:
     """
+    card_no = data["card_no"]
+    consume_event = data["consume_event"]
+    amount = float(data["amount"])
     deposit = get_deposit_status(card_no)
     if not deposit:
         return "No deposit"
@@ -134,9 +148,22 @@ def consume_virtual_card(card_no, consume_event, amount):
     card = VirtualCard.update(balance=VirtualCard.balance-amount).where(VirtualCard.card_no == card_no)
     card.execute()
     ConsumeRecord.create(card=card_no, consume_event=consume_event,
-                         consume_date_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                         consume_date_time=datetime.now(),
                          consume_fee=-amount, balance=balance-amount)
     return "Consume " + str(amount) + " succeed"
+
+
+def get_virtual_card_info(card_no):
+    """
+    get virtual card information
+    :param card_no: card number
+    :return: card number, deposit and balance
+    """
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    info = model_to_dict(virtual_card)
+    return {"card no": info["card_no"]["username"],
+            "deposit": info["deposit"],
+            "balance": info["balance"]}
 
 
 # ***************************** for test ***************************** #
@@ -156,8 +183,10 @@ if __name__ == '__main__':
     # add_template()
     # print(pay_deposit("Shuo_Ren", 199))
     # print(get_deposit_status("Shuo_Ren"))
-    print(top_up("Shuo_Ren", 200))
+    # print(top_up("Shuo_Ren", 200))
     # print(get_card_balance("Shuo_Ren"))
     # return_deposit("Shuo_Ren")
     # print(consume_virtual_card("Shuo_Ren", "任性", 10000))
     # print(consume_virtual_card("Shuo_Ren", "不任性", 10))
+    # print(get_virtual_card_info("Shuo_Ren"))
+    print(get_consume_record("Shuo_Ren"))

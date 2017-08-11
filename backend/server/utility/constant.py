@@ -9,3 +9,5 @@ APPOINTMENT_STATUS = {
 
     "-1": "取消"
 }
+
+DEFAULT_DEPOSIT = 199.0
