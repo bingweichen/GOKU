@@ -157,9 +157,11 @@ class Battery(BaseModel):
 # 闪充电池报修记录
 class BatteryReport(BaseModel):
     # 电池id
-    battery = ForeignKeyField(Battery, related_name='battery_report', null=True)
+    battery = ForeignKeyField(
+        Battery, related_name='battery_report', null=True)
     # 当前使用人
-    current_owner = ForeignKeyField(User, related_name='battery_report', null=True)
+    current_owner = ForeignKeyField(
+        User, related_name='battery_report', null=True)
     # 保修单生成时间
     report_time = DateTimeField()
 

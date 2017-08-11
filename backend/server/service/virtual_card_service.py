@@ -107,7 +107,8 @@ def return_deposit(data):
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
     if deposit:
-        result = VirtualCard.update(deposit=0).where(VirtualCard.card_no == card_no)
+        result = VirtualCard.update(deposit=0
+                                    ).where(VirtualCard.card_no == card_no)
         result.execute()
         ConsumeRecord.create(card=card_no, consume_event="return deposit",
                              consume_date_time=datetime.now(),
@@ -145,7 +146,8 @@ def consume_virtual_card(data):
     balance = get_card_balance(card_no)
     if balance < amount:
         return "Low Balance"
-    card = VirtualCard.update(balance=VirtualCard.balance-amount).where(VirtualCard.card_no == card_no)
+    card = VirtualCard.update(balance=VirtualCard.balance-amount
+                              ).where(VirtualCard.card_no == card_no)
     card.execute()
     ConsumeRecord.create(card=card_no, consume_event=consume_event,
                          consume_date_time=datetime.now(),

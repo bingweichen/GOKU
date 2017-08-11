@@ -50,7 +50,8 @@ def get_my_coupons(user):
     coupon = Coupon.update(status="过期").where(
         Coupon.user == user, Coupon.status == "可用", Coupon.expired < now)
     coupon.execute()
-    coupon = Coupon.select().where(Coupon.user == user, Coupon.status == "可用")
+    coupon = Coupon.select().where(
+        Coupon.user == user, Coupon.status == "可用")
     coupon = models_to_json(coupon)
     return coupon
 

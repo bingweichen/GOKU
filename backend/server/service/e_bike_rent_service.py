@@ -37,7 +37,8 @@ def modify_user(data):
         status = "空闲"
     else:
         status = "已租"
-    statement = EBike.update(user=user, status=status).where(EBike.plate_no == plate_no)
+    statement = EBike.update(user=user, status=status
+                             ).where(EBike.plate_no == plate_no)
     return statement.execute()
 
 
@@ -46,11 +47,13 @@ def get_available_e_bike_models():
     get available e-bike models
     :return: available e-bike models
     """
-    e_bikes = EBike.select(EBike.model, EBike.color).distinct().where(EBike.status == "空闲")
+    e_bikes = EBike.select(EBike.model, EBike.color
+                           ).distinct().where(EBike.status == "空闲")
     query = e_bikes.execute()
     result = []
     for i in query:
-        result.append({"model_name": model_to_dict(i.model)["name"], "color": i.color})
+        result.append({"model_name": model_to_dict(i.model)["name"],
+                       "color": i.color})
     return result
 
 

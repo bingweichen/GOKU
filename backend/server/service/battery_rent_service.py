@@ -51,7 +51,8 @@ def modify_use_status(data):
         if is_loan:
             return "Battery is on loan"
         else:
-            result = Battery.update(on_loan=True, user_id=owner).where(Battery.id == b_id)
+            result = Battery.update(on_loan=True, user_id=owner
+                                    ).where(Battery.id == b_id)
             result.execute()
             return "Modify succeed"
     else:
