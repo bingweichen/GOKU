@@ -16,9 +16,10 @@
 """
 from playhouse.shortcuts import model_to_dict
 
-from server.database.model import Storage
-from server.utility.json_utility import models_to_json, print_array
 
+from server.database.model import Storage
+from server.service import e_bike_model_service
+from server.utility.json_utility import models_to_json, print_array
 from server.utility.logger import logger
 
 
@@ -114,12 +115,11 @@ def decrement_num(model, color):
 
 def check_storage(model, color):
     storage = Storage.select().where(
-        Storage.model == model, Storage.color == color)
-    if storage.num > 0:
+        Storage.model == model, Storage.color == color).get()
+    if storage and storage.num > 0:
         return True
     else:
         return False
-
 
 # ***************************** test ***************************** #
 def decrement_test():  # complete
@@ -156,7 +156,24 @@ def add_template():
         logger.debug(result)
 
 
+# 增加库存脚本 为每个电动车类型增加库存
+def add_script():
+    # 从 e_bike_model 提取
+    e_bike_models = e_bike_model_service.get_all()
+    for e_bike_model in e_bike_models:
+        model = e_bike_model.name
+        colors = e_bike_model.colors
+        colors = colors.split("、")
+        num = 50
+        for color in colors:
+            result = add(model=model, color=color, num=num)
+            if not result:
+                logger.error("add error")
+    pass
+
+
 if __name__ == '__main__':
     pass
-    # add_template()
-    print(get_storage_total("E101小龟"))
+    add_script()
+
+

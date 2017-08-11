@@ -32,14 +32,20 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 # 1.提交预约单
 @appointment_app.route('/', methods=['PUT'])
 def add_appointment():
+    username = "bingwei"
     try:
         data = request.get_json()
-        appointment = appointment_service.add_appointment(**data)
+        appointment = appointment_service.add_appointment(
+            user=username,
+            **data
+        )
         if appointment:
             return jsonify({'response': appointment}), 200
 
-    except NoStorageError:
-        return jsonify({'response': NoStorageError}), 400
+    except NoStorageError as e:
+        return jsonify(
+            {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
+        # return jsonify({'response': str(NoStorageError)}), 400
 
 
 # 2. 提交预约款付款成功
@@ -79,6 +85,8 @@ def cancel_appointment():
     data = request.get_json()
     appointment_id = data["appointment_id"]
     result = appointment_service.cancel_appointment(appointment_id)
+    if result:
+        return jsonify({'response': result}), 200
 
 
 @appointment_app.route('/', methods=['GET'])
@@ -119,7 +127,6 @@ def remove_appointment(appointment_id):
     else:
         return jsonify({'response': "no appointment find"}), 404
     pass
-
 
 # ***************************** unit test ***************************** #
 # 生成预约单

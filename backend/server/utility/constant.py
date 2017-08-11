@@ -7,7 +7,23 @@ APPOINTMENT_STATUS = {
     "2": "等待付款",
     "3": "交易成功",
 
-    "-1": "取消"
+    "-1": "取消",
+    "-2": "已过期"
 }
 
 DEFAULT_DEPOSIT = 199.0
+
+
+# 电动车类型 小龟、酷车，租车
+E_BIKE_MODEL_CATEGORY = {
+    "0": "小龟",
+    "1": "酷车",
+    "2": "租车",
+}
+
+DELIVERY = {
+    "0": "自提",
+    "1": "商家配送"
+}
+
+MAXIMUM_APPOINTMENT = 5
