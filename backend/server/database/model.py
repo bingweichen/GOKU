@@ -130,7 +130,18 @@ class Appointment(BaseModel):
     note = CharField(null=True)
     date = DateTimeField()
     expired_date_time = DateTimeField()
+    # delivery = CharField(DELIVERY["0"])
+    # valid = BooleanField(default=True)
     status = CharField(default=APPOINTMENT_STATUS["0"])
+
+    # @classmethod
+    # def get(cls, *query, **kwargs):
+    #     sq = cls.select().naive()
+    #     if query:
+    #         sq = sq.where(*query)
+    #     if kwargs:
+    #         sq = sq.filter(**kwargs)
+    #     return sq.get()
 
 
 # 闪充电池出租

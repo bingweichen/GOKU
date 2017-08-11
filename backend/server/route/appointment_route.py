@@ -32,9 +32,13 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 # 1.提交预约单
 @appointment_app.route('/', methods=['PUT'])
 def add_appointment():
+    username = "bingwei"
     try:
         data = request.get_json()
-        appointment = appointment_service.add_appointment(**data)
+        appointment = appointment_service.add_appointment(
+            user=username,
+            **data
+        )
         if appointment:
             return jsonify({'response': appointment}), 200
 
@@ -81,6 +85,8 @@ def cancel_appointment():
     data = request.get_json()
     appointment_id = data["appointment_id"]
     result = appointment_service.cancel_appointment(appointment_id)
+    if result:
+        return jsonify({'response': result}), 200
 
 
 @appointment_app.route('/', methods=['GET'])

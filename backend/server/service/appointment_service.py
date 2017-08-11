@@ -59,6 +59,9 @@ def add_appointment(**kwargs):
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
         raise NoStorageError("not enough storage")
+    # 检查该用户是否存在订单
+    if not check_user_appointment(user=kwargs["user"]):
+        raise NoStorageError("too much appointment")
     appointment = add(**kwargs)
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
@@ -90,14 +93,24 @@ def cancel_appointment(appointment_id):
     return modify_status(appointment_id, status)
 
 
+# 订单过期
+def expired_appointment(appointment_id):
+    status = APPOINTMENT_STATUS["-2"]
+    return modify_status(appointment_id, status)
+
+
 # 检查提车码 TODO
 def check_code(code):
     return True
 
 
 def get(*query, **kwargs):
+    # 检查是否过期
+
     appointment = Appointment.get(*query, **kwargs)
-    return model_to_dict(appointment)
+    if check_valid(appointment):
+        return appointment
+    # else:
 
 
 def get_all():
@@ -117,7 +130,7 @@ def get_all_paginate(offset, limit):
 
 
 def get_by_id(appointment_id):
-    return model_to_dict(Appointment.get(Appointment.id == appointment_id))
+    return model_to_dict(get(Appointment.id == appointment_id))
 
 
 def modify_status(appointment_id, status):
@@ -143,26 +156,32 @@ def remove_by_id(appointment_id):
     return query.execute()
 
 
-# def test():
-#
-#     def tt2(user, *args, **kwargs):
-#         print("1", user)
-#
-#     def tt(**data1):
-#         print("xx", data1)
-#         tt2(data1)
-#         # print(**data1)
-#         # print("1", data1["user"])
-#
-#     data = {
-#         "user": "bingwei",
-#         "e_bike_model": "E101小龟",
-#         "color": "蓝",
-#         "date": "datetime.now()",
-#         "note": "小龟电动车",
-#         "type": "小龟"
-#     }
-#     tt(**data)
+def check_user_appointment(user):
+    count = Appointment.select().where(
+        Appointment.user == user).count()
+    if count >= MAXIMUM_APPOINTMENT:
+        return False
+    else:
+        return True
+
+
+def check_valid(appointment):
+    """
+
+    :param appointment:
+    :type appointment:
+    :return: True is valid
+    :rtype: bool
+    """
+    now = datetime.now()
+    if now >= appointment.expired_date_time:
+        return False
+    else:
+        return True
+
+
+
+
 
 # ***************************** unit test ***************************** #
 def add_template():
@@ -180,5 +199,5 @@ def add_template():
 
 
 if __name__ == '__main__':
-    add_template()
+    # print(get(id="4"))
     pass
