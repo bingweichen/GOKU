@@ -64,3 +64,13 @@ def login():
     response = {'response': {'token': create_access_token(identity=user),
                              'user': user}}
     return jsonify(response), 200
+
+
+@user_app.route('/', methods=['POST'])
+def create_virtual_card():
+    data = request.get_json()
+    try:
+        virtual_card = user_service.create_virtual_card(data)
+        return jsonify({'response': virtual_card}), 200
+    except Exception as e:
+        return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400

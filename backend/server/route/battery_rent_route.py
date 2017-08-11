@@ -16,7 +16,7 @@ PREFIX = '/battery_rent'
 battery_rent = Blueprint("battery_rent", __name__, url_prefix=PREFIX)
 
 
-@battery_rent.route('/<string:b_id>', methods=['GET'])
+@battery_rent.route('/<int:b_id>', methods=['GET'])
 def get_battery_rent_info(b_id):
     """
     get battery rent information
@@ -31,13 +31,21 @@ def get_battery_rent_info(b_id):
         return jsonify({'response': 'No information found'}), 404
 
 
-@battery_rent.route('/', methods=['POST'])
-def modify_use_status():
-    pass
+@battery_rent.route('/<int:b_id>/<string:owner>', methods=['POST'])
+def modify_use_status(b_id, owner):
+    """
+    modify the user of e-bike
+    :param b_id: battery id
+    :param owner: user
+    :return:
+    """
+    modified = battery_rent_service.modify_use_status(b_id, owner)
+    return jsonify({'response': modified}), 200
 
 
-@battery_rent.route('/', methods=['PUT'])
-def add_repair_report():
+@battery_rent.route('/<int:b_id>/<string:owner>', methods=['PUT'])
+def add_repair_report(b_id, owner):
+    report = battery_rent_service.add_repair_report(b_id, owner)
     pass
 
 

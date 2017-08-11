@@ -17,6 +17,7 @@ from playhouse.shortcuts import model_to_dict
 from server.utility.exception import PasswordError
 
 from server.database.model import User
+from server.service import virtual_card_service
 
 
 def add(username, password, **kwargs):
@@ -68,6 +69,11 @@ def login(username, password):
     if check_password_hash(user.password, password):
         return model_to_dict(user)
     raise PasswordError("error password")
+
+
+def create_virtual_card(data):
+    virtual_card = virtual_card_service.add(data)
+    return virtual_card
 
 
 # ***************************** test ***************************** #
