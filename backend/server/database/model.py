@@ -47,10 +47,17 @@ class User(BaseModel):
 
 
 class VirtualCard(BaseModel):
-    deposit = FloatField(null=True)
-    security = IntegerField()
+    card_no = ForeignKeyField(User, primary_key=True, related_name="virtual_cards")
+    deposit = FloatField(default=0.0)
+    balance = FloatField(default=0.0)
 
-    owner = ForeignKeyField(User, related_name="virtual_cards")
+
+class ConsumeRecord(BaseModel):
+    card = ForeignKeyField(VirtualCard, related_name="consume_record")
+    consume_event = CharField()
+    consume_date_time = DateTimeField()
+    consume_fee = FloatField()
+    balance = FloatField(default=0.0)
 
 
 EBikeModelDICT = {
@@ -135,14 +142,19 @@ class Appointment(BaseModel):
 
 # 闪充电池出租
 class Battery(BaseModel):
-    # 电池id
-    b_id = CharField(unique=True, primary_key=True)
     # 是否被租
     on_loan = BooleanField(default=False)
     # 电池信息，比如电压、电流
     desc = CharField()
     # 租用人
     user = ForeignKeyField(User, related_name='battery', null=True)
+
+
+# 闪充电池报修记录
+class BatteryReport(BaseModel):
+    battery_id = ForeignKeyField(Battery, related_name='battery_report', null=True)
+    current_owner = ForeignKeyField(User, related_name='battery_report', null=True)
+    report_time = DateTimeField()
 
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,

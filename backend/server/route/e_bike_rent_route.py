@@ -18,6 +18,10 @@ e_bike_rent = Blueprint("e_bike_rent", __name__, url_prefix=PREFIX)
 
 @e_bike_rent.route('/', methods=['PUT'])
 def add_e_bike():
+    """
+    add e-bike to database
+    :return:
+    """
     data = request.get_json()
     e_bike = e_bike_rent_service.add(**data)
     if e_bike:
@@ -26,6 +30,12 @@ def add_e_bike():
 
 @e_bike_rent.route('/<int:plate_no>/<string:user>', methods=['POST'])
 def modify_user(plate_no, user):
+    """
+    modify user of e-bike
+    :param plate_no: plate no of e-bike
+    :param user: user of e-bike
+    :return:
+    """
     result = e_bike_rent_service.modify_user(plate_no, user)
     if result:
         return jsonify({'response': "modify success"}), 200
@@ -35,6 +45,10 @@ def modify_user(plate_no, user):
 
 @e_bike_rent.route('/', method=['GET'])
 def get_available_e_bike_models():
+    """
+    get available e-bike models
+    :return: available e-bike models
+    """
     e_bikes = e_bike_rent_service.get_available_e_bike_models()
     if e_bikes:
         return jsonify({"response": e_bikes}), 200
@@ -44,6 +58,11 @@ def get_available_e_bike_models():
 
 @e_bike_rent.route('/<string:name>', method=['GET'])
 def get_e_bike_model_information(name):
+    """
+    get information of an e-bike model
+    :param name: e-bike model name
+    :return: information of an e-bike model
+    """
     info = e_bike_rent_service.get_e_bike_model_information(name)
     if info:
         return jsonify({"response": info}), 200
@@ -53,6 +72,12 @@ def get_e_bike_model_information(name):
 
 @e_bike_rent.route('/<string:name>/<string:color>', method=['GET'])
 def get_storage(name, color):
+    """
+    get storage of a certain e-bike model with a certain color
+    :param name: e-bike model
+    :param color: color
+    :return: storage
+    """
     storage = e_bike_rent_service.get_storage(name, color)
     if storage:
         return jsonify({"response": storage}), 200

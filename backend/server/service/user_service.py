@@ -17,6 +17,7 @@ from playhouse.shortcuts import model_to_dict
 from server.utility.exception import PasswordError
 
 from server.database.model import User
+from server.service import virtual_card_service
 
 
 def add(username, password, **kwargs):
@@ -70,6 +71,11 @@ def login(username, password):
     raise PasswordError("error password")
 
 
+def create_virtual_card(data):
+    virtual_card = virtual_card_service.add(data)
+    return virtual_card
+
+
 # ***************************** test ***************************** #
 def add_test():
     result = add(username="bingwei111", password="123456",
@@ -93,13 +99,21 @@ def remove_test():
 
 def add_template():
     template_json = [
+        # {
+        #     "username": 'bingwei',
+        #     "password": "123456",
+        #     "name": "陈炳蔚",
+        #     "phone": 15988731660,
+        #     "school": "浙江大学",
+        #     "student_id": "12358"
+        # },
         {
-            "username": 'bingwei',
+            "username": 'Shuo_Ren',
             "password": "123456",
-            "name": "陈炳蔚",
-            "phone": 15988731660,
+            "name": "Ren",
+            "phone": 15701683747,
             "school": "浙江大学",
-            "student_id": "12358"
+            "student_id": "00001"
         }
     ]
     for json in template_json:
@@ -109,4 +123,5 @@ def add_template():
 # ***************************** unit test ***************************** #
 if __name__ == '__main__':
     pass
+    add_template()
     print(get_all())
