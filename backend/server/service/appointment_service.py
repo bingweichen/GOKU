@@ -18,24 +18,24 @@
 """
 
 from playhouse.shortcuts import model_to_dict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from server.database.model import Appointment
 from server.service import storage_service
 from server.utility.exception import NoStorageError
 from server.utility.constant import *
+
+
 def add(**kwargs):
     """
     add appointment
 
     eg = {
-
     "user": "bingwei",
-    "e_bike_model": "E101小龟",
+    "e_bike_model": "小龟电动车 爆款 48V、12A",
     "color": 蓝,
-    "date": "datetime.now()",
     "note": "小龟电动车",
-    "type": "小龟"
+    "category": E_BIKE_MODEL_CATEGORY["0"],
     }
 
     :param kwargs:
@@ -43,8 +43,13 @@ def add(**kwargs):
     :return: the added json
     :rtype: json
     """
-    appointment = Appointment.create(**kwargs)
-    return model_to_dict(appointment)
+    date = datetime.now()
+    expired_date_time = date + timedelta(days=7)
+
+    appointment = Appointment.create(**kwargs,
+                                     date=date,
+                                     expired_date_time=expired_date_time)
+    return appointment
 
 
 # 1.生成订单
@@ -54,7 +59,7 @@ def add_appointment(**kwargs):
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
         raise NoStorageError("not enough storage")
-    appointment = Appointment.create(**kwargs)
+    appointment = add(**kwargs)
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
     return model_to_dict(appointment)
@@ -164,12 +169,9 @@ def add_template():
     template_json = [
         {
             "user": "bingwei",
-            "e_bike_model": "E101小龟",
+            "e_bike_model": "小龟电动车 爆款 48V、12A",
             "color": "蓝",
-            "date": datetime.now(),
-
-            "type": "小龟"
-
+            "category": E_BIKE_MODEL_CATEGORY["0"],
         }
     ]
     for json in template_json:
@@ -178,5 +180,5 @@ def add_template():
 
 
 if __name__ == '__main__':
+    add_template()
     pass
-

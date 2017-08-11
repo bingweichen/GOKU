@@ -8,9 +8,6 @@ Date: 2017.07.20
 from flask import Flask
 from flask import jsonify
 
-from flask import send_from_directory
-from flask import Response
-
 from flask_cors import CORS
 from datetime import timedelta
 
@@ -19,14 +16,8 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_claims
 
 from server.database.db import database
-from server.route import user_route, resource_route,\
+from server.route import user_route, resource_route, \
     e_bike_model_route, appointment_route
-
-# Print all queries to stderr.
-# import logging
-# logger = logging.getLogger('peewee')
-# logger.setLevel(logging.DEBUG)
-# logger.addHandler(logging.StreamHandler())
 
 app = Flask(__name__, static_url_path='')
 
@@ -41,6 +32,8 @@ app.secret_key = 'super-super-secret'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
 # Setup the Flask-JWT-Extended extension
 jwt = JWTManager(app)
+
+
 # This method will get whatever object is passed into the
 # create_access_token method.
 
@@ -81,19 +74,6 @@ def before_request():
 def after_request(response):
     database.close()
     return response
-
-# @app.route("/image/<imageid>")
-# def index(imageid):
-#     image = file("丽江/{}.jpg".format(imageid))
-#     resp = Response(image, mimetype="image/jpeg")
-#     return resp
-
-
-@app.route('/js/<path:path>')
-def send_js(path):
-    # return path
-    return app.send_static_file("IMG_20170810_133806.jpg")
-    # return send_from_directory('jpg', "./IMG_20170810_133806.jpg")
 
 
 def main():

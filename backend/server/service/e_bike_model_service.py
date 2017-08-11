@@ -46,7 +46,7 @@ def get(*query, **kwargs):
 
 def get_all():
     e_bike_models = EBikeModel.select()
-    return models_to_json(e_bike_models)
+    return e_bike_models
 
 
 def get_by_name(name):
@@ -75,7 +75,7 @@ def modify_by_name(name, modify_json):
 def num_view_increment(name):
     # 获取num_view
     # 递增num_view
-    query = EBikeModel.update(num_view=EBikeModel.num_view - 1) \
+    query = EBikeModel.update(num_view=EBikeModel.num_view + 1) \
         .where(EBikeModel.name == name)
     return query.execute()
 
@@ -96,7 +96,7 @@ def add_template():
             "battery": "48V、12A",
             "distance": "30KM",
             "price": "1699RMB",
-            "category": "小龟"
+            "category": "小龟",
         },
         {
             "name": "小龟电动车 GB 48V、12A",
@@ -301,7 +301,14 @@ def add_template():
             "battery": "48V、20A"
         },
     ]
+    # add url to json
+    url = "http://ouhx8b81v.bkt.clouddn.com/"
+    for i in range(len(template_json)):
+        image_url = "%s%s.png" % (url, template_json[i]["name"])
+        template_json[i]["image_url"] = image_url
+    # print(template_json)
     for json in template_json:
+        # result = modify_by_name(json["name"], json)
         result = add(**json)
         print(result)
 

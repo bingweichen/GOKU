@@ -9,6 +9,14 @@
 
 1. e_bike_model Add/Get/Modify/Remove
 
+1. 电动车类型列表
+localhost:5000/e_bike_model?category=小龟
+localhost:5000/e_bike_model?category=酷车
+localhost:5000/e_bike_model?category=租车
+2. 单个电动车类型详情
+localhost:5000/e_bike_model/<string:name>
+localhost:5000/e_bike_model/小龟电动车 爆款 48V、12A
+
 """
 from flask import Blueprint
 from flask import jsonify
@@ -31,10 +39,17 @@ def add_e_bike_model():
     pass
 
 
-# 单独获取一个
-# 当调用这个api时该车型浏览量加一
+# 2. 单个电动车类型详情
 @e_bike_model_app.route('/<string:name>', methods=['GET'])
 def get_e_bike_model_one(name):
+    """
+    # 单独获取一个
+    # 当调用这个api时该车型浏览量加一
+    :param name:
+    :type name:
+    :return:
+    :rtype:
+    """
     e_bike_model = e_bike_model_service.get_by_name(name)
     if e_bike_model:
         # 递增
@@ -46,6 +61,7 @@ def get_e_bike_model_one(name):
         return jsonify({'response': "no e_bike_model find"}), 404
 
 
+# 1. 电动车类型列表
 @e_bike_model_app.route('/', methods=['GET'])
 def get_e_bike_model():
     category = request.args.get('category')
@@ -84,11 +100,4 @@ def remove_e_bike_model(name):
     pass
 
 # ***************************** unit test ***************************** #
-# 获取小龟列表
-# localhost:5000/e_bike_model?category=小龟
-# 获取酷车列表
-# localhost:5000/e_bike_model?category=酷车
-# 获取闪租列表
-# localhost:5000/e_bike_model?category=闪租
-# 获取迷你租列表
-# localhost:5000/e_bike_model?category=迷你租
+

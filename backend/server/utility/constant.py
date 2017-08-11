@@ -9,3 +9,10 @@ APPOINTMENT_STATUS = {
 
     "-1": "取消"
 }
+
+# 电动车类型 小龟、酷车，租车
+E_BIKE_MODEL_CATEGORY = {
+    "0": "小龟",
+    "1": "酷车",
+    "2": "租车",
+}

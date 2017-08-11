@@ -14,6 +14,7 @@ from peewee import *
 from server.database.db import database
 from server.utility.constant import *
 
+
 class BaseModel(Model):
     class Meta:
         database = database
@@ -47,7 +48,8 @@ class User(BaseModel):
 
 
 class VirtualCard(BaseModel):
-    card_no = ForeignKeyField(User, primary_key=True, related_name="virtual_cards")
+    card_no = ForeignKeyField(User, primary_key=True,
+                              related_name="virtual_cards")
     deposit = FloatField(default=0.0)
     balance = FloatField(default=0.0)
 
@@ -60,26 +62,18 @@ class ConsumeRecord(BaseModel):
     balance = FloatField(default=0.0)
 
 
-EBikeModelDICT = {
-    "0": "小龟",
-    "1": "酷车",
-    "2": "闪租",
-    "3": "迷你租",
-}
-
-
 # from playhouse.postgres_ext import ArrayField
 # 颜色应该是数组
 class EBikeModel(BaseModel):
     # 电动车型号 model string
     name = CharField(primary_key=True)
-    # 电动车类型 小龟、酷车，闪租，迷你租
+    # 电动车类型 小龟、酷车，租车
     category = CharField()
     price = CharField()
     colors = CharField()  # 红，蓝，绿。。。
     # 续航
     distance = CharField()
-    configure = CharField(),
+    configure = CharField()
     battery = CharField()
 
     introduction = CharField(default="物品简介")
@@ -106,7 +100,7 @@ class Storage(BaseModel):
     num = IntegerField()
 
     class Meta:
-        primary_key = CompositeKey('model', 'color',)
+        primary_key = CompositeKey('model', 'color', )
 
 
 # TODO 思考完模式决定一下
@@ -130,13 +124,12 @@ class Appointment(BaseModel):
     user = ForeignKeyField(User, related_name='appointments')
     e_bike_model = ForeignKeyField(EBikeModel, related_name='appointments')
     color = CharField(max_length=5)
-
-    date = DateTimeField()
+    # 电动车类型 小龟、酷车，租车
+    category = CharField(null=True)
     # 备注
     note = CharField(null=True)
-    # 属于什么订单 小龟、酷车，闪租，迷你租
-    type = CharField(null=True)
-
+    date = DateTimeField()
+    expired_date_time = DateTimeField()
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
 
@@ -152,15 +145,17 @@ class Battery(BaseModel):
 
 # 闪充电池报修记录
 class BatteryReport(BaseModel):
-    battery_id = ForeignKeyField(Battery, related_name='battery_report', null=True)
-    current_owner = ForeignKeyField(User, related_name='battery_report', null=True)
+    battery_id = ForeignKeyField(Battery, related_name='battery_report',
+                                 null=True)
+    current_owner = ForeignKeyField(User, related_name='battery_report',
+                                    null=True)
     report_time = DateTimeField()
 
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment]
 
-table_temp = [EBikeModel]
+table_temp = [Appointment]
 
 
 def create_tables():

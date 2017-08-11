@@ -38,8 +38,10 @@ def add_appointment():
         if appointment:
             return jsonify({'response': appointment}), 200
 
-    except NoStorageError:
-        return jsonify({'response': NoStorageError}), 400
+    except NoStorageError as e:
+        return jsonify(
+            {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
+        # return jsonify({'response': str(NoStorageError)}), 400
 
 
 # 2. 提交预约款付款成功
@@ -119,7 +121,6 @@ def remove_appointment(appointment_id):
     else:
         return jsonify({'response': "no appointment find"}), 404
     pass
-
 
 # ***************************** unit test ***************************** #
 # 生成预约单
