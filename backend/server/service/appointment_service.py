@@ -44,7 +44,7 @@ def add(**kwargs):
     :rtype: json
     """
     date = datetime.now()
-    expired_date_time = date + timedelta(days=7)
+    expired_date_time = date + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
 
     appointment = Appointment.create(**kwargs,
                                      date=date,
@@ -71,6 +71,15 @@ def add_appointment(**kwargs):
 # 2. 预付款成功
 def appointment_payment_success(appointment_id):
     status = APPOINTMENT_STATUS["1"]
+
+    # # 预付款后更改新的过期日期
+    # query = Appointment.update(
+    #     status=status,
+    #     expired_date_time=datetime.now+timedelta(days=APPOINTMENT_EXPIRED_DAYS)
+    # ).where(
+    #     Appointment.id == appointment_id
+    # ).excute()
+
     return modify_status(appointment_id, status)
 
 
@@ -90,13 +99,26 @@ def total_payment_success(appointment_id):
 # 取消订单
 def cancel_appointment(appointment_id):
     status = APPOINTMENT_STATUS["-1"]
+    increment_storage(appointment_id)
     return modify_status(appointment_id, status)
 
 
 # 订单过期
 def expired_appointment(appointment_id):
     status = APPOINTMENT_STATUS["-2"]
+    increment_storage(appointment_id)
     return modify_status(appointment_id, status)
+
+
+# 退还押金！！！
+
+# 退还库存
+def increment_storage(appointment_id):
+    appointment = get(id=appointment_id)
+    storage_service.increment_num(
+        model=appointment.e_bike_model,
+        color=appointment.color
+    )
 
 
 # 检查提车码 TODO
@@ -106,11 +128,12 @@ def check_code(code):
 
 def get(*query, **kwargs):
     # 检查是否过期
-
     appointment = Appointment.get(*query, **kwargs)
-    if check_valid(appointment):
-        return appointment
-    # else:
+    if not check_valid(appointment):
+        # 设置过期状态
+        print(expired_appointment(appointment.id))
+        appointment = Appointment.get(*query, **kwargs)
+    return appointment
 
 
 def get_all():
@@ -178,9 +201,6 @@ def check_valid(appointment):
         return False
     else:
         return True
-
-
-
 
 
 # ***************************** unit test ***************************** #

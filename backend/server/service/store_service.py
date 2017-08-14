@@ -79,6 +79,12 @@ def remove_by_name(name):
     return query.execute()
 
 
+# 根据用户提供供货点
+def get_user_store(user):
+    store = user.school.store
+    return store
+
+
 # ***************************** test ***************************** #
 def add_test():
     """

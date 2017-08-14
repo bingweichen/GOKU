@@ -113,6 +113,12 @@ def decrement_num(model, color):
     return query.execute()
 
 
+def increment_num(model, color):
+    query = Storage.update(num=Storage.num + 1) \
+        .where(Storage.model == model, Storage.color == color)
+    return query.execute()
+
+
 def check_storage(model, color):
     storage = Storage.select().where(
         Storage.model == model, Storage.color == color).get()

@@ -9,10 +9,21 @@
 每个field 生效是要重新删表，建表
 
 """
+import json
+
 from peewee import *
 
 from server.database.db import database
 from server.utility.constant import *
+
+
+class JSONField(TextField):
+    def db_value(self, value):
+        return json.dumps(value)
+
+    def python_value(self, value):
+        if value is not None:
+            return json.loads(value)
 
 
 class BaseModel(Model):
@@ -70,6 +81,7 @@ class EBikeModel(BaseModel):
     # 电动车类型 小龟、酷车，租车
     category = CharField()
     price = CharField()
+
     colors = CharField()  # 红，蓝，绿。。。
     # 续航
     distance = CharField()
@@ -83,11 +95,6 @@ class EBikeModel(BaseModel):
     num_sold = IntegerField(default=0)
     # 浏览量
     num_view = IntegerField(default=0)
-
-    # TODO 不懂什么意思
-    # pics = CharField(null=True)
-    # 剩余电动车数量
-    # left = IntegerField(default=0)
 
 
 # 新增库存表
@@ -130,8 +137,7 @@ class Appointment(BaseModel):
     note = CharField(null=True)
     date = DateTimeField()
     expired_date_time = DateTimeField()
-    # delivery = CharField(DELIVERY["0"])
-    # valid = BooleanField(default=True)
+    delivery = CharField(DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
     # @classmethod
@@ -183,7 +189,7 @@ class Coupon(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Battery]
+table_temp = [Appointment, EBikeModel]
 
 
 def create_tables():
