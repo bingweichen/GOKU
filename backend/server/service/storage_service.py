@@ -127,6 +127,7 @@ def check_storage(model, color):
     else:
         return False
 
+
 # ***************************** test ***************************** #
 def decrement_test():  # complete
     logger.debug(decrement_num(model="E100小龟",
@@ -169,7 +170,7 @@ def add_script():
     for e_bike_model in e_bike_models:
         model = e_bike_model.name
         colors = e_bike_model.colors
-        colors = colors.split("、")
+        # colors = colors.split("、")
         num = 50
         for color in colors:
             result = add(model=model, color=color, num=num)

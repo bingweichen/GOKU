@@ -12,7 +12,7 @@
 
 """
 
-from playhouse.shortcuts import model_to_dict
+# from playhouse.shortcuts import model_to_dict
 
 from server.database.model import EBikeModel
 from server.utility.json_utility import models_to_json
@@ -36,12 +36,12 @@ def add(**kwargs):
     :rtype: json
     """
     e_bike_model = EBikeModel.create(**kwargs)
-    return model_to_dict(e_bike_model)
+    return e_bike_model
 
 
 def get(*query, **kwargs):
     e_bike_model = EBikeModel.get(*query, **kwargs)
-    return model_to_dict(e_bike_model)
+    return e_bike_model
 
 
 def get_all():
@@ -50,12 +50,12 @@ def get_all():
 
 
 def get_by_name(name):
-    return model_to_dict(EBikeModel.get(EBikeModel.name == name))
+    return EBikeModel.get(EBikeModel.name == name)
 
 
 def get_by_category(category):
     e_bike_models = EBikeModel.select().where(EBikeModel.category == category)
-    return models_to_json(e_bike_models)
+    return e_bike_models
 
 
 def modify_by_name(name, modify_json):
@@ -304,15 +304,19 @@ def add_template():
     # add url to json
     url = "http://ouhx8b81v.bkt.clouddn.com/"
     for i in range(len(template_json)):
-        image_url = "%s%s.png" % (url, template_json[i]["name"])
-        template_json[i]["image_url"] = image_url
-    # print(template_json)
+        # 将 colors 转成数组
+        colors = template_json[i]["colors"]
+        colors = colors.split("、")
+        template_json[i]["colors"] = colors
+        # 将 image_urls 存入
+        image_url = "%s%s.png_1" % (url, template_json[i]["name"])
+        template_json[i]["image_urls"] = [image_url]
+        template_json[i]["image_urls"] = [image_url]
     for json in template_json:
-        # result = modify_by_name(json["name"], json)
         result = add(**json)
         print(result)
 
 
 if __name__ == '__main__':
     pass
-    print(add_template())
+    print(models_to_json(get_all()))

@@ -22,21 +22,34 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from playhouse.shortcuts import model_to_dict
+
+
 from server.service import e_bike_model_service
 from server.utility.logger import logger
+from server.utility.json_utility import models_to_json
+
 PREFIX = '/e_bike_model'
 
 e_bike_model_app = Blueprint("e_bike_model_app", __name__, url_prefix=PREFIX)
 
 
-# ***************************** e_bike_model ***************************** #
-@e_bike_model_app.route('/', methods=['PUT'])  # test complete
-def add_e_bike_model():
-    data = request.get_json()
-    e_bike_model = e_bike_model_service.add(**data)
-    if e_bike_model:
-        return jsonify({'response': e_bike_model}), 200
-    pass
+# 1. 电动车类型列表
+@e_bike_model_app.route('/', methods=['GET'])
+def get_e_bike_model():
+    category = request.args.get('category')
+    if category is None:
+        e_bike_models = e_bike_model_service.get_all()
+    else:
+        e_bike_models = e_bike_model_service.get_by_category(category)
+
+    if e_bike_models:
+        return jsonify({
+            'response': {
+                "e_bike_models": models_to_json(e_bike_models)
+            }}), 200
+    else:
+        return jsonify({'response': "no e_bike_model find"}), 404
 
 
 # 2. 单个电动车类型详情
@@ -56,24 +69,20 @@ def get_e_bike_model_one(name):
         result = e_bike_model_service.num_view_increment(name)
         logger.debug("increment", result)
 
-        return jsonify({'response': {"e_bike_model": e_bike_model}}), 200
+        return jsonify({
+            'response':
+                {"e_bike_model": model_to_dict(e_bike_model)}}), 200
     else:
         return jsonify({'response': "no e_bike_model find"}), 404
 
 
-# 1. 电动车类型列表
-@e_bike_model_app.route('/', methods=['GET'])
-def get_e_bike_model():
-    category = request.args.get('category')
-    if category is None:
-        e_bike_models = e_bike_model_service.get_all()
-    else:
-        e_bike_models = [e_bike_model_service.get_by_category(category)]
-
-    if e_bike_models:
-        return jsonify({'response': {"e_bike_models": e_bike_models}}), 200
-    else:
-        return jsonify({'response': "no e_bike_model find"}), 404
+@e_bike_model_app.route('/', methods=['PUT'])  # test complete
+def add_e_bike_model():
+    data = request.get_json()
+    e_bike_model = e_bike_model_service.add(**data)
+    if e_bike_model:
+        return jsonify({'response': e_bike_model}), 200
+    pass
 
 
 @e_bike_model_app.route('/<string:name>',
@@ -100,4 +109,3 @@ def remove_e_bike_model(name):
     pass
 
 # ***************************** unit test ***************************** #
-

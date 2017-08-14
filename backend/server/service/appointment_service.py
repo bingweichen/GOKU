@@ -17,12 +17,12 @@
 5. modify status
 """
 
-from playhouse.shortcuts import model_to_dict
 from datetime import datetime, timedelta
 
 from server.database.model import Appointment
 from server.service import storage_service
-from server.utility.exception import NoStorageError
+from server.service import serial_number_service
+from server.utility.exception import NoStorageError, WrongSerialsNumber
 from server.utility.constant import *
 
 
@@ -43,12 +43,12 @@ def add(**kwargs):
     :return: the added json
     :rtype: json
     """
+    # 生成到期时间
     date = datetime.now()
     expired_date_time = date + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
 
-    appointment = Appointment.create(**kwargs,
-                                     date=date,
-                                     expired_date_time=expired_date_time)
+    appointment = Appointment.create(
+        date=date, expired_date_time=expired_date_time, **kwargs)
     return appointment
 
 
@@ -63,9 +63,16 @@ def add_appointment(**kwargs):
     if not check_user_appointment(user=kwargs["user"]):
         raise NoStorageError("too much appointment")
     appointment = add(**kwargs)
+    print("appointment", appointment)
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
-    return model_to_dict(appointment)
+
+    # 获取有效的 serial_number
+    serial_number = serial_number_service.get_available_code(appointment)
+    # 更改 serial_number
+    appointment.serial_number = serial_number
+    appointment.save()
+    return appointment
 
 
 # 2. 预付款成功
@@ -78,16 +85,18 @@ def appointment_payment_success(appointment_id):
     #     expired_date_time=datetime.now+timedelta(days=APPOINTMENT_EXPIRED_DAYS)
     # ).where(
     #     Appointment.id == appointment_id
-    # ).excute()
+    # ).execute()
 
     return modify_status(appointment_id, status)
 
 
 # 3. 提车码
-def upload_code(appointment_id, code):
-    if check_code(code):
+def upload_serial_number(appointment_id, serial_number):
+    appointment = get(id=appointment_id)
+    if check_serial_number(appointment, serial_number):
         status = APPOINTMENT_STATUS["2"]
         return modify_status(appointment_id, status)
+    raise WrongSerialsNumber("wrong serials number")
 
 
 # 4. 付款成功
@@ -98,6 +107,14 @@ def total_payment_success(appointment_id):
 
 # 取消订单
 def cancel_appointment(appointment_id):
+    appointment = get(id=appointment_id)
+    # 退还押金
+    return_appointment_fee(appointment)
+    # 更改 serial number
+    serial_number_service.modify_available_appointment(
+        appointment.serial_number, True, None
+    )
+    # 退还库存
     status = APPOINTMENT_STATUS["-1"]
     increment_storage(appointment_id)
     return modify_status(appointment_id, status)
@@ -111,6 +128,12 @@ def expired_appointment(appointment_id):
 
 
 # 退还押金！！！
+def return_appointment_fee(appointment):
+    appointment_fee = appointment.appointment_fee
+    if appointment_fee == 0:
+        return
+    print("需退还押金"+appointment_fee)
+
 
 # 退还库存
 def increment_storage(appointment_id):
@@ -121,9 +144,11 @@ def increment_storage(appointment_id):
     )
 
 
-# 检查提车码 TODO
-def check_code(code):
-    return True
+# 检查提车码
+def check_serial_number(appointment, serial_number):
+    if appointment.serial_number == serial_number:
+        return True
+    return False
 
 
 def get(*query, **kwargs):
@@ -140,7 +165,7 @@ def get_all():
     appointments = Appointment.select()
     new_appointments = []
     for appointment in appointments:
-        new_appointments.append(model_to_dict(appointment))
+        new_appointments.append(appointment)
     return new_appointments
 
 
@@ -148,12 +173,12 @@ def get_all_paginate(offset, limit):
     appointments = Appointment.select().paginate(offset, limit)
     new_appointments = []
     for appointment in appointments:
-        new_appointments.append(model_to_dict(appointment))
+        new_appointments.append(appointment)
     return new_appointments
 
 
 def get_by_id(appointment_id):
-    return model_to_dict(get(Appointment.id == appointment_id))
+    return get(Appointment.id == appointment_id)
 
 
 def modify_status(appointment_id, status):
@@ -219,5 +244,6 @@ def add_template():
 
 
 if __name__ == '__main__':
-    # print(get(id="4"))
+    print(Appointment.get(Appointment.id==1))
+    # print(add_template())
     pass
