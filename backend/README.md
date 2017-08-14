@@ -4,6 +4,8 @@
 
 service 层使用 Add/Get/Modify/Remove
 
+方法默认使用primary key进行搜索
+
 database 层使用 Create/Read/Update/Delete
 
 

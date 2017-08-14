@@ -20,8 +20,10 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from playhouse.shortcuts import model_to_dict
+
 from server.service import appointment_service
-from server.utility.exception import NoStorageError
+from server.utility.exception import NoStorageError, WrongSerialsNumber
 
 PREFIX = '/appointment'
 
@@ -32,6 +34,21 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 # 1.提交预约单
 @appointment_app.route('/', methods=['PUT'])
 def add_appointment():
+    """
+
+    e_bike_model: string
+    color: string
+    category: string
+
+    eg = {
+    "e_bike_model": "小龟电动车 爆款 48V、12A",
+    "color": "蓝",
+    "category": "小龟"
+    }
+
+    :return: the appointment created
+    :rtype: json
+    """
     username = "bingwei"
     try:
         data = request.get_json()
@@ -40,7 +57,7 @@ def add_appointment():
             **data
         )
         if appointment:
-            return jsonify({'response': appointment}), 200
+            return jsonify({'response': model_to_dict(appointment)}), 200
 
     except NoStorageError as e:
         return jsonify(
@@ -51,6 +68,12 @@ def add_appointment():
 # 2. 提交预约款付款成功
 @appointment_app.route('/status/appointment_payment_success', methods=['POST'])
 def appointment_payment_success():
+    """
+    appointment_id: string
+
+    :return: 1 for success
+    :rtype: int
+    """
     data = request.get_json()
     appointment_id = data["appointment_id"]
     result = appointment_service.appointment_payment_success(appointment_id)
@@ -59,19 +82,45 @@ def appointment_payment_success():
 
 
 # 3. 提交取车码
-@appointment_app.route('/status/upload_code', methods=['POST'])
+@appointment_app.route('/status/upload_serials_number', methods=['POST'])
 def upload_code():
+    """
+    appointment_id: int
+    serials_number: string
+
+    eg = {
+    "appointment_id": 3,
+    "serials_number": "AM0002"
+    }
+
+    :return: 1 for success
+    :rtype:
+    """
     data = request.get_json()
     appointment_id = data["appointment_id"]
-    code = data["code"]
-    result = appointment_service.upload_code(appointment_id, code)
-    if result:
-        return jsonify({'response': result}), 200
+    serials_number = data["serials_number"]
+    try:
+        result = appointment_service.upload_serial_number(
+            appointment_id, serials_number)
+        if result:
+            return jsonify({'response': result}), 200
+    except WrongSerialsNumber as e:
+        return jsonify(
+            {'response': '%s: %s' % (str(WrongSerialsNumber), e.args)}), 400
 
 
 # 4. 提交付款成功
 @appointment_app.route('/status/total_payment_success', methods=['POST'])
 def total_payment_success():
+    """
+    appointment_id: int
+
+    eg = {
+    "appointment_id": 3,
+    }
+    :return: 1 for success
+    :rtype:
+    """
     data = request.get_json()
     appointment_id = data["appointment_id"]
     result = appointment_service.total_payment_success(appointment_id)
@@ -82,6 +131,15 @@ def total_payment_success():
 # 取消订单
 @appointment_app.route('/status/cancel', methods=['POST'])
 def cancel_appointment():
+    """
+    appointment_id: int
+
+    eg = {
+    "appointment_id": 3,
+    }
+    :return: 1 for success
+    :rtype:
+    """
     data = request.get_json()
     appointment_id = data["appointment_id"]
     result = appointment_service.cancel_appointment(appointment_id)
@@ -129,13 +187,3 @@ def remove_appointment(appointment_id):
     pass
 
 # ***************************** unit test ***************************** #
-# 生成预约单
-# localhost:5000/appointment  PUT
-# json = {
-#     "user": "bingwei",
-#     "e_bike_model": "E101小龟",
-#     "color": "蓝",
-#     "type": "小龟",
-#     "date": datetime.now(),
-#     "note": "xx"
-# }

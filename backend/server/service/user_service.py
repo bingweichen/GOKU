@@ -123,5 +123,5 @@ def add_template():
 # ***************************** unit test ***************************** #
 if __name__ == '__main__':
     pass
-    add_template()
+    # add_template()
     print(get_all())

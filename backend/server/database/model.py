@@ -9,10 +9,21 @@
 每个field 生效是要重新删表，建表
 
 """
+import json
+
 from peewee import *
 
 from server.database.db import database
 from server.utility.constant import *
+
+
+class JSONField(TextField):
+    def db_value(self, value):
+        return json.dumps(value)
+
+    def python_value(self, value):
+        if value is not None:
+            return json.loads(value)
 
 
 class BaseModel(Model):
@@ -70,24 +81,20 @@ class EBikeModel(BaseModel):
     # 电动车类型 小龟、酷车，租车
     category = CharField()
     price = CharField()
-    colors = CharField()  # 红，蓝，绿。。。
+
+    colors = JSONField()  # [红，蓝，绿。。。]
     # 续航
     distance = CharField()
     configure = CharField()
     battery = CharField()
-
     introduction = CharField(default="物品简介")
-    image_url = CharField(default=None, null=True)
+    image_urls = JSONField(default=None, null=True)
 
+    # introduction_image_url = CharField(default=None, null=True)
     # 销售量
     num_sold = IntegerField(default=0)
     # 浏览量
     num_view = IntegerField(default=0)
-
-    # TODO 不懂什么意思
-    # pics = CharField(null=True)
-    # 剩余电动车数量
-    # left = IntegerField(default=0)
 
 
 # 新增库存表
@@ -130,18 +137,11 @@ class Appointment(BaseModel):
     note = CharField(null=True)
     date = DateTimeField()
     expired_date_time = DateTimeField()
-    # delivery = CharField(DELIVERY["0"])
-    # valid = BooleanField(default=True)
+    serial_number = CharField(null=True)
+    # 预约金
+    appointment_fee = FloatField(default=0)
+    delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
-
-    # @classmethod
-    # def get(cls, *query, **kwargs):
-    #     sq = cls.select().naive()
-    #     if query:
-    #         sq = sq.where(*query)
-    #     if kwargs:
-    #         sq = sq.filter(**kwargs)
-    #     return sq.get()
 
 
 # 闪充电池出租
@@ -180,10 +180,26 @@ class Coupon(BaseModel):
     status = CharField(default="可用")
 
 
+# 编号
+class SerialNumber(BaseModel):
+    code = CharField(primary_key=True)
+    store = ForeignKeyField(Store)
+    store_code = CharField()
+    category_code = CharField()
+    available = BooleanField(default=True)
+    appointment = ForeignKeyField(Appointment, null=True)
+
+
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Battery]
+table_temp = [Appointment]
+
+
+#
+# import uuid
+# class Test(BaseModel):
+#     uuid = UUIDField(primary_key=True, default=uuid.uuid4)
 
 
 def create_tables():
