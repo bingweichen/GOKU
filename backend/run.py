@@ -17,7 +17,8 @@ from flask_jwt_extended import get_jwt_claims
 
 from server.database.db import database
 from server.route import user_route, resource_route, \
-    e_bike_model_route, appointment_route, coupon_route, virtual_card_route
+    e_bike_model_route, appointment_route, coupon_route, \
+    virtual_card_route, battery_rent_route
 
 app = Flask(__name__, static_url_path='')
 
@@ -29,6 +30,8 @@ app.register_blueprint(e_bike_model_route.e_bike_model_app)
 app.register_blueprint(appointment_route.appointment_app)
 app.register_blueprint(virtual_card_route.virtual_card)
 app.register_blueprint(coupon_route.coupon)
+app.register_blueprint(battery_rent_route.battery_rent)
+
 
 app.secret_key = 'super-super-secret'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)

@@ -20,7 +20,7 @@ def add_coupon(**kwargs):
     :return:
     """
     coupon = Coupon.create(**kwargs)
-    return model_to_dict(coupon)
+    return coupon
 
 
 def get_my_coupons(user):
@@ -35,7 +35,6 @@ def get_my_coupons(user):
     coupon.execute()
     coupon = Coupon.select().where(
         Coupon.user == user, Coupon.status == "可用")
-    coupon = models_to_json(coupon)
     return coupon
 
 
@@ -59,3 +58,22 @@ def use_coupon(user, c_id, before_price):
     after_price = Coupon.select().where(coupon.id == c_id)
     after_price = before_price - models_to_json(after_price)["value"]
     return after_price
+
+
+# ***************************** unit test ***************************** #
+def add_template():
+    template_json = [
+        {
+            "user": "bingwei",
+            "situation": 1000,
+            "value": 100,
+            "expired": "20170910",
+            "desc": "满1000减100"
+        }
+    ]
+    for json in template_json:
+        result = add_coupon(**json)
+        print(result)
+
+if __name__ == "__main__":
+    add_template()

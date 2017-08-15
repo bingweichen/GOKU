@@ -47,6 +47,7 @@ def add_appointment():
     "category": "小龟",
     "type" "租车",
     "note: "",
+    "coupon": null
 
     }
 
@@ -57,6 +58,7 @@ def add_appointment():
     "category": "租车",
     "type" "买车",
     "note: "",
+    "coupon": null
 
     "rent_time_period": "学期"
     }

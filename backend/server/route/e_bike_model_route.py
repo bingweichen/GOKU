@@ -24,7 +24,6 @@ from flask import request
 
 from playhouse.shortcuts import model_to_dict
 
-
 from server.service import e_bike_model_service
 from server.utility.logger import logger
 from server.utility.json_utility import models_to_json
@@ -43,13 +42,18 @@ def get_e_bike_model():
     else:
         e_bike_models = e_bike_model_service.get_by_category(category)
 
-    if e_bike_models:
-        return jsonify({
-            'response': {
-                "e_bike_models": models_to_json(e_bike_models)
-            }}), 200
-    else:
-        return jsonify({'response': "no e_bike_model find"}), 404
+    return jsonify({
+        'response': {
+            "e_bike_models": models_to_json(e_bike_models)
+        }}), 200
+
+    # if e_bike_models:
+    #     return jsonify({
+    #         'response': {
+    #             "e_bike_models": models_to_json(e_bike_models)
+    #         }}), 200
+    # else:
+    #     return jsonify({'response': "no e_bike_model find"}), 404
 
 
 # 2. 单个电动车类型详情

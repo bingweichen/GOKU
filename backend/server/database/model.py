@@ -149,12 +149,13 @@ class Appointment(BaseModel):
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
 
-# 闪充电池出租
+# 闪充电池 出租
 class Battery(BaseModel):
-    # 是否被租
-    on_loan = BooleanField(default=False)
+    serial_number = CharField(primary_key=True)
     # 电池信息，比如电压、电流
     desc = CharField(null=True)
+    # 是否被租
+    on_loan = BooleanField(default=False)
     # 租用人
     user = ForeignKeyField(User, related_name='battery', null=True)
 
@@ -171,8 +172,18 @@ class BatteryReport(BaseModel):
     report_time = DateTimeField()
 
 
+# 闪充电池租用记录
+class BatteryRecord(BaseModel):
+    rent_date = DateTimeField()
+    return_date = DateTimeField()
+    battery = ForeignKeyField(Battery)
+    price = FloatField(default=0)
+    situation = CharField(default="借用中")  # 借用中，已归还
+
+
 # 优惠券
 class Coupon(BaseModel):
+    desc = CharField()  # 优惠劵描述
     # 用户
     user = ForeignKeyField(User, related_name='coupon', null=True)
     # 使用条件
@@ -193,12 +204,13 @@ class SerialNumber(BaseModel):
     category_code = CharField()
     available = BooleanField(default=True)
     appointment = ForeignKeyField(Appointment, null=True)
+    battery = ForeignKeyField(Battery, null=True)
 
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [EBikeModel]
+table_temp = [Coupon]
 
 
 #

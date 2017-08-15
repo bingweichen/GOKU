@@ -1,5 +1,7 @@
+from playhouse.shortcuts import model_to_dict
 from server.service import store_service
 from server.database.model import SerialNumber
+
 # from server.utility.constant import *
 
 """
@@ -53,6 +55,16 @@ def generate_serial_number():
                 category_code=category_code
             )
             print(serial_number)
+
+        # 电池序列号
+        for i in range(100):
+            battery_code = str(i).zfill(5)
+            serial_number = SerialNumber.create(
+                code=store_code + battery_code,
+                store=store["name"],
+                store_code=store_code,
+            )
+            print(serial_number)
     pass
 
 
@@ -71,6 +83,18 @@ def get_available_code(appointment):
     serial_number.save()
     code = serial_number.code
     return code
+
+
+def get_available_battery_code():
+    serial_number = SerialNumber.select().where(
+        SerialNumber.category_code.not_in(["M", "Z"]),
+        SerialNumber.available == True).get()
+
+    # 更改被使用的serial number
+    serial_number.available = False
+    # serial_number.battery = battery
+    serial_number.save()
+    return serial_number.code
 
 
 # 更改被使用的serial number
@@ -114,4 +138,6 @@ def get_available_code_test():
 
 
 if __name__ == "__main__":
-    get_available_code_test()
+    pass
+    print(get_available_battery_code())
+    # generate_serial_number()
