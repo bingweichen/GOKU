@@ -41,9 +41,24 @@ def add_appointment():
     category: string
 
     eg = {
+    "user" : "bingwei"
     "e_bike_model": "小龟电动车 爆款 48V、12A",
     "color": "蓝",
-    "category": "小龟"
+    "category": "小龟",
+    "type" "租车",
+    "note: "",
+
+    }
+
+    租车订单
+    eg = {
+    "e_bike_model": "租车 闪租 48V、20A",
+    "color": "蓝",
+    "category": "租车",
+    "type" "买车",
+    "note: "",
+
+    "rent_time_period": "学期"
     }
 
     :return: the appointment created
@@ -60,10 +75,9 @@ def add_appointment():
         if appointment:
             return jsonify({'response': model_to_dict(appointment)}), 200
 
-    except NoStorageError as e:
+    except Error as e:
         return jsonify(
-            {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
-        # return jsonify({'response': str(NoStorageError)}), 400
+            {'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
 # 2. 提交预约款付款成功

@@ -40,7 +40,7 @@ def get_deposit_status(card_no):
         return "No deposit found"
 
 
-def pay_deposit(data):
+def pay_deposit(**kwargs):
     """
     pay deposit
     :param data:
@@ -48,8 +48,8 @@ def pay_deposit(data):
         deposit_fee: deposit amount
     :return:
     """
-    card_no = data["card_no"]
-    deposit_fee = float(data["deposit_fee"])
+    card_no = kwargs["card_no"]
+    deposit_fee = float(kwargs["deposit_fee"])
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
     if deposit < DEFAULT_DEPOSIT:
@@ -64,7 +64,7 @@ def pay_deposit(data):
         return "You need not pay deposit"
 
 
-def top_up(data):
+def top_up(**kwargs):
     """
     top up virtual card
     :param data:
@@ -72,8 +72,8 @@ def top_up(data):
         top_up_fee: top up amount
     :return:
     """
-    card_no = data["card_no"]
-    top_up_fee = float(data["top_up_fee"])
+    card_no = kwargs["card_no"]
+    top_up_fee = float(kwargs["top_up_fee"])
     deposit = get_deposit_status(card_no)
     if not deposit:
         return "No deposit"
@@ -98,14 +98,14 @@ def get_card_balance(card_no):
     return balance.balance
 
 
-def return_deposit(data):
+def return_deposit(**kwargs):
     """
     return deposit
     :param data:
         card_no: card number
     :return:
     """
-    card_no = data["card_no"]
+    card_no = kwargs["card_no"]
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
     if deposit:
@@ -130,7 +130,7 @@ def get_consume_record(card_no):
     return models_to_json(record)
 
 
-def consume_virtual_card(data):
+def consume_virtual_card(**kwargs):
     """
     consume virtual card
     :param data:
@@ -139,9 +139,9 @@ def consume_virtual_card(data):
         amount: consume amount
     :return:
     """
-    card_no = data["card_no"]
-    consume_event = data["consume_event"]
-    amount = float(data["amount"])
+    card_no = kwargs["card_no"]
+    amount = float(kwargs["amount"])
+
     deposit = get_deposit_status(card_no)
     if not deposit:
         return "No deposit"
@@ -151,7 +151,7 @@ def consume_virtual_card(data):
     card = VirtualCard.update(balance=VirtualCard.balance-amount
                               ).where(VirtualCard.card_no == card_no)
     card.execute()
-    ConsumeRecord.create(card=card_no, consume_event=consume_event,
+    ConsumeRecord.create(card=card_no, consume_event="consume",
                          consume_date_time=datetime.now(),
                          consume_fee=-amount, balance=balance-amount)
     return "Consume " + str(amount) + " succeed"
