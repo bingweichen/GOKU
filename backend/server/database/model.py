@@ -138,6 +138,13 @@ class Appointment(BaseModel):
     date = DateTimeField()
     expired_date_time = DateTimeField()
     serial_number = CharField(null=True)
+
+    rent_time_period = CharField()
+    end_time = DateTimeField()
+    # 最终价格
+    price = FloatField()
+    # 优惠价格
+    reduced_price = FloatField(null=True)
     # 预约金
     appointment_fee = FloatField(default=0)
     delivery = CharField(default=DELIVERY["0"])

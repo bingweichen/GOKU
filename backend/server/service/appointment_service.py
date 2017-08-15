@@ -17,11 +17,13 @@
 5. modify status
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 
 from server.database.model import Appointment
 from server.service import storage_service
 from server.service import serial_number_service
+from server.service import e_bike_model_service
 from server.utility.exception import NoStorageError, WrongSerialsNumber
 from server.utility.constant import *
 
@@ -52,6 +54,7 @@ def add(**kwargs):
     return appointment
 
 
+# ***************************** buy appointment ***************************** #
 # 1.生成订单
 def add_appointment(**kwargs):
     e_bike_model = kwargs["e_bike_model"]
@@ -59,11 +62,11 @@ def add_appointment(**kwargs):
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
         raise NoStorageError("not enough storage")
-    # 检查该用户是否存在订单
+
+    # 检查该用户是否存在订单 (买车订单数）
     if not check_user_appointment(user=kwargs["user"]):
         raise NoStorageError("too much appointment")
     appointment = add(**kwargs)
-    print("appointment", appointment)
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
 
@@ -71,6 +74,9 @@ def add_appointment(**kwargs):
     serial_number = serial_number_service.get_available_code(appointment)
     # 更改 serial_number
     appointment.serial_number = serial_number
+    # 使用优惠劵
+    # price = e_bike_model_service.get(name=e_bike_model).price
+
     appointment.save()
     return appointment
 
@@ -90,18 +96,30 @@ def appointment_payment_success(appointment_id):
     return modify_status(appointment_id, status)
 
 
-# 3. 提车码
+#  提车码
 def upload_serial_number(appointment_id, serial_number):
     appointment = get(id=appointment_id)
     if check_serial_number(appointment, serial_number):
-        status = APPOINTMENT_STATUS["2"]
-        return modify_status(appointment_id, status)
+        return True
+        # status = APPOINTMENT_STATUS["2"]
+        # return modify_status(appointment_id, status)
     raise WrongSerialsNumber("wrong serials number")
 
 
 # 4. 付款成功
 def total_payment_success(appointment_id):
-    status = APPOINTMENT_STATUS["3"]
+    # 检查是否租车
+    appointment = get(id=appointment_id)
+    if appointment.category == E_BIKE_MODEL_CATEGORY["2"]:  # 租车
+        rent_time_period = appointment.rent_time_period
+        end_time = datetime.now + \
+                   timedelta(days=RENT_TIME_PERIOD[rent_time_period])
+        appointment.end_time = end_time
+        status = APPOINTMENT_STATUS["3"]
+        appointment.status = status
+        return appointment.save()
+
+    status = APPOINTMENT_STATUS["4"]
     return modify_status(appointment_id, status)
 
 
@@ -132,7 +150,7 @@ def return_appointment_fee(appointment):
     appointment_fee = appointment.appointment_fee
     if appointment_fee == 0:
         return
-    print("需退还押金"+appointment_fee)
+    print("需退还押金" + appointment_fee)
 
 
 # 退还库存
@@ -228,6 +246,14 @@ def check_valid(appointment):
         return True
 
 
+# ***************************** rent appointment ***************************** #
+# 1.生成租车订单
+def add_rent_appointment(**kwargs):
+
+
+    pass
+
+
 # ***************************** unit test ***************************** #
 def add_template():
     template_json = [
@@ -244,6 +270,6 @@ def add_template():
 
 
 if __name__ == '__main__':
-    print(Appointment.get(Appointment.id==1))
+    print(Appointment.get(Appointment.id == 1))
     # print(add_template())
     pass
