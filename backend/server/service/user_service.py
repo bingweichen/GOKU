@@ -71,8 +71,8 @@ def login(username, password):
     raise PasswordError("error password")
 
 
-def create_virtual_card(data):
-    virtual_card = virtual_card_service.add(data)
+def create_virtual_card(**kwargs):
+    virtual_card = virtual_card_service.add(**kwargs)
     return virtual_card
 
 

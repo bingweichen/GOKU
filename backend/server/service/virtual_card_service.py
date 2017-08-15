@@ -13,6 +13,8 @@ from server.database.model import ConsumeRecord
 from server.utility.constant import DEFAULT_DEPOSIT
 from server.utility.json_utility import models_to_json
 
+from server.utility.exception import *
+
 
 def add(**kwargs):
     """
@@ -21,7 +23,7 @@ def add(**kwargs):
     :return:
     """
     virtual_card = VirtualCard.create(**kwargs)
-    return model_to_dict(virtual_card)
+    return virtual_card
 
 
 def get_deposit_status(card_no):
@@ -167,9 +169,18 @@ def get_virtual_card_info(card_no):
             "deposit": info["deposit"],
             "balance": info["balance"]}
 
+
 # ***************************** service ***************************** #
 def check_deposit(username):
-    pass
+    virtual_card = VirtualCard.get(VirtualCard.card_no == username)
+    if virtual_card:
+        deposit = virtual_card.deposit
+        if deposit >= DEFAULT_DEPOSIT:
+            return True
+        else:
+            raise Error("no enough deposit")
+    else:
+        raise Error("no virtual card")
 
 
 # ***************************** for test ***************************** #

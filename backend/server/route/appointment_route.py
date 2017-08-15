@@ -23,7 +23,7 @@ from flask import request
 from playhouse.shortcuts import model_to_dict
 
 from server.service import appointment_service
-from server.utility.exception import NoStorageError, WrongSerialsNumber
+from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
 
 PREFIX = '/appointment'
 
@@ -49,11 +49,12 @@ def add_appointment():
     :return: the appointment created
     :rtype: json
     """
-    username = "bingwei"
+    # username = "bingwei"
     data = request.get_json()
+    user = data.pop("username")
     try:
         appointment = appointment_service.add_appointment(
-            user=username,
+            user=user,
             **data
         )
         if appointment:
@@ -81,7 +82,7 @@ def appointment_payment_success():
         return jsonify({'response': result}), 200
 
 
-# 3. 提交取车码
+# 3. 检查取车码
 @appointment_app.route('/check/upload_serials_number', methods=['POST'])
 def upload_code():
     """
@@ -128,9 +129,62 @@ def total_payment_success():
         return jsonify({'response': result}), 200
 
 
+# ***************************** rent appointment ***************************** #
+# # 1.提交生成 预约单
+# @appointment_app.route('/rent/', methods=['PUT'])
+# def add_rent_appointment():
+#     """
+#     租车订单
+#     eg = {
+#     "e_bike_model": "租车 闪租 48V、20A",
+#     "color": "蓝",
+#     "category": "租车",
+#     "rent_time_period": "学期"
+#
+#     }
+#
+#     :return: the appointment created
+#     :rtype: json
+#     """
+#     pass
+#
+#     username = "bingwei"
+#     data = request.get_json()
+#     try:
+#         appointment = appointment_service.add_appointment(
+#             user=username,
+#             e_bike_model=data.pop("e_bike_model"),
+#             color=data.pop("color"),
+#             category=data.pop("category"),
+#             rent_time_period=data.pop("rent_time_period"),
+#             **data
+#         )
+#         if appointment:
+#             return jsonify({'response': model_to_dict(appointment)}), 200
+#
+#     except NoStorageError as e:
+#         return jsonify(
+#             {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
+
+
 # 5. 针对租车 到期日前还车成功， 由管理员发起
+# # 用户还车，由管理员执行
+@appointment_app.route('/rent/return_e_bike', methods=['POST'])
+def return_e_bike():
+    data = request.get_json()
+    try:
+        result = appointment_service.return_e_bike(
+            appointment_id=data["appointment_id"],
+            serial_number=data["serial_number"]
+        )
+        if result:
+            return jsonify({'response': result}), 200
+    except Error as e:
+        return jsonify(
+            {'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
+# ***************************** unit test ***************************** #
 # 取消订单
 @appointment_app.route('/status/cancel', methods=['POST'])
 def cancel_appointment():
@@ -165,53 +219,6 @@ def get_appointment(appointment_id=None):
     pass
 
 
-# ***************************** rent appointment ***************************** #
-# 1.提交生成 预约单
-@appointment_app.route('/rent/', methods=['PUT'])
-def add_rent_appointment():
-    """
-    租车订单
-    eg = {
-    "e_bike_model": "租车 闪租 48V、20A",
-    "color": "蓝",
-    "category": "租车",
-    "rent_time_period": "学期"
-
-    }
-
-    :return: the appointment created
-    :rtype: json
-    """
-    pass
-
-    username = "bingwei"
-    data = request.get_json()
-    try:
-        appointment = appointment_service.add_rent_appointment(
-            user=username,
-            e_bike_model=data.pop("e_bike_model"),
-            color=data.pop("color"),
-            category=data.pop("category"),
-            rent_time_period=data.pop("rent_time_period"),
-            **data
-        )
-        if appointment:
-            return jsonify({'response': model_to_dict(appointment)}), 200
-
-    except NoStorageError as e:
-        return jsonify(
-            {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
-
-
-# # 用户还车，由管理员执行
-# @appointment_app.route('/rent/return_e_bike', methods=['POST'])
-# def return_e_bike():
-#     data = request.get_json()
-#     try:
-#         appointment = appointment_service.
-
-
-# ***************************** unit test ***************************** #
 # 更改预约单状态
 @appointment_app.route('/modify_status/<string:appointment_id>/<string:status>',
                        methods=['POST'])

@@ -88,7 +88,7 @@ class EBikeModel(BaseModel):
     battery = CharField()  # 电池规格
 
     image_urls = JSONField(default=None, null=True)  # 轮播图
-    introduction_image_urls = CharField(default=None, null=True)  # 介绍图
+    introduction_image_urls = JSONField(default=None, null=True)  # 介绍图
     introduction = CharField(default="物品简介")  # 文字介绍
 
     num_sold = IntegerField(default=0)  # 销售量
@@ -198,7 +198,7 @@ class SerialNumber(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Appointment]
+table_temp = [EBikeModel]
 
 
 #

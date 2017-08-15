@@ -66,11 +66,24 @@ def login():
     return jsonify(response), 200
 
 
-@user_app.route('/', methods=['POST'])
+@user_app.route('/virtual_card', methods=['PUT'])
 def create_virtual_card():
+    """
+
+    eg = {
+     card_no = "bingwei"
+    }
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
+    card_no = data.pop("card_no")
     try:
-        virtual_card = user_service.create_virtual_card(data)
-        return jsonify({'response': virtual_card}), 200
+        virtual_card = user_service.create_virtual_card(
+            card_no=card_no, **data
+        )
+        return jsonify({'response': model_to_dict(virtual_card)}), 200
     except Exception as e:
         return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400
+

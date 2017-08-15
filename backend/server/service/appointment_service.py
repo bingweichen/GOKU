@@ -34,6 +34,7 @@ from server.utility.constant import *
 # 1.生成订单
 def add_appointment(**kwargs):
     user = kwargs["user"]
+
     e_bike_model = kwargs["e_bike_model"]
     color = kwargs["color"]
     e_bike_type = kwargs["type"]
@@ -41,11 +42,16 @@ def add_appointment(**kwargs):
 
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
-        raise NoStorageError("not enough storage")
+        raise Error("not enough storage")
 
     # 检查该用户是否存在订单 (买车订单数）
     if not check_user_appointment(user=user, type=e_bike_type):
-        raise NoStorageError("too much appointment")
+        raise Error("too much appointment")
+
+    # 租车订单 检查是否存在押金
+    if e_bike_type == "租车":
+        if not virtual_card_service.check_deposit(username=user):
+            raise Error("no deposit in virtual_card")
 
     appointment = add(**kwargs)
     # 库存-1
@@ -70,7 +76,10 @@ def add_appointment(**kwargs):
 
 # 2. 预付款成功
 def appointment_payment_success(appointment_id):
+    appointment = Appointment.get(id=appointment_id)
     status = APPOINTMENT_STATUS["1"]
+    appointment.status = status
+    return appointment.save()
 
     # # 预付款后更改新的过期日期
     # query = Appointment.update(
@@ -80,10 +89,10 @@ def appointment_payment_success(appointment_id):
     #     Appointment.id == appointment_id
     # ).execute()
 
-    return modify_status(appointment_id, status)
+    # return modify_status(appointment_id, status)
 
 
-#  提车码
+# 3. 提车码
 def upload_serial_number(appointment_id, serial_number):
     appointment = get(id=appointment_id)
     if check_serial_number(appointment, serial_number):
@@ -96,23 +105,24 @@ def upload_serial_number(appointment_id, serial_number):
 # 4. 付款成功
 def total_payment_success(appointment_id):
     # 检查是否租车
-    appointment = get(id=appointment_id)
-    if appointment.category == E_BIKE_MODEL_CATEGORY["2"]:  # 租车
+    appointment = Appointment.get(id=appointment_id)
+    if appointment.type == "租车":  # 租车
         rent_time_period = appointment.rent_time_period
         end_time = \
             datetime.now + timedelta(days=RENT_TIME_PERIOD[rent_time_period])
         appointment.end_time = end_time
-        status = APPOINTMENT_STATUS["3"]
+        status = APPOINTMENT_STATUS["2"]
         appointment.status = status
         return appointment.save()
 
-    status = APPOINTMENT_STATUS["4"]
-    return modify_status(appointment_id, status)
+    status = APPOINTMENT_STATUS["2"]
+    appointment.status = status
+    return appointment.save()
 
 
 # 取消订单
 def cancel_appointment(appointment_id):
-    appointment = get(id=appointment_id)
+    appointment = Appointment.get(id=appointment_id)
     # 退还押金
     return_appointment_fee(appointment)
     # 更改 serial number
@@ -122,14 +132,17 @@ def cancel_appointment(appointment_id):
     # 退还库存
     status = APPOINTMENT_STATUS["-1"]
     increment_storage(appointment_id)
-    return modify_status(appointment_id, status)
+    appointment.status = status
+    return appointment.save()
 
 
 # 订单过期
 def expired_appointment(appointment_id):
+    appointment = Appointment.get(id=appointment_id)
     status = APPOINTMENT_STATUS["-2"]
     increment_storage(appointment_id)
-    return modify_status(appointment_id, status)
+    appointment.status = status
+    return appointment.save()
 
 
 # 退还押金！！！
@@ -142,7 +155,7 @@ def return_appointment_fee(appointment):
 
 # 退还库存
 def increment_storage(appointment_id):
-    appointment = get(id=appointment_id)
+    appointment = Appointment.get(id=appointment_id)
     storage_service.increment_num(
         model=appointment.e_bike_model,
         color=appointment.color
@@ -156,6 +169,7 @@ def check_serial_number(appointment, serial_number):
     return False
 
 
+# 检查用户订单数量
 def check_user_appointment(user, type):
     count = Appointment.select().where(
         Appointment.user == user, Appointment.category == type).count()
@@ -170,6 +184,7 @@ def check_user_appointment(user, type):
         return True
 
 
+# 检查订单有效时间
 def check_valid(appointment):
     """
 
@@ -228,8 +243,18 @@ def check_valid(appointment):
 def return_e_bike(appointment_id, serial_number):
     appointment = Appointment.get(id=appointment_id)
     if check_serial_number(
-            serial_number=serial_number, appointment=appointment):
-        appointment.status = RENT_APPOINTMENT_STATUS["4"]
+            serial_number=serial_number,
+            appointment=appointment):
+        appointment.status = RENT_APPOINTMENT_STATUS["3"]
+        increment_storage(appointment_id)
+        # 更改 serial number
+        serial_number_service.modify_available_appointment(
+            code=appointment.serial_number,
+            available=True,
+            appointment=None
+        )
+        return appointment.save()
+    raise Error("wrong serial number")
 
 
 # ***************************** general ***************************** #
