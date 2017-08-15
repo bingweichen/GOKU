@@ -22,22 +22,22 @@ def add_coupon(**kwargs):
     return model_to_dict(coupon)
 
 
-def use_coupon(data):
-    """
-    use a coupon
-    :param data: coupon information
-    :return: 
-    """
-    user = data["user"]
-    c_id = data["c_id"]
-    coupon_info = Coupon.get(Coupon.user == user)
-    if user != models_to_json(coupon_info)["user"]:
-        return "User not matched"
-    if coupon_info["status"] != "可用":
-        return "This coupon cannot be used any more"
-    coupon = Coupon.update(status="已使用").where(Coupon.id == c_id)
-    coupon.execute()
-    return "Coupon used succeed"
+# def use_coupon(data):
+#     """
+#     use a coupon
+#     :param data: coupon information
+#     :return:
+#     """
+#     user = data["user"]
+#     c_id = data["c_id"]
+#     coupon_info = Coupon.get(Coupon.user == user)
+#     if user != models_to_json(coupon_info)["user"]:
+#         return "User not matched"
+#     if coupon_info["status"] != "可用":
+#         return "This coupon cannot be used any more"
+#     coupon = Coupon.update(status="已使用").where(Coupon.id == c_id)
+#     coupon.execute()
+#     return "Coupon used succeed"
 
 
 def get_my_coupons(user):
@@ -66,5 +66,20 @@ def appointment_coupon(c_id, before_price):
     coupon = Coupon.update(status="已使用").where(Coupon.id == c_id)
     coupon.execute()
     after_price = Coupon.select().where(coupon.id == c_id)
-    after_price = before_price-models_to_json(after_price)["value"]
+    after_price = before_price - models_to_json(after_price)["value"]
     return after_price
+
+
+# ***************************** service ***************************** #
+def use_coupon(username, coupon_id, price):  # TODO
+    """使用优惠劵，返回优惠价格，将优惠劵更改为无效或删除, 检查用户名
+
+    :param coupon_id:
+    :type coupon_id:
+    :param price:
+    :type price:
+    :return:
+    :rtype:
+    """
+    reduced_price = 0
+    return reduced_price

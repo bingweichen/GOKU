@@ -167,6 +167,10 @@ def get_virtual_card_info(card_no):
             "deposit": info["deposit"],
             "balance": info["balance"]}
 
+# ***************************** service ***************************** #
+def check_deposit(username):
+    pass
+
 
 # ***************************** for test ***************************** #
 def add_template():

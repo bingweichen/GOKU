@@ -70,9 +70,7 @@ def get_available_code(appointment):
     serial_number.appointment = appointment
     serial_number.save()
     code = serial_number.code
-    print(code)
     return code
-    pass
 
 
 # 更改被使用的serial number

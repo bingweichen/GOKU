@@ -78,23 +78,21 @@ class ConsumeRecord(BaseModel):
 class EBikeModel(BaseModel):
     # 电动车型号 model string
     name = CharField(primary_key=True)
-    # 电动车类型 小龟、酷车，租车
-    category = CharField()
-    price = CharField()
 
+    category = CharField()  # 电动车类别：小龟，酷车，闪车，MINI租
+    type = CharField()  # 电动车类型：买车，租车
+    price = CharField()  # 价格
     colors = JSONField()  # [红，蓝，绿。。。]
-    # 续航
-    distance = CharField()
-    configure = CharField()
-    battery = CharField()
-    introduction = CharField(default="物品简介")
-    image_urls = JSONField(default=None, null=True)
+    distance = CharField()  # 续航
+    configure = CharField()  # 配置
+    battery = CharField()  # 电池规格
 
-    # introduction_image_url = CharField(default=None, null=True)
-    # 销售量
-    num_sold = IntegerField(default=0)
-    # 浏览量
-    num_view = IntegerField(default=0)
+    image_urls = JSONField(default=None, null=True)  # 轮播图
+    introduction_image_urls = CharField(default=None, null=True)  # 介绍图
+    introduction = CharField(default="物品简介")  # 文字介绍
+
+    num_sold = IntegerField(default=0)  # 销售量
+    num_view = IntegerField(default=0)  # 浏览量
 
 
 # 新增库存表
@@ -131,8 +129,8 @@ class Appointment(BaseModel):
     user = ForeignKeyField(User, related_name='appointments')
     e_bike_model = ForeignKeyField(EBikeModel, related_name='appointments')
     color = CharField(max_length=5)
-    # 电动车类型 小龟、酷车，租车
-    category = CharField(null=True)
+    category = CharField()  # 电动车类别：小龟，酷车，闪车，MINI租
+    type = CharField()  # 电动车类型：买车，租车
     # 备注
     note = CharField(null=True)
     date = DateTimeField()

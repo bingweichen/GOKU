@@ -32,7 +32,7 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 
 # ***************************** buy appointment ***************************** #
 # 1.提交生成 预约单
-@appointment_app.route('/buy/', methods=['PUT'])
+@appointment_app.route('/', methods=['PUT'])
 def add_appointment():
     """
     买车订单
@@ -166,6 +166,7 @@ def get_appointment(appointment_id=None):
 
 
 # ***************************** rent appointment ***************************** #
+# 1.提交生成 预约单
 @appointment_app.route('/rent/', methods=['PUT'])
 def add_rent_appointment():
     """
@@ -200,6 +201,14 @@ def add_rent_appointment():
     except NoStorageError as e:
         return jsonify(
             {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
+
+
+# # 用户还车，由管理员执行
+# @appointment_app.route('/rent/return_e_bike', methods=['POST'])
+# def return_e_bike():
+#     data = request.get_json()
+#     try:
+#         appointment = appointment_service.
 
 
 # ***************************** unit test ***************************** #

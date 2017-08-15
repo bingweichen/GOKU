@@ -23,60 +23,47 @@ from datetime import timedelta
 from server.database.model import Appointment
 from server.service import storage_service
 from server.service import serial_number_service
-from server.service import e_bike_model_service
-from server.utility.exception import NoStorageError, WrongSerialsNumber
+from server.service import virtual_card_service
+from server.service import coupon_service
+
+from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
 from server.utility.constant import *
-
-
-def add(**kwargs):
-    """
-    add appointment
-
-    eg = {
-    "user": "bingwei",
-    "e_bike_model": "小龟电动车 爆款 48V、12A",
-    "color": 蓝,
-    "note": "小龟电动车",
-    "category": E_BIKE_MODEL_CATEGORY["0"],
-    }
-
-    :param kwargs:
-    :type kwargs:
-    :return: the added json
-    :rtype: json
-    """
-    # 生成到期时间
-    date = datetime.now()
-    expired_date_time = date + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
-
-    appointment = Appointment.create(
-        date=date, expired_date_time=expired_date_time, **kwargs)
-    return appointment
 
 
 # ***************************** buy appointment ***************************** #
 # 1.生成订单
 def add_appointment(**kwargs):
+    user = kwargs["user"]
     e_bike_model = kwargs["e_bike_model"]
     color = kwargs["color"]
+    e_bike_type = kwargs["type"]
+    coupon = kwargs.get("coupon")
+
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
         raise NoStorageError("not enough storage")
 
     # 检查该用户是否存在订单 (买车订单数）
-    if not check_user_appointment(user=kwargs["user"]):
+    if not check_user_appointment(user=user, type=e_bike_type):
         raise NoStorageError("too much appointment")
+
     appointment = add(**kwargs)
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
-
     # 获取有效的 serial_number
     serial_number = serial_number_service.get_available_code(appointment)
     # 更改 serial_number
     appointment.serial_number = serial_number
-    # 使用优惠劵
-    # price = e_bike_model_service.get(name=e_bike_model).price
 
+    # 使用优惠劵
+    price = appointment.e_bike_model.price
+    price = ''.join([c for c in price if c in '1234567890.'])
+    price = float(price)
+    if coupon:
+        reduced_price = coupon_service.use_coupon(user, coupon, price)
+        price = price - reduced_price
+        appointment.reduced_price = reduced_price
+    appointment.price = price
     appointment.save()
     return appointment
 
@@ -112,8 +99,8 @@ def total_payment_success(appointment_id):
     appointment = get(id=appointment_id)
     if appointment.category == E_BIKE_MODEL_CATEGORY["2"]:  # 租车
         rent_time_period = appointment.rent_time_period
-        end_time = datetime.now + \
-                   timedelta(days=RENT_TIME_PERIOD[rent_time_period])
+        end_time = \
+            datetime.now + timedelta(days=RENT_TIME_PERIOD[rent_time_period])
         appointment.end_time = end_time
         status = APPOINTMENT_STATUS["3"]
         appointment.status = status
@@ -169,6 +156,109 @@ def check_serial_number(appointment, serial_number):
     return False
 
 
+def check_user_appointment(user, type):
+    count = Appointment.select().where(
+        Appointment.user == user, Appointment.category == type).count()
+    if type == "租车":
+        if count >= 1:
+            return False
+        else:
+            return True
+    if count >= MAXIMUM_APPOINTMENT:
+        return False
+    else:
+        return True
+
+
+def check_valid(appointment):
+    """
+
+    :param appointment:
+    :type appointment:
+    :return: True is valid
+    :rtype: bool
+    """
+    now = datetime.now()
+    if now >= appointment.expired_date_time:
+        return False
+    else:
+        return True
+
+
+# ***************************** rent appointment ***************************** #
+# 1.生成租车订单
+# def add_rent_appointment(**kwargs):
+#     # 检查该用户是否有押金
+#     username = kwargs["username"]
+#     e_bike_model = kwargs["e_bike_model"]
+#     color = kwargs["color"]
+#     type = kwargs["type"]
+#
+#     coupon = kwargs.get("coupon")
+#
+#     if not virtual_card_service.check_deposit(username):
+#         raise Error("no deposit")
+#
+#     # 检查库存量，虽然库存不足时前端会生不成订单
+#     if not storage_service.check_storage(model=e_bike_model, color=color):
+#         raise Error("not enough storage")
+#
+#     # 检查该用户是否存在订单 (租车订单数）
+#     if not check_user_appointment(user=kwargs["user"], type=type):
+#         raise Error("too much appointment")
+#
+#     appointment = add(**kwargs)
+#     # # 库存-1
+#     storage_service.decrement_num(e_bike_model, color)
+#
+#     # 使用优惠劵
+#     # price = e_bike_model_service.get(name=e_bike_model).price
+#     price = appointment.e_bike_model.price
+#     if coupon:
+#         reduced_price = coupon_service.use_coupon(username, coupon, price)
+#         price = price - reduced_price
+#         appointment.reduced_price = reduced_price
+#     appointment.price = price
+#     appointment.save()
+#     return appointment
+#     pass
+
+
+# 4. 用户还车，由管理员执行
+def return_e_bike(appointment_id, serial_number):
+    appointment = Appointment.get(id=appointment_id)
+    if check_serial_number(
+            serial_number=serial_number, appointment=appointment):
+        appointment.status = RENT_APPOINTMENT_STATUS["4"]
+
+
+# ***************************** general ***************************** #
+def add(**kwargs):
+    """
+    add appointment
+
+    eg = {
+    "user": "bingwei",
+    "e_bike_model": "小龟电动车 爆款 48V、12A",
+    "color": 蓝,
+    "note": "小龟电动车",
+    "category": E_BIKE_MODEL_CATEGORY["0"],
+    }
+
+    :param kwargs:
+    :type kwargs:
+    :return: the added json
+    :rtype: json
+    """
+    # 生成到期时间
+    date = datetime.now()
+    expired_date_time = date + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
+
+    appointment = Appointment.create(
+        date=date, expired_date_time=expired_date_time, **kwargs)
+    return appointment
+
+
 def get(*query, **kwargs):
     # 检查是否过期
     appointment = Appointment.get(*query, **kwargs)
@@ -220,38 +310,6 @@ def modify_status(appointment_id, status):
 def remove_by_id(appointment_id):
     query = Appointment.delete().where(Appointment.id == appointment_id)
     return query.execute()
-
-
-def check_user_appointment(user):
-    count = Appointment.select().where(
-        Appointment.user == user).count()
-    if count >= MAXIMUM_APPOINTMENT:
-        return False
-    else:
-        return True
-
-
-def check_valid(appointment):
-    """
-
-    :param appointment:
-    :type appointment:
-    :return: True is valid
-    :rtype: bool
-    """
-    now = datetime.now()
-    if now >= appointment.expired_date_time:
-        return False
-    else:
-        return True
-
-
-# ***************************** rent appointment ***************************** #
-# 1.生成租车订单
-def add_rent_appointment(**kwargs):
-
-
-    pass
 
 
 # ***************************** unit test ***************************** #
