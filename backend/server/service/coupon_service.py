@@ -55,3 +55,16 @@ def get_my_coupons(user):
     coupon = models_to_json(coupon)
     return coupon
 
+
+def appointment_coupon(c_id, before_price):
+    """
+    use coupon and get price after using coupon
+    :param c_id: coupon id
+    :param before_price: price before using coupon
+    :return: price after using coupon
+    """
+    coupon = Coupon.update(status="已使用").where(Coupon.id == c_id)
+    coupon.execute()
+    after_price = Coupon.select().where(coupon.id == c_id)
+    after_price = before_price-models_to_json(after_price)["value"]
+    return after_price
