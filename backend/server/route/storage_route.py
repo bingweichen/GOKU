@@ -7,7 +7,7 @@
 
 @desc: storage route
 
-1. store list Add/Get/Modify
+1. storage Add/Get/Modify
 
 """
 from flask import Blueprint

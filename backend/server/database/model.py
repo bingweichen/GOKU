@@ -130,21 +130,20 @@ class Appointment(BaseModel):
     color = CharField(max_length=5)
     category = CharField()  # 电动车类别：小龟，酷车，闪车，MINI租
     type = CharField()  # 电动车类型：买车，租车
-    # 备注
-    note = CharField(null=True)
-    date = DateTimeField()
-    expired_date_time = DateTimeField()
-    serial_number = CharField(null=True)
+
+    note = CharField(null=True)  # 备注
+    date = DateTimeField()  # 生成日期
+    expired_date_time = DateTimeField()  # 有效期限
+    serial_number = CharField(null=True)  # 车序列号
 
     rent_time_period = CharField()  # 租期：学期，年
+    end_time = DateTimeField()  # 租用结束日期
 
-    end_time = DateTimeField()
-    # 最终价格
-    price = FloatField()
-    # 优惠价格
-    reduced_price = FloatField(null=True)
-    # 预约金
-    appointment_fee = FloatField(default=0)
+    price = FloatField() # 最终价格
+
+    reduced_price = FloatField(null=True) # 优惠价格
+
+    appointment_fee = FloatField(default=0) # 预约金
     delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
@@ -211,7 +210,7 @@ class SerialNumber(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [EBikeModel]
+table_temp = [Storage]
 
 
 #

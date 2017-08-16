@@ -1,3 +1,4 @@
+# encoding: utf-8
 """
 
 @author: Bingwei Chen
@@ -19,7 +20,7 @@ from playhouse.shortcuts import model_to_dict
 
 from server.database.model import Storage
 from server.service import e_bike_model_service
-from server.utility.json_utility import models_to_json, print_array
+from server.utility.json_utility import models_to_json
 from server.utility.logger import logger
 
 
@@ -129,17 +130,16 @@ def check_storage(model, color):
 
 
 # ***************************** test ***************************** #
-def decrement_test():  # complete
-    logger.debug(decrement_num(model="E100小龟",
-                               color="红"))
+# def decrement_test():  # complete
+#     logger.debug(decrement_num(model="E100小龟",
+#                                color="红"))
+#
+#
+# def modify_num_test():  # complete
+#     logger.debug(modify_num(model="E100小龟",
+#                             color="红", num=10))
 
 
-def modify_num_test():  # complete
-    logger.debug(modify_num(model="E100小龟",
-                            color="红", num=10))
-
-
-# ***************************** unit test ***************************** #
 def add_template():
     template_json = [
         {
@@ -176,11 +176,9 @@ def add_script():
             result = add(model=model, color=color, num=num)
             if not result:
                 logger.error("add error")
-    pass
 
 
 if __name__ == '__main__':
-    pass
-    add_script()
 
+    add_script()
 

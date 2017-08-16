@@ -23,3 +23,6 @@ def filter_number(price):
     price = ''.join([c for c in price if c in '1234567890.'])
     return price
 
+if __name__ == '__main__':
+
+    pass

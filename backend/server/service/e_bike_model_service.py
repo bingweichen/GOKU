@@ -330,11 +330,11 @@ def add_template():
         if template_json[i]["type"] == "租车":
             prices = price.split("；")
             price = {
-                "学期": filter_number(prices[0]),
-                "年": filter_number(prices[1])
+                "学期": float(filter_number(prices[0])),
+                "年": float(filter_number(prices[1]))
             }
         else:
-            price = filter_number(price)
+            price = float(filter_number(price))
         template_json[i]["price"] = price
 
     for json in template_json:
