@@ -18,7 +18,8 @@ from flask_jwt_extended import get_jwt_claims
 from server.database.db import database
 from server.route import user_route, resource_route, \
     e_bike_model_route, appointment_route, coupon_route, \
-    virtual_card_route, battery_rent_route, manager_route
+    virtual_card_route, battery_rent_route, manager_route, \
+    store_route
 
 app = Flask(__name__, static_url_path='')
 
@@ -32,6 +33,7 @@ app.register_blueprint(virtual_card_route.virtual_card)
 app.register_blueprint(coupon_route.coupon)
 app.register_blueprint(battery_rent_route.battery_rent)
 app.register_blueprint(manager_route.manager)
+app.register_blueprint(store_route.store)
 
 
 app.secret_key = 'super-super-secret'

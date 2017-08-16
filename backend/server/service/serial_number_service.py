@@ -17,9 +17,8 @@ STORE_CODE = {
     "浙科院Goku出行": "C",
 }
 
-E_BIKE_MODEL_CATEGORY_CODE = {
-    "小龟": "M",
-    "酷车": "M",
+E_BIKE_MODEL_TYPE_CODE = {
+    "买车": "M",
     "租车": "Z",
 }
 
@@ -70,8 +69,8 @@ def generate_serial_number():
 
 def get_available_code(appointment):
     store = appointment.user.school.store
-    category = appointment.category
-    category_code = E_BIKE_MODEL_CATEGORY_CODE[category]
+    type = appointment.type
+    category_code = E_BIKE_MODEL_TYPE_CODE[type]
     serial_number = SerialNumber.get(
         store=store,
         category_code=category_code,

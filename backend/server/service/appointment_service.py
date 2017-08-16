@@ -20,11 +20,12 @@
 from datetime import datetime
 from datetime import timedelta
 
-from server.database.model import Appointment
+from server.database.model import Appointment, EBikeModel
 from server.service import storage_service
 from server.service import serial_number_service
 from server.service import virtual_card_service
 from server.service import coupon_service
+# from server.service import e_bike_model_service
 
 from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
 from server.utility.constant import *
@@ -38,6 +39,9 @@ def add_appointment(**kwargs):
     color = kwargs["color"]
     e_bike_type = kwargs["type"]
     coupon = kwargs.get("coupon")
+    rent_time_period = kwargs.get("rent_time_period")
+
+    e_bike_model = EBikeModel.get(name=e_bike_model)
 
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
@@ -52,30 +56,26 @@ def add_appointment(**kwargs):
         if not virtual_card_service.check_deposit(username=user):
             raise Error("no deposit in virtual_card")
 
-    appointment = add(**kwargs)
-
     if e_bike_type == "租车":
-        rent_time_period = kwargs.get("rent_time_period")
-        price = appointment.e_bike_model.price[rent_time_period]
+        price = e_bike_model.price[rent_time_period]
     else:
-        price = appointment.e_bike_model.price
+        price = e_bike_model.price
 
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
+
+    # 使用优惠劵
+    if coupon:
+        reduced_price = coupon_service.use_coupon(user, coupon, price)
+        price = price - reduced_price
+        kwargs["reduced_price"] = reduced_price
+    kwargs["price"] = price
+    appointment = add(**kwargs)
+
     # 获取有效的 serial_number
     serial_number = serial_number_service.get_available_code(appointment)
     # 更改 serial_number
     appointment.serial_number = serial_number
-
-    # 使用优惠劵
-    # price = appointment.e_bike_model.price
-    # price = ''.join([c for c in price if c in '1234567890.'])
-    price = float(price)
-    if coupon:
-        reduced_price = coupon_service.use_coupon(user, coupon, price)
-        price = price - reduced_price
-        appointment.reduced_price = reduced_price
-    appointment.price = price
     appointment.save()
     return appointment
 
@@ -85,6 +85,7 @@ def appointment_payment_success(appointment_id):
     appointment = Appointment.get(id=appointment_id)
     status = APPOINTMENT_STATUS["1"]
     appointment.status = status
+
     return appointment.save()
 
     # # 预付款后更改新的过期日期
@@ -178,7 +179,7 @@ def check_serial_number(appointment, serial_number):
 # 检查用户订单数量
 def check_user_appointment(user, type):
     count = Appointment.select().where(
-        Appointment.user == user, Appointment.category == type).count()
+        Appointment.user == user, Appointment.type == type).count()
     if type == "租车":
         if count >= 1:
             return False
@@ -364,6 +365,6 @@ def add_template():
 
 
 if __name__ == '__main__':
-    print(Appointment.get(Appointment.id == 1))
+    # print(Appointment.get(Appointment.id == 1))
     # print(add_template())
     pass

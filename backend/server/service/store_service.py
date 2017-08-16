@@ -10,9 +10,9 @@
 1. store Add/Get/Modify/Remove
 
 """
-from playhouse.shortcuts import model_to_dict
+# from playhouse.shortcuts import model_to_dict
 
-from server.database.model import Store
+from server.database.model import Store, User
 
 
 def add(**kwargs):
@@ -30,24 +30,24 @@ def add(**kwargs):
     :rtype: json
     """
     store = Store.create(**kwargs)
-    return model_to_dict(store)
+    return store
 
 
 def get(*query, **kwargs):
     store = Store.get(*query, **kwargs)
-    return model_to_dict(store)
+    return store
 
 
 def get_all():
     stores = Store.select()
     new_stores = []
     for store in stores:
-        new_stores.append(model_to_dict(store))
+        new_stores.append(store)
     return new_stores
 
 
 def get_by_name(name):
-    return model_to_dict(Store.get(Store.name == name))
+    return Store.get(Store.name == name)
 
 
 # 暂未启用
@@ -80,7 +80,8 @@ def remove_by_name(name):
 
 
 # 根据用户提供供货点
-def get_user_store(user):
+def get_user_store(username):
+    user = User.get(username=username)
     store = user.school.store
     return store
 
@@ -100,7 +101,7 @@ def add_test():
     :rtype:
     """
     store = Store.create(name="123456111", address="bing111")
-    return model_to_dict(store)
+    return store
 
 
 def add_test_2():
@@ -120,7 +121,7 @@ def get_test():
     :rtype:
     """
     store = Store.get()
-    print(model_to_dict(store))
+    print(store)
     return store
 
 
@@ -129,7 +130,7 @@ def get_all_test():
     for store in stores:
         # for school in store.schools:
         #     print("school", model_to_dict(school))
-        print(model_to_dict(store))
+        print(store)
     return stores
 
 

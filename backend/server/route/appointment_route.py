@@ -41,24 +41,27 @@ def add_appointment():
     category: string
 
     eg = {
-    "user" : "bingwei"
+    "username" : "bingwei",
+
     "e_bike_model": "小龟电动车 爆款 48V、12A",
     "color": "蓝",
     "category": "小龟",
-    "type" "租车",
-    "note: "",
+    "type": "买车",
+    "note": "",
     "coupon": null
 
     }
 
     租车订单
     eg = {
-    "e_bike_model": "租车 闪租 48V、20A",
-    "color": "蓝",
-    "category": "租车",
-    "type" "买车",
-    "note: "",
-    "coupon": null
+    "username" : "Shuo_Ren",
+
+    "e_bike_model": "闪租 48V、20A",
+    "color": "黑",
+    "category": "闪租",
+    "type": "租车",
+    "note": "",
+    "coupon": null,
 
     "rent_time_period": "学期"
     }
@@ -66,7 +69,6 @@ def add_appointment():
     :return: the appointment created
     :rtype: json
     """
-    # username = "bingwei"
     data = request.get_json()
     user = data.pop("username")
     try:
