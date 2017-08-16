@@ -11,12 +11,8 @@
 
 1. 电动车类型列表
 localhost:5000/e_bike_model?category=小龟
-localhost:5000/e_bike_model?category=酷车
-localhost:5000/e_bike_model?category=租车
 2. 单个电动车类型详情
-localhost:5000/e_bike_model/<string:name>
-localhost:5000/e_bike_model/小龟电动车 爆款 48V、12A
-
+localhost:5000/e_bike_model/<string:name>   eg=小龟电动车 爆款 48V、12A
 """
 from flask import Blueprint
 from flask import jsonify
@@ -27,7 +23,7 @@ from playhouse.shortcuts import model_to_dict
 from server.service import e_bike_model_service
 from server.utility.logger import logger
 from server.utility.json_utility import models_to_json
-
+from server.utility.constant import *
 PREFIX = '/e_bike_model'
 
 e_bike_model_app = Blueprint("e_bike_model_app", __name__, url_prefix=PREFIX)
@@ -46,14 +42,6 @@ def get_e_bike_model():
         'response': {
             "e_bike_models": models_to_json(e_bike_models)
         }}), 200
-
-    # if e_bike_models:
-    #     return jsonify({
-    #         'response': {
-    #             "e_bike_models": models_to_json(e_bike_models)
-    #         }}), 200
-    # else:
-    #     return jsonify({'response': "no e_bike_model find"}), 404
 
 
 # 2. 单个电动车类型详情
@@ -74,12 +62,16 @@ def get_e_bike_model_one(name):
         logger.debug("increment", result)
 
         return jsonify({
-            'response':
-                {"e_bike_model": model_to_dict(e_bike_model)}}), 200
+            'response': {
+                "e_bike_model": model_to_dict(e_bike_model),
+                "appointment_fee": DEFAULT_APPOINTMENT_FEE
+            }
+        }), 200
     else:
         return jsonify({'response': "no e_bike_model find"}), 404
 
 
+# ***************************** unit test ***************************** #
 @e_bike_model_app.route('/', methods=['PUT'])  # test complete
 def add_e_bike_model():
     data = request.get_json()
@@ -110,6 +102,3 @@ def remove_e_bike_model(name):
         return jsonify({'response': "delete success"}), 200
     else:
         return jsonify({'response': "no e_bike_model find"}), 404
-    pass
-
-# ***************************** unit test ***************************** #

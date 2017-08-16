@@ -34,7 +34,6 @@ from server.utility.constant import *
 # 1.生成订单
 def add_appointment(**kwargs):
     user = kwargs["user"]
-
     e_bike_model = kwargs["e_bike_model"]
     color = kwargs["color"]
     e_bike_type = kwargs["type"]
@@ -54,6 +53,13 @@ def add_appointment(**kwargs):
             raise Error("no deposit in virtual_card")
 
     appointment = add(**kwargs)
+
+    if e_bike_type == "租车":
+        rent_time_period = kwargs.get("rent_time_period")
+        price = appointment.e_bike_model.price[rent_time_period]
+    else:
+        price = appointment.e_bike_model.price
+
     # 库存-1
     storage_service.decrement_num(e_bike_model, color)
     # 获取有效的 serial_number
@@ -62,8 +68,8 @@ def add_appointment(**kwargs):
     appointment.serial_number = serial_number
 
     # 使用优惠劵
-    price = appointment.e_bike_model.price
-    price = ''.join([c for c in price if c in '1234567890.'])
+    # price = appointment.e_bike_model.price
+    # price = ''.join([c for c in price if c in '1234567890.'])
     price = float(price)
     if coupon:
         reduced_price = coupon_service.use_coupon(user, coupon, price)
@@ -294,12 +300,12 @@ def get(*query, **kwargs):
     return appointment
 
 
-def get_all():
-    appointments = Appointment.select()
-    new_appointments = []
-    for appointment in appointments:
-        new_appointments.append(appointment)
-    return new_appointments
+def get_all(username=None):
+    if username:
+        appointments = Appointment.select().where(Appointment.user == username)
+    else:
+        appointments = Appointment.select()
+    return appointments
 
 
 def get_all_paginate(offset, limit):
@@ -310,7 +316,12 @@ def get_all_paginate(offset, limit):
     return new_appointments
 
 
-def get_by_id(appointment_id):
+def get_by_id(appointment_id, username=None):
+    if username:
+        return get(
+            Appointment.id == appointment_id,
+            Appointment.user == username
+        )
     return get(Appointment.id == appointment_id)
 
 

@@ -24,7 +24,7 @@ from playhouse.shortcuts import model_to_dict
 
 from server.service import appointment_service
 from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
-
+from server.utility.json_utility import models_to_json
 PREFIX = '/appointment'
 
 appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
@@ -200,6 +200,43 @@ def return_e_bike():
             {'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
+# ***************************** get ***************************** #
+@appointment_app.route('/all', methods=['GET'])
+def get_all_appointments():
+    username = request.args.get('username')
+    appointments = appointment_service.get_all(username)
+    return jsonify({
+        'response': {
+            "appointments": models_to_json(appointments)
+        }}), 200
+
+
+@appointment_app.route('/', methods=['GET'])
+def get_appointment():
+    username = request.args.get('username')
+    appointment_id = request.args.get('appointment_id')
+    appointment = appointment_service.get_by_id(
+        appointment_id=appointment_id, username=username)
+    return jsonify({
+        'response': {
+            "appointment": model_to_dict(appointment)}}), 200
+
+
+# @appointment_app.route('/', methods=['GET'])
+# @appointment_app.route('/<string:appointment_id>',
+#                        methods=['GET'])  # test complete
+# def get_appointment(appointment_id=None):
+#     if appointment_id is None:
+#         appointments = appointment_service.get_all()
+#     else:
+#         appointments = [appointment_service.get_by_id(appointment_id)]
+#     if appointments:
+#         return jsonify({'response': {"appointments": appointments}}), 200
+#     else:
+#         return jsonify({'response': "no appointment find"}), 404
+#     pass
+
+
 # ***************************** unit test ***************************** #
 # 取消订单
 @appointment_app.route('/status/cancel', methods=['POST'])
@@ -220,19 +257,6 @@ def cancel_appointment():
         return jsonify({'response': result}), 200
 
 
-@appointment_app.route('/', methods=['GET'])
-@appointment_app.route('/<string:appointment_id>',
-                       methods=['GET'])  # test complete
-def get_appointment(appointment_id=None):
-    if appointment_id is None:
-        appointments = appointment_service.get_all()
-    else:
-        appointments = [appointment_service.get_by_id(appointment_id)]
-    if appointments:
-        return jsonify({'response': {"appointments": appointments}}), 200
-    else:
-        return jsonify({'response': "no appointment find"}), 404
-    pass
 
 
 # 更改预约单状态

@@ -29,23 +29,20 @@ user_app = Blueprint("user_app", __name__, url_prefix=PREFIX)
 @user_app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    username = data['username']
-    password = data['password']
-    data.pop('username')
-    data.pop('password')
+    username = data.pop('username')
+    password = data.pop('password')
+
     if username is None or password is None:
         return jsonify({'response': 'invalid user or password'}), 400
+
     try:
-        added_user = user_service.add(username=username, password=password,
-                                      **data)
-        print("added_user", added_user)
+        added_user = user_service.add(
+            username=username, password=password, **data)
         added_user = model_to_dict(added_user)
-        print("added_user", model_to_dict(added_user))
-        # added_user = json_utility.convert_to_json(added_user.to_mongo())
         added_user.pop('password')
+        return jsonify({'response': added_user}), 200
     except Exception as e:
         return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400
-    return jsonify({'response': added_user}), 200
 
 
 @user_app.route('/login', methods=['POST'])
@@ -54,16 +51,22 @@ def login():
     password = request.json.get('password', None)
     try:
         user = user_service.login(username, password)
+        user = model_to_dict(user)
         user.pop('password')
+
+        # Identity can be any data that is json serializable
+        response = {
+            'response': {
+                'token': create_access_token(identity=user),
+                'user': user}}
+        return jsonify(response), 200
+
     except DoesNotExist as e:
-        return jsonify({'response': '%s: %s' % (str(
-            DoesNotExist), e.args)}), 400
+        return jsonify({
+            'response': '%s: %s' % (str(DoesNotExist), e.args)}), 400
+
     except PasswordError as e:
         return jsonify({'response': 'Bad username or password, %s' % e}), 400
-    # Identity can be any data that is json serializable
-    response = {'response': {'token': create_access_token(identity=user),
-                             'user': user}}
-    return jsonify(response), 200
 
 
 @user_app.route('/virtual_card', methods=['PUT'])

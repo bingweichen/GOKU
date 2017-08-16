@@ -16,6 +16,7 @@
 
 from server.database.model import EBikeModel
 from server.utility.json_utility import models_to_json
+from server.utility.service_utility import *
 
 
 def add(**kwargs):
@@ -315,7 +316,7 @@ def add_template():
         colors = template_json[i]["colors"]
         colors = colors.split("、")
         template_json[i]["colors"] = colors
-
+        # 存入type
         template_json[i]["type"] = category_type[template_json[i]["category"]]
         # 将 image_urls 存入
         image_url = "%s%s.png_1" % (url, template_json[i]["name"])
@@ -323,6 +324,18 @@ def add_template():
         introduction_image_url = \
             "%s%s.png_intro_1" % (url, template_json[i]["name"])
         template_json[i]["introduction_image_urls"] = [introduction_image_url]
+
+        # price
+        price = template_json[i]["price"]
+        if template_json[i]["type"] == "租车":
+            prices = price.split("；")
+            price = {
+                "学期": filter_number(prices[0]),
+                "年": filter_number(prices[1])
+            }
+        else:
+            price = filter_number(price)
+        template_json[i]["price"] = price
 
     for json in template_json:
         result = add(**json)

@@ -11,9 +11,15 @@
 @desc:
 
 """
-def check_existed(id):
-    '''
-    判断用户是否已存在
-    :param id:
-    :return:
-    '''
+# def check_existed(id):
+#     '''
+#     判断用户是否已存在
+#     :param id:
+#     :return:
+#     '''
+
+
+def filter_number(price):
+    price = ''.join([c for c in price if c in '1234567890.'])
+    return price
+

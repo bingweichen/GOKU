@@ -12,7 +12,6 @@
 """
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-from playhouse.shortcuts import model_to_dict
 
 from server.utility.exception import PasswordError
 
@@ -44,30 +43,30 @@ def add(username, password, **kwargs):
     """
     hashed_password = generate_password_hash(password)
     user = User.create(username=username, password=hashed_password, **kwargs)
-    return model_to_dict(user)
+    return user
 
 
 def get(*query, **kwargs):
     user = User.get(*query, **kwargs)
-    return model_to_dict(user)
+    return user
 
 
 def get_all():
     users = User.select()
-    new_users = []
-    for user in users:
-        new_users.append(model_to_dict(user))
-    return new_users
+    # new_users = []
+    # for user in users:
+    #     new_users.append(model_to_dict(user))
+    return users
 
 
 def get_by_username(username):
-    return model_to_dict(User.get(User.username == username))
+    return User.get(User.username == username)
 
 
 def login(username, password):
     user = User.get(User.username == username)
     if check_password_hash(user.password, password):
-        return model_to_dict(user)
+        return user
     raise PasswordError("error password")
 
 

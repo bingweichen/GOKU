@@ -81,7 +81,7 @@ class EBikeModel(BaseModel):
 
     category = CharField()  # 电动车类别：小龟，酷车，闪车，MINI租
     type = CharField()  # 电动车类型：买车，租车
-    price = CharField()  # 价格
+    price = JSONField()  # 价格
     colors = JSONField()  # [红，蓝，绿。。。]
     distance = CharField()  # 续航
     configure = CharField()  # 配置
@@ -111,7 +111,6 @@ class Storage(BaseModel):
 # TODO 思考完模式决定一下
 # 1. 车不进行录入，当生成订单时生成
 # 2. 录入车辆
-# 不需要 primary key, 自动生成递增id
 class EBike(BaseModel):
     # 车牌号
     plate_no = CharField(primary_key=True)
@@ -137,7 +136,8 @@ class Appointment(BaseModel):
     expired_date_time = DateTimeField()
     serial_number = CharField(null=True)
 
-    rent_time_period = CharField()
+    rent_time_period = CharField()  # 租期：学期，年
+
     end_time = DateTimeField()
     # 最终价格
     price = FloatField()
@@ -160,6 +160,16 @@ class Battery(BaseModel):
     user = ForeignKeyField(User, related_name='battery', null=True)
 
 
+# 闪充电池租用记录
+class BatteryRecord(BaseModel):
+    user = ForeignKeyField(User)
+    battery = ForeignKeyField(Battery, related_name="battery_records")
+    rent_date = DateTimeField()
+    return_date = DateTimeField()
+    price = FloatField(default=0)
+    situation = CharField(default="借用中")  # 借用中，已归还
+
+
 # 闪充电池报修记录
 class BatteryReport(BaseModel):
     # 电池id
@@ -170,15 +180,6 @@ class BatteryReport(BaseModel):
         User, related_name='battery_report', null=True)
     # 保修单生成时间
     report_time = DateTimeField()
-
-
-# 闪充电池租用记录
-class BatteryRecord(BaseModel):
-    rent_date = DateTimeField()
-    return_date = DateTimeField()
-    battery = ForeignKeyField(Battery)
-    price = FloatField(default=0)
-    situation = CharField(default="借用中")  # 借用中，已归还
 
 
 # 优惠券
@@ -210,7 +211,7 @@ class SerialNumber(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Coupon]
+table_temp = [EBikeModel]
 
 
 #
