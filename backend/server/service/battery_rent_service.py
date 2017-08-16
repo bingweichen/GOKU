@@ -40,7 +40,7 @@ def get_user_battery(username):
 def rent_battery(**kwargs):
     """
     modify using status
-    :param data:
+    :param kwargs:
         b_id: battery id
         owner: user of battery
     :return:
@@ -138,6 +138,37 @@ def add_record(battery):
     )
 
 
+def manager_get_total_uses_amount():
+    total_number = int(BatteryRecord.select().count())
+    return total_number or 0
+
+
+def manager_get_current_uses_amount():
+    current_use = int(BatteryRecord.select().where(
+        BatteryRecord.situation == "借用中").count())
+    return current_use or 0
+
+
+def manager_get_use_status_by_id(serial_number):
+    battery = Battery.select().where(Battery.serial_number == serial_number)
+    loan = battery.on_loan
+    if loan:
+        user = battery.user_id
+        return {"on_loan": True, "user": user}
+    else:
+        return {"on_loan": False}
+
+
+def manager_get_history_record_by_id(serial_number, period):
+    today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+    before = today-timedelta(days=period)
+    record = BatteryRecord.select().where(
+        BatteryRecord.battery == serial_number,
+        BatteryRecord.return_date >= before)
+    record = models_to_json(record)
+    return record
+
+
 # def calculate_price(duration):
 #     # 15分钟 1元
 #     days, seconds = duration.days, duration.seconds
@@ -151,6 +182,7 @@ def add_record(battery):
 #     minutes = (seconds % 3600) // 60
 #     seconds = (seconds % 60)
 #     return days, hours, minutes, seconds
+
 
 if __name__ == "__main__":
     pass
