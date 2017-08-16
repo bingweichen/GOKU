@@ -146,7 +146,7 @@ def consume_virtual_card(**kwargs):
     if not deposit:
         return "No deposit"
     balance = get_card_balance(card_no)
-    if balance < amount:
+    if balance <= 0:
         return "Low Balance"
     card = VirtualCard.update(balance=VirtualCard.balance-amount
                               ).where(VirtualCard.card_no == card_no)
