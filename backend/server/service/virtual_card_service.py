@@ -170,8 +170,12 @@ def get_virtual_card_info(card_no):
             "balance": info["balance"]}
 
 
-# ***************************** service ***************************** #
 def check_deposit(username):
+    """
+    check if the card has enough deposit
+    :param username: card holder
+    :return: True or raise an error
+    """
     virtual_card = VirtualCard.get(VirtualCard.card_no == username)
     if virtual_card:
         deposit = virtual_card.deposit
@@ -181,6 +185,20 @@ def check_deposit(username):
             raise Error("no enough deposit")
     else:
         raise Error("no virtual card")
+
+
+def check_value(card_no):
+    """
+    check if the card can be used
+    :param card_no: card number of user
+    :return: True if usable or raise an error
+    """
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    if virtual_card.deposit < DEFAULT_DEPOSIT:
+        raise Error("No enough deposit")
+    if virtual_card.balance <= 0:
+        raise Error("No Balance")
+    return True
 
 
 # ***************************** for test ***************************** #
