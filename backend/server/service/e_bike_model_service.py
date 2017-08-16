@@ -59,7 +59,7 @@ def get_by_category(category):
     return e_bike_models
 
 
-def modify_by_name(name, modify_json):
+def modify_by_name(name, **modify_json):
     """
 
     :param name:

@@ -20,6 +20,7 @@ from server.utility.exception import *
 from server.utility.constant import *
 from server.utility.json_utility import models_to_json
 
+
 # ***************************** service ***************************** #
 def get_battery(serial_number):
     """
@@ -44,8 +45,11 @@ def rent_battery(**kwargs):
         owner: user of battery
     :return:
     """
+
     serial_number = kwargs["serial_number"]
     username = kwargs["username"]
+    if not virtual_card_service.check_deposit(username):
+        return
     battery = Battery.get(serial_number=serial_number)
     if battery.on_loan:
         raise Error("Battery is on loan")
@@ -109,12 +113,6 @@ def add(**kwargs):
     return model_to_dict(battery)
 
 
-
-
-
-
-
-
 def add_repair_report(data):
     """
     apply a repair report
@@ -138,9 +136,6 @@ def add_record(battery):
         rent_date=datetime.now(),
         battery=battery,
     )
-
-
-
 
 
 # def calculate_price(duration):

@@ -86,7 +86,7 @@ def add_e_bike_model():
 def modify_e_bike_model(name):
     data = request.get_json()
     modify_json = data
-    result = e_bike_model_service.modify_by_name(name, modify_json)
+    result = e_bike_model_service.modify_by_name(name, **modify_json)
     if result:
         return jsonify({'response': "modify success"}), 200
     else:

@@ -15,12 +15,12 @@
 4. 库存减一(完成）
 
 """
-from playhouse.shortcuts import model_to_dict
+# from playhouse.shortcuts import model_to_dict
 
 
 from server.database.model import Storage
 from server.service import e_bike_model_service
-from server.utility.json_utility import models_to_json
+# from server.utility.json_utility import models_to_json
 from server.utility.logger import logger
 
 
@@ -39,27 +39,27 @@ def add(**kwargs):
     :rtype: json
     """
     store_list = Storage.create(**kwargs)
-    return model_to_dict(store_list)
+    return store_list
 
 
 def get(*query, **kwargs):
     store_list = Storage.get(*query, **kwargs)
-    return model_to_dict(store_list)
+    return store_list
 
 
 def get_all():
     storage = Storage.select()
-    return models_to_json(storage)
+    return storage
 
 
 def get_by_id(store_list_id):
-    return model_to_dict(Storage.get(Storage.id == store_list_id))
+    return Storage.get(Storage.id == store_list_id)
 
 
 def get_by_model_color(model, color):
     storage = Storage.select().where(
         Storage.model == model, color == color)
-    return models_to_json(storage)
+    return storage
 
 
 def get_storage(model):
@@ -72,7 +72,7 @@ def get_storage(model):
     """
     storage = Storage.select().where(
         Storage.model == model)
-    return models_to_json(storage)
+    return storage
 
 
 def get_storage_total(model):
@@ -179,6 +179,5 @@ def add_script():
 
 
 if __name__ == '__main__':
-
     add_script()
 

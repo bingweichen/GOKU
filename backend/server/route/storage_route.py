@@ -15,6 +15,8 @@ from flask import jsonify
 from flask import request
 
 from server.service import storage_service
+from playhouse.shortcuts import model_to_dict
+from server.utility.json_utility import models_to_json
 
 PREFIX = '/storage'
 
@@ -41,7 +43,7 @@ def add_storage():
     data = request.get_json()
     storage = storage_service.add(**data)
     if storage:
-        return jsonify({'response': storage}), 200
+        return jsonify({'response': model_to_dict(storage)}), 200
 
 
 # 通过型号，颜色获取库存
@@ -56,7 +58,7 @@ def get_storage():
         storage = [storage_service.get_by_model_color(model, color)]
 
     if storage:
-        return jsonify({'response': {"storages": storage}}), 200
+        return jsonify({'response': {"storages": models_to_json(storage)}}), 200
     else:
         return jsonify({'response': "no storage find"}), 404
 
