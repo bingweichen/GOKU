@@ -23,7 +23,7 @@ def add_coupon(**kwargs):
         desc = "满%s减%s" % (kwargs["situation"], kwargs["value"])
     if "duration" not in kwargs:
         kwargs.update({"duration": 3650})
-    coupon = Coupon.create(desc=desc, **kwargs)
+    coupon = Coupon.create(desc=desc or "通用", **kwargs)
     return coupon
 
 
