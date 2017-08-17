@@ -4,7 +4,7 @@
 @time: 8/11/17
 @desc: coupon route
 """
-# from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -69,4 +69,15 @@ def get_my_coupons(user):
 #     return jsonify({'response': coup}), 200
 
 
+@coupon.route('/coupon_template', methods=['POST'])
+def add_coupon_template_to_all_user():
+    data = request.get_json()
+    template_id = data.pop("template_id")
+    coupon_service.add_coupon_template_to_all_user(template_id)
 
+
+@coupon.route('/coupon_template', methods=['POST'])
+def add_coupon_template():
+    data = request.get_json()
+    coupon_template = coupon_service.add_coupon_template(**data)
+    return jsonify({'response': coupon_template}), 200
