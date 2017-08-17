@@ -181,19 +181,35 @@ class BatteryReport(BaseModel):
     report_time = DateTimeField()
 
 
+# 优惠券模版
+class CouponTemplate(BaseModel):
+    # 优惠劵描述
+    desc = CharField()
+    # 使用条件
+    situation = FloatField(null=True, default=0)
+    # 面值
+    value = FloatField()
+    # 有效期
+    duration = IntegerField(null=True)
+
+
 # 优惠券
 class Coupon(BaseModel):
-    desc = CharField()  # 优惠劵描述
+    # 优惠劵描述
+    desc = CharField()
     # 用户
     user = ForeignKeyField(User, related_name='coupon', null=True)
     # 使用条件
-    situation = FloatField(null=True)
+    situation = FloatField(null=True, default=0)
     # 面值
-    value = FloatField(null=True)
+    value = FloatField()
     # 到期日期
     expired = DateTimeField(null=True)
     # 状态: 可用，已使用，过期
     status = CharField(default="可用")
+    # 模版编号
+    template_no = ForeignKeyField(CouponTemplate, related_name='coupon',
+                                  null=True)
 
 
 # 编号
@@ -210,7 +226,7 @@ class SerialNumber(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Storage]
+table_temp = [CouponTemplate, Coupon]
 
 
 #
