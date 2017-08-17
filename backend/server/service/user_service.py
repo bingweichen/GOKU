@@ -21,17 +21,6 @@ from server.service import virtual_card_service
 
 def add(username, password, **kwargs):
     """
-
-    eg = {
-    "username": "bingwei",
-    "password": "123456",
-    "name": "bing",
-    "phone": "11",
-    "school": "123",
-    "status": "1",
-    "student_id": "11"
-    }
-
     :param username:
     :type username:
     :param password:

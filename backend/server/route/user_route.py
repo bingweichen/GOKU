@@ -81,6 +81,11 @@ def register():
 def login():
     """
 
+    eg = {
+    "username": "bingwei",
+    "password": "123456"
+    }
+
     :return:
     :rtype:
     """

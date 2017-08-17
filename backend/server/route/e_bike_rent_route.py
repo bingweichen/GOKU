@@ -3,6 +3,8 @@
 @author: larry.shuoren@outlook.com
 @time: 8/9/17
 @desc: e-bike rent route
+
+# 暂时不用
 """
 
 from flask import Blueprint
