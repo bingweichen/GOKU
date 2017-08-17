@@ -41,7 +41,7 @@ def add_coupon():
 
 
 @coupon.route('/<string:user>', methods=['GET'])
-@jwt_required
+# @jwt_required
 # @auth_decorator.requires_auth
 def get_my_coupons(user):
     """
@@ -52,8 +52,8 @@ def get_my_coupons(user):
     :param user: user
     :return: valid coupons
     """
-    current_user = get_jwt_identity()
-    print("current_user", current_user)
+    # current_user = get_jwt_identity()
+    # print("current_user", current_user)
 
     coup = coupon_service.get_my_coupons(user)
     return jsonify({'response': models_to_json(coup)}), 200
