@@ -61,19 +61,27 @@ def register():
             student_id=data.pop("student_id"),
             phone=data.pop("phone"),
             identify_number=data.pop("identify_number"),
-
             # 注释项 是可选项
             # we_chat_id=data.pop("we_chat_id"),
             # account=data.pop("account"),
             # account_type=data.pop("account_type"),
             **data)
+        
         added_user = model_to_dict(added_user)
         added_user.pop('password')
         return jsonify({'response': added_user}), 200
     except Exception as e:
+        error = e.args[1]
+        message = "字段错误"
+        if "PRIMARY" in error:
+            message = "用户名已存在"
+        if "user_identify_number" in error:
+            message = "身份证号码重复"
+        if "phone" in error:
+            message = "手机号码重复"
         return jsonify({'response': {
-            "error": '%s: %s' % (str(Exception), e.args),
-            "message": "用户名已存在"
+            "message": message,
+            "error": error,
         }}), 400
 
 

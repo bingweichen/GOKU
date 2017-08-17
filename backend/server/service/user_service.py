@@ -91,20 +91,22 @@ def create_virtual_card(**kwargs):
 def add_template():
     template_json = [
         {
-            "username": 'bingwei',
+            "username": "bingwei1",
             "password": "123456",
             "name": "陈炳蔚",
             "phone": 15988731660,
             "school": "浙江大学",
-            "student_id": "12358"
+            "student_id": "12358",
+            "identify_number": "30032323232322"
         },
         {
-            "username": 'Shuo_Ren',
+            "username": "Shuo_Ren",
             "password": "123456",
             "name": "Ren",
             "phone": 15701683747,
             "school": "浙江大学",
-            "student_id": "00001"
+            "student_id": "00001",
+            "identify_number": "3003232323232211"
         }
     ]
     for json in template_json:

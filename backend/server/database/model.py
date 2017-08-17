@@ -264,12 +264,6 @@ table_list = [User, School, Store, VirtualCard, EBikeModel,
 table_temp = [CouponTemplate, Coupon]
 
 
-#
-# import uuid
-# class Test(BaseModel):
-#     uuid = UUIDField(primary_key=True, default=uuid.uuid4)
-
-
 def create_tables():
     """
 
