@@ -47,11 +47,16 @@ class User(BaseModel):
     username = CharField(primary_key=True)
     password = CharField()  # change
     name = CharField()
-    phone = BigIntegerField(null=True)
     school = ForeignKeyField(School, related_name='users')
-    student_id = CharField(db_column='student_id')
+    student_id = CharField(db_column='student_id')  # 学号
+    phone = BigIntegerField(unique=True, null=True)
+    identify_number = CharField(unique=True)  # 身份证号
 
-    status = CharField(default="empty")
+    we_chat_id = CharField()  # 微信号
+    account = CharField()  # 退款账号
+    account_type = CharField()  # 账号类型
+
+    status = CharField(default="empty")  # 租用状态
 
     # 什么效果？
     def __unicode__(self):
@@ -63,6 +68,8 @@ class VirtualCard(BaseModel):
                               related_name="virtual_cards")
     deposit = FloatField(default=0.0)
     balance = FloatField(default=0.0)
+
+    # situation = CharField(default="正常")  # 冻结
 
 
 class ConsumeRecord(BaseModel):
@@ -139,11 +146,11 @@ class Appointment(BaseModel):
     rent_time_period = CharField()  # 租期：学期，年
     end_time = DateTimeField()  # 租用结束日期
 
-    price = FloatField() # 最终价格
+    price = FloatField()  # 最终价格
 
-    reduced_price = FloatField(null=True) # 优惠价格
+    reduced_price = FloatField(null=True)  # 优惠价格
 
-    appointment_fee = FloatField(default=0) # 预约金
+    appointment_fee = FloatField(default=0)  # 预约金
     delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
@@ -177,8 +184,9 @@ class BatteryReport(BaseModel):
     # 当前使用人
     current_owner = ForeignKeyField(
         User, related_name='battery_report', null=True)
-    # 保修单生成时间
-    report_time = DateTimeField()
+
+    report_time = DateTimeField()  # 保修单生成时间
+    # reporter = ForeignKeyField(User, related_name=)
 
 
 # 优惠券
@@ -207,10 +215,37 @@ class SerialNumber(BaseModel):
     battery = ForeignKeyField(Battery, null=True)
 
 
+# 退款表格
+class RefundTable(BaseModel):
+    user = ForeignKeyField(User)
+    account = CharField()  # 退款账号
+    account_type = CharField()  # 账号类型
+    type = CharField()  # 退款类型：退预约金，退虚拟卡押金
+    value = FloatField()  # 退款金额
+    date = DateTimeField()  # 日期
+    comment = CharField(null=True)  # 备注
+    status = CharField(default="未处理")  # 状态：已退款
+
+
+# 报修表格 电动车点击报修
+class ReportTable(BaseModel):
+    appointment = ForeignKeyField(Appointment)
+    user = ForeignKeyField(User)
+    address = CharField()
+    comment = CharField()
+    phone = BigIntegerField(null=True)
+    date = DateTimeField()
+
+
+class Const(BaseModel):
+    key = CharField(primary_key=True)
+    value = JSONField()
+
+
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Storage]
+table_temp = [User]
 
 
 #

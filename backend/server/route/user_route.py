@@ -28,16 +28,44 @@ user_app = Blueprint("user_app", __name__, url_prefix=PREFIX)
 
 @user_app.route('/register', methods=['POST'])
 def register():
+    """
+
+    eg = {
+            "username": 'bingwei',
+            "password": "123456",
+            "name": "陈炳蔚",
+            "phone": 15988731660,
+            "school": "浙江大学",
+            "student_id": "12358"
+
+            "identify_number": "30032323232322"
+
+        }
+
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     username = data.pop('username')
     password = data.pop('password')
 
     if username is None or password is None:
         return jsonify({'response': 'invalid user or password'}), 400
-
     try:
         added_user = user_service.add(
-            username=username, password=password, **data)
+            username=username,
+            password=password,
+            name=data.pop("name"),
+            school=data.pop("school"),
+            student_id=data.pop("student_id"),
+            phone=data.pop("phone"),
+            identify_number=data.pop("identify_number"),
+
+            # we_chat_id=data.pop("we_chat_id"),
+            # account=data.pop("account"),
+            # account_type=data.pop("account_type"),
+            **data)
         added_user = model_to_dict(added_user)
         added_user.pop('password')
         return jsonify({'response': added_user}), 200
@@ -47,6 +75,11 @@ def register():
 
 @user_app.route('/login', methods=['POST'])
 def login():
+    """
+
+    :return:
+    :rtype:
+    """
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     try:
@@ -69,6 +102,7 @@ def login():
         return jsonify({'response': 'Bad username or password, %s' % e}), 400
 
 
+# 开通虚拟消费卡
 @user_app.route('/virtual_card', methods=['PUT'])
 def create_virtual_card():
     """

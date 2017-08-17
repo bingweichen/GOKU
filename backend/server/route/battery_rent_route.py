@@ -74,7 +74,7 @@ def rent_battery():
             'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
-# 4. 归还电池
+# 4. 归还电池 （还没想清楚如何归还，用户点击归还就还了吗？）
 @battery_rent.route('/return', methods=['POST'])
 def return_battery():
     data = request.get_json()
@@ -90,6 +90,7 @@ def return_battery():
             'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
+# 移动到管理员
 @battery_rent.route('/battery', methods=['PUT'])
 def add_battery():
     """
@@ -106,25 +107,24 @@ def add_battery():
     return jsonify({'response': battery}), 200
 
 
-
-
-
-
-
-
-
-
-
-@battery_rent.route('/', methods=['PUT'])
+@battery_rent.route('/battery_report', methods=['PUT'])
 def add_repair_report():
     """
-    report a battery repair requirement  
+    report a battery repair requirement
+
+    eg = {
+    "serial_number": "A00001",
+
+    }
     :return:
     """
     # b_id: battery id
     # owner: user
     data = request.get_json()
-    report = battery_rent_service.add_repair_report(data)
-    return jsonify({'response': report}), 200
+    result = battery_rent_service.add_repair_report(
+        serial_number=data.pop("serial_number")
+    )
+    if result:
+        return jsonify({'response': result}), 200
 
 

@@ -3,6 +3,8 @@
 @author: larry.shuoren@outlook.com
 @time: 8/10/17
 @desc: virtual card service
+
+TODO 闪充使用过程中不得退回押金
 """
 from datetime import datetime
 
@@ -10,6 +12,8 @@ from playhouse.shortcuts import model_to_dict
 
 from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
+from server.service import refund_table_service
+
 from server.utility.constant import DEFAULT_DEPOSIT
 from server.utility.json_utility import models_to_json
 
@@ -115,6 +119,18 @@ def return_deposit(**kwargs):
         ConsumeRecord.create(card=card_no, consume_event="return deposit",
                              consume_date_time=datetime.now(),
                              consume_fee=-deposit, balance=balance)
+
+        # 记录退款
+        refund_table_service.add(
+            user=kwargs["username"],
+            account=kwargs["account"],
+            account_type=kwargs["account_type"],
+            type="退虚拟卡押金",
+            value=deposit,
+            comment=kwargs["comment"]
+        )
+        print("退虚拟卡押金" + deposit)
+
         return "Return deposit succeed"
     else:
         return "No deposit refundable"

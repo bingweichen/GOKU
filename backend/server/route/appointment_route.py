@@ -70,10 +70,9 @@ def add_appointment():
     :rtype: json
     """
     data = request.get_json()
-    user = data.pop("username")
     try:
         appointment = appointment_service.add_appointment(
-            user=user,
+            user=data.pop("username"),
             **data
         )
         if appointment:
@@ -90,12 +89,19 @@ def appointment_payment_success():
     """
     appointment_id: string
 
+    eg = {
+    "username" : "bingwei",
+    "appointment_id": 3
+    }
+
     :return: 1 for success
     :rtype: int
     """
     data = request.get_json()
-    appointment_id = data["appointment_id"]
-    result = appointment_service.appointment_payment_success(appointment_id)
+    result = appointment_service.appointment_payment_success(
+        user=data.pop("username"),
+        appointment_id=data.pop("appointment_id")
+    )
     if result:
         return jsonify({'response': result}), 200
 
@@ -108,6 +114,7 @@ def upload_code():
     serials_number: string
 
     eg = {
+    "username": "bingwei",
     "appointment_id": 3,
     "serials_number": "AM0002"
     }
@@ -116,11 +123,13 @@ def upload_code():
     :rtype:
     """
     data = request.get_json()
-    appointment_id = data["appointment_id"]
-    serials_number = data["serials_number"]
+
     try:
         result = appointment_service.upload_serial_number(
-            appointment_id, serials_number)
+            user=data.pop("username"),
+            appointment_id=data.pop("appointment_id"),
+            serial_number=data.pop("serial_number")
+            )
         if result:
             return jsonify({'response': result}), 200
     except WrongSerialsNumber as e:
@@ -135,14 +144,49 @@ def total_payment_success():
     appointment_id: int
 
     eg = {
+    "username": "bingwei",
     "appointment_id": 3,
+    }
+
+    :return: 1 for success
+    :rtype:
+    """
+    data = request.get_json()
+    result = appointment_service.total_payment_success(
+        user=data.pop("username"),
+        appointment_id=data.pop("appointment_id"),
+    )
+    if result:
+        return jsonify({'response': result}), 200
+
+
+# 取消订单
+@appointment_app.route('/status/cancel', methods=['POST'])
+def cancel_appointment():
+    """
+    appointment_id: int
+
+    eg = {
+    "username": "bingwei",
+    "appointment_id": 3,
+    "account": "BingweiChen",
+    "account_type": "wechat",
+    "comment": "test",
+
     }
     :return: 1 for success
     :rtype:
     """
     data = request.get_json()
-    appointment_id = data["appointment_id"]
-    result = appointment_service.total_payment_success(appointment_id)
+    # appointment_id = data["appointment_id"]
+    result = appointment_service.cancel_appointment(
+        username=data.pop("username"),
+        appointment_id=data.pop("appointment_id"),
+        account=data.pop("account"),
+        account_type=data.pop("account_type"),
+        comment=data.pop("comment"),
+        **data
+    )
     if result:
         return jsonify({'response': result}), 200
 
@@ -185,7 +229,7 @@ def total_payment_success():
 #             {'response': '%s: %s' % (str(NoStorageError), e.args)}), 400
 
 
-# 5. 针对租车 到期日前还车成功， 由管理员发起
+# 5. 针对租车 到期日前还车成功， 由管理员发起 (优先级低，之后再做）
 # # 用户还车，由管理员执行
 @appointment_app.route('/rent/return_e_bike', methods=['POST'])
 def return_e_bike():
@@ -240,23 +284,7 @@ def get_appointment():
 
 
 # ***************************** unit test ***************************** #
-# 取消订单
-@appointment_app.route('/status/cancel', methods=['POST'])
-def cancel_appointment():
-    """
-    appointment_id: int
 
-    eg = {
-    "appointment_id": 3,
-    }
-    :return: 1 for success
-    :rtype:
-    """
-    data = request.get_json()
-    appointment_id = data["appointment_id"]
-    result = appointment_service.cancel_appointment(appointment_id)
-    if result:
-        return jsonify({'response': result}), 200
 
 
 

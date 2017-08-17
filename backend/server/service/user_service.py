@@ -42,7 +42,10 @@ def add(username, password, **kwargs):
     :rtype:
     """
     hashed_password = generate_password_hash(password)
-    user = User.create(username=username, password=hashed_password, **kwargs)
+    user = User.create(
+        username=username,
+        password=hashed_password,
+        **kwargs)
     return user
 
 
@@ -76,36 +79,36 @@ def create_virtual_card(**kwargs):
 
 
 # ***************************** test ***************************** #
-def add_test():
-    result = add(username="bingwei111", password="123456",
-                 name='陈炳蔚', phone=15988731660,
-                 school="2",
-                 student_id="123434")
-    print(result)
-
-
-def add_test1():
-    result = User.create(username="bingwei111", password="123456",
-                         name='陈炳蔚', phone=15988731660,
-                         school="2",
-                         student_id="123434")
-    print(result)
-
-
-def remove_test():
-    pass
+# def add_test():
+#     result = add(username="bingwei111", password="123456",
+#                  name='陈炳蔚', phone=15988731660,
+#                  school="2",
+#                  student_id="123434")
+#     print(result)
+#
+#
+# def add_test1():
+#     result = User.create(username="bingwei111", password="123456",
+#                          name='陈炳蔚', phone=15988731660,
+#                          school="2",
+#                          student_id="123434")
+#     print(result)
+#
+#
+# def remove_test():
+#     pass
 
 
 def add_template():
     template_json = [
-        # {
-        #     "username": 'bingwei',
-        #     "password": "123456",
-        #     "name": "陈炳蔚",
-        #     "phone": 15988731660,
-        #     "school": "浙江大学",
-        #     "student_id": "12358"
-        # },
+        {
+            "username": 'bingwei',
+            "password": "123456",
+            "name": "陈炳蔚",
+            "phone": 15988731660,
+            "school": "浙江大学",
+            "student_id": "12358"
+        },
         {
             "username": 'Shuo_Ren',
             "password": "123456",

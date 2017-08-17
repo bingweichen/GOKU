@@ -116,7 +116,11 @@ def top_up():
 def return_deposit():
     """
     eg = {
-    "card_no": "bingwei"
+    "username": "bingwei",
+    "card_no": "bingwei",
+    "account": "BingweiChen",
+    "account_type": "wechat",
+    "comment": "test",
     }
 
     return deposit
@@ -124,6 +128,11 @@ def return_deposit():
     """
     data = request.get_json()
     result = virtual_card_service.return_deposit(
-        card_no=data["card_no"]
+        username=data.pop("username"),
+        card_no=data.pop("card_no"),
+        account=data.pop("account"),
+        account_type=data.pop("account_type"),
+        comment=data.pop("comment"),
+        **data
     )
     return jsonify({'response': result}), 200
