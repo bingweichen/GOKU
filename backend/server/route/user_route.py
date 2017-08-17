@@ -28,25 +28,67 @@ user_app = Blueprint("user_app", __name__, url_prefix=PREFIX)
 
 @user_app.route('/register', methods=['POST'])
 def register():
+    """
+
+    eg = {
+            "username": 'bingwei',
+            "password": "123456",
+            "name": "陈炳蔚",
+            "phone": 15988731660,
+            "school": "浙江大学",
+            "student_id": "12358"
+
+            "identify_number": "30032323232322"
+
+        }
+
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     username = data.pop('username')
     password = data.pop('password')
 
     if username is None or password is None:
         return jsonify({'response': 'invalid user or password'}), 400
-
     try:
         added_user = user_service.add(
-            username=username, password=password, **data)
+            username=username,
+            password=password,
+            name=data.pop("name"),
+            school=data.pop("school"),
+            student_id=data.pop("student_id"),
+            phone=data.pop("phone"),
+            identify_number=data.pop("identify_number"),
+
+            # 注释项 是可选项
+            # we_chat_id=data.pop("we_chat_id"),
+            # account=data.pop("account"),
+            # account_type=data.pop("account_type"),
+            **data)
         added_user = model_to_dict(added_user)
         added_user.pop('password')
         return jsonify({'response': added_user}), 200
     except Exception as e:
-        return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400
+        return jsonify({'response': {
+            "error": '%s: %s' % (str(Exception), e.args),
+            "message": "用户名已存在"
+        }}), 400
 
 
 @user_app.route('/login', methods=['POST'])
 def login():
+    """
+
+    eg = {
+    "username": "bingwei",
+    "password": "123456"
+    }
+
+    :return:
+    :rtype:
+    """
     username = request.json.get('username', None)
     password = request.json.get('password', None)
     try:
@@ -63,12 +105,20 @@ def login():
 
     except DoesNotExist as e:
         return jsonify({
-            'response': '%s: %s' % (str(DoesNotExist), e.args)}), 400
+            'response': {
+                "error": '%s: %s' % (str(DoesNotExist), e.args),
+                "message": "用户名不存在"
+            }}), 400
 
     except PasswordError as e:
-        return jsonify({'response': 'Bad username or password, %s' % e}), 400
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(PasswordError), e.args),
+                "message": "用户名密码错误"
+            }}), 400
 
 
+# 开通虚拟消费卡
 @user_app.route('/virtual_card', methods=['PUT'])
 def create_virtual_card():
     """

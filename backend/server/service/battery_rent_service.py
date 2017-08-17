@@ -113,7 +113,7 @@ def add(**kwargs):
     return model_to_dict(battery)
 
 
-def add_repair_report(data):
+def add_repair_report(serial_number):
     """
     apply a repair report
     :param data: 
@@ -121,14 +121,21 @@ def add_repair_report(data):
         owner: user of battery
     :return:
     """
-    b_id = data["b_id"]
-    owner = data["owner"]
-    battery_info = model_to_dict(Battery.get(Battery.id == b_id))
-    if battery_info["owner"] != data["owner"]:
-        return "Owner not matched"
-    BatteryReport.create(battery=b_id, current_owner=owner,
-                         report_time=datetime.now())
-    return "Report succeed"
+    battery = Battery.get(serial_number=serial_number)
+    return BatteryReport.create(
+        battery=serial_number,
+        current_owner=battery.user,
+        report_time=datetime.now()
+    )
+
+    # b_id = data["b_id"]
+    # owner = data["owner"]
+    # battery_info = model_to_dict(Battery.get(Battery.id == b_id))
+    # if battery_info["owner"] != data["owner"]:
+    #     return "Owner not matched"
+    # BatteryReport.create(battery=b_id, current_owner=owner,
+    #                      report_time=datetime.now())
+    # return "Report succeed"
 
 
 def add_record(battery):

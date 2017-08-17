@@ -14,7 +14,7 @@
 
 
 """
-from playhouse.shortcuts import model_to_dict
+# from playhouse.shortcuts import model_to_dict
 
 from server.database.model import School
 
@@ -39,24 +39,21 @@ def add(**kwargs):
     :rtype: json
     """
     school = School.create(**kwargs)
-    return model_to_dict(school)
+    return school
 
 
 def get(*query, **kwargs):
     school = School.get(*query, **kwargs)
-    return model_to_dict(school)
+    return school
 
 
 def get_all():
     schools = School.select()
-    new_schools = []
-    for school in schools:
-        new_schools.append(model_to_dict(school))
-    return new_schools
+    return schools
 
 
 def get_by_name(name):
-    return model_to_dict(School.get(School.name == name))
+    return School.get(School.name == name)
 
 
 def modify_by_name(name, modify_json):

@@ -25,6 +25,8 @@ from server.service import storage_service
 from server.service import serial_number_service
 from server.service import virtual_card_service
 from server.service import coupon_service
+from server.service import refund_table_service
+
 # from server.service import e_bike_model_service
 
 from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
@@ -81,57 +83,54 @@ def add_appointment(**kwargs):
 
 
 # 2. 预付款成功
-def appointment_payment_success(appointment_id):
-    appointment = Appointment.get(id=appointment_id)
-    status = APPOINTMENT_STATUS["1"]
-    appointment.status = status
+def appointment_payment_success(user, appointment_id):
 
+    appointment = Appointment.get(
+        id=appointment_id,
+        user=user)
+    appointment.status = APPOINTMENT_STATUS["1"]
+    # 预付款后更改新的过期日期
+    appointment.expired_date_time = \
+        datetime.now()+timedelta(days=APPOINTMENT_EXPIRED_DAYS)
     return appointment.save()
-
-    # # 预付款后更改新的过期日期
-    # query = Appointment.update(
-    #     status=status,
-    #     expired_date_time=datetime.now+timedelta(days=APPOINTMENT_EXPIRED_DAYS)
-    # ).where(
-    #     Appointment.id == appointment_id
-    # ).execute()
-
-    # return modify_status(appointment_id, status)
 
 
 # 3. 提车码
-def upload_serial_number(appointment_id, serial_number):
-    appointment = get(id=appointment_id)
+def upload_serial_number(user, appointment_id, serial_number):
+    appointment = get(id=appointment_id, user=user)
     if check_serial_number(appointment, serial_number):
         return True
-        # status = APPOINTMENT_STATUS["2"]
-        # return modify_status(appointment_id, status)
     raise WrongSerialsNumber("wrong serials number")
 
 
 # 4. 付款成功
-def total_payment_success(appointment_id):
+def total_payment_success(user, appointment_id):
+    appointment = Appointment.get(
+        id=appointment_id,
+        user=user)
+
     # 检查是否租车
-    appointment = Appointment.get(id=appointment_id)
     if appointment.type == "租车":  # 租车
         rent_time_period = appointment.rent_time_period
         end_time = \
-            datetime.now + timedelta(days=RENT_TIME_PERIOD[rent_time_period])
+            datetime.now() + timedelta(days=RENT_TIME_PERIOD[rent_time_period])
         appointment.end_time = end_time
         status = APPOINTMENT_STATUS["2"]
         appointment.status = status
         return appointment.save()
 
-    status = APPOINTMENT_STATUS["2"]
-    appointment.status = status
-    return appointment.save()
+    else:
+        status = APPOINTMENT_STATUS["2"]
+        appointment.status = status
+        return appointment.save()
 
 
 # 取消订单
-def cancel_appointment(appointment_id):
+def cancel_appointment(username, appointment_id, **kwargs):
     appointment = Appointment.get(id=appointment_id)
     # 退还押金
-    return_appointment_fee(appointment)
+    return_appointment_fee(username, appointment, **kwargs)
+
     # 更改 serial number
     serial_number_service.modify_available_appointment(
         appointment.serial_number, True, None
@@ -153,10 +152,19 @@ def expired_appointment(appointment_id):
 
 
 # 退还押金！！！
-def return_appointment_fee(appointment):
+def return_appointment_fee(username, appointment, **kwargs):
     appointment_fee = appointment.appointment_fee
     if appointment_fee == 0:
         return
+
+    refund_table_service.add(
+        user=username,
+        account=kwargs["account"],
+        account_type=kwargs["account_type"],
+        type="退预约金",
+        value=appointment_fee,
+        comment=kwargs["comment"]
+    )
     print("需退还押金" + appointment_fee)
 
 
