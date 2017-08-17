@@ -62,6 +62,7 @@ def register():
             phone=data.pop("phone"),
             identify_number=data.pop("identify_number"),
 
+            # 注释项 是可选项
             # we_chat_id=data.pop("we_chat_id"),
             # account=data.pop("account"),
             # account_type=data.pop("account_type"),
@@ -70,7 +71,10 @@ def register():
         added_user.pop('password')
         return jsonify({'response': added_user}), 200
     except Exception as e:
-        return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400
+        return jsonify({'response': {
+            "error": '%s: %s' % (str(Exception), e.args),
+            "message": "用户名已存在"
+        }}), 400
 
 
 @user_app.route('/login', methods=['POST'])
@@ -96,10 +100,17 @@ def login():
 
     except DoesNotExist as e:
         return jsonify({
-            'response': '%s: %s' % (str(DoesNotExist), e.args)}), 400
+            'response': {
+                "error": '%s: %s' % (str(DoesNotExist), e.args),
+                "message": "用户名不存在"
+            }}), 400
 
     except PasswordError as e:
-        return jsonify({'response': 'Bad username or password, %s' % e}), 400
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(PasswordError), e.args),
+                "message": "用户名密码错误"
+            }}), 400
 
 
 # 开通虚拟消费卡
