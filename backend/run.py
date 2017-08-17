@@ -21,7 +21,7 @@ from server.route import user_route, resource_route, \
     virtual_card_route, battery_rent_route, manager_route, \
     store_route, school_route, const_route, \
     appointment_query_route, battery_query_route, \
-    refund_table_route, e_bike_rent_route
+    refund_table_route, e_bike_rent_route, report_table_route
 
 app = Flask(__name__, static_url_path='')
 
@@ -43,6 +43,7 @@ app.register_blueprint(appointment_query_route.appointment_query)
 app.register_blueprint(battery_query_route.battery_query)
 app.register_blueprint(refund_table_route.refund_table)
 # app.register_blueprint(e_bike_rent_route.e_bike_rent)
+app.register_blueprint(report_table_route.report_table_app)
 
 
 app.secret_key = 'super-super-secret'
