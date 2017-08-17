@@ -5,11 +5,10 @@
 @desc: coupon service
 """
 
-from datetime import datetime
-from playhouse.shortcuts import model_to_dict
+from datetime import datetime, timedelta
 
-from server.database.model import Coupon
-from server.utility.json_utility import models_to_json
+from server.database.model import Coupon, CouponTemplate, User
+from server.utility.json_utility import models_to_json, model_to_dict
 from server.utility.exception import *
 
 
@@ -19,7 +18,12 @@ def add_coupon(**kwargs):
     :param kwargs: coupon information
     :return:
     """
-    coupon = Coupon.create(**kwargs)
+    desc = ""
+    if "situation" in kwargs and "value" in kwargs:
+        desc = "满%s减%s" % (kwargs["situation"], kwargs["value"])
+    if "duration" not in kwargs:
+        kwargs.update({"duration": 3650})
+    coupon = Coupon.create(desc=desc, **kwargs)
     return coupon
 
 
@@ -60,6 +64,28 @@ def use_coupon(user, c_id, before_price):
     return after_price
 
 
+def add_coupon_template_to_all_user(template_id):
+    template = CouponTemplate.get(CouponTemplate.id == template_id)
+    today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+    expired = today + timedelta(days=template.duration)
+    data = {"desc": template.desc, "situation": template.situation,
+            "value": template.value, "expired": expired,
+            "template_no": template_id}
+    users = User.select(User.username)
+    for u in users:
+        Coupon.create(user=u.username, **data)
+
+
+def add_coupon_template(**kwargs):
+    desc = ""
+    if "situation" in kwargs and "value" in kwargs:
+        desc = "满%s减%s" % (kwargs["situation"], kwargs["value"])
+    if "duration" not in kwargs:
+        kwargs.update({"duration": 3650})
+    c_t = CouponTemplate.create(desc=desc or "通用", **kwargs)
+    return c_t
+
+
 # ***************************** unit test ***************************** #
 def add_template():
     template_json = [
@@ -75,5 +101,9 @@ def add_template():
         result = add_coupon(**json)
         print(result)
 
+
 if __name__ == "__main__":
-    add_template()
+    # add_template()
+    # add_coupon_template(value=100)
+    # add_coupon_template_to_all_user(1)
+    pass
