@@ -8,12 +8,6 @@
 
 部分可调整到数据库进行参数设置
 """
-from server.service.const_service import get
-
-# from playhouse.shortcuts import model_to_dict
-
-
-
 # 订单状态 已下单，已付款，已提车
 # 等待到款, 等待审核, 等待提货，交易成功, 已取消
 # 等待付预约款, 等待提货, 等待付款, 交易成功
@@ -57,14 +51,3 @@ RENT_TIME_PERIOD = {
     "年": 1
 }
 
-
-# ** custom value**#
-def get_custom_const(string):
-    return get(string).value
-
-
-DEFAULT_APPOINTMENT_FEE = 100
-DEFAULT_DEPOSIT = 199
-MAXIMUM_APPOINTMENT = 5
-APPOINTMENT_EXPIRED_DAYS = 7  # 7 days
-BATTERY_RENT_PRICE = 1

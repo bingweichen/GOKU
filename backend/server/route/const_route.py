@@ -44,7 +44,12 @@ def modify():
     :return:
     :rtype:
     """
+    data = request.get_json()
+    result = const_service.modify(
+        key=data.pop("key"),
+        value=data.pop("value")
+    )
     return jsonify({
         'response': {
-            "appointments": models_to_json(const)
+            "result": result
         }}), 200

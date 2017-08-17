@@ -24,6 +24,8 @@ from server.service import e_bike_model_service
 from server.utility.logger import logger
 from server.utility.json_utility import models_to_json
 from server.utility.constant import *
+from server.service import const_service
+
 PREFIX = '/e_bike_model'
 
 e_bike_model_app = Blueprint("e_bike_model_app", __name__, url_prefix=PREFIX)
@@ -64,7 +66,8 @@ def get_e_bike_model_one(name):
         return jsonify({
             'response': {
                 "e_bike_model": model_to_dict(e_bike_model),
-                "appointment_fee": DEFAULT_APPOINTMENT_FEE
+                "appointment_fee":
+                    get_custom_const("DEFAULT_APPOINTMENT_FEE")
             }
         }), 200
     else:

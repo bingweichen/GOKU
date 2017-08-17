@@ -5,23 +5,23 @@ flask main function
 Author: Bingwei Chen
 Date: 2017.07.20
 """
-from flask import Flask
-from flask import jsonify
-
-from flask_cors import CORS
 from datetime import timedelta
 
+from flask import Flask
+from flask import jsonify
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_claims
+from flask_jwt_extended import jwt_required
 
 from server.database.db import database
+from server.manager_route import manager_route
 from server.route import user_route, resource_route, \
     e_bike_model_route, appointment_route, coupon_route, \
-    virtual_card_route, battery_rent_route, manager_route, \
-    store_route, school_route, const_route, \
+    virtual_card_route, battery_rent_route, store_route, school_route, \
+    const_route, \
     appointment_query_route, battery_query_route, \
-    refund_table_route, e_bike_rent_route, report_table_route
+    refund_table_route, report_table_route
 
 app = Flask(__name__, static_url_path='')
 

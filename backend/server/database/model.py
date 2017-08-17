@@ -14,7 +14,7 @@ import json
 from peewee import *
 
 from server.database.db import database
-from server.utility.constant import *
+from server.utility.basic_constant import *
 
 
 class JSONField(TextField):
