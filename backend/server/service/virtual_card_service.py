@@ -3,8 +3,6 @@
 @author: larry.shuoren@outlook.com
 @time: 8/10/17
 @desc: virtual card service
-
-TODO 闪充使用过程中不得退回押金
 """
 from datetime import datetime
 
