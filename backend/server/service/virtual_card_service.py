@@ -12,6 +12,7 @@ from playhouse.shortcuts import model_to_dict
 
 from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
+from server.database.model import Battery
 from server.service import refund_table_service
 
 from server.utility.constant import DEFAULT_DEPOSIT
@@ -105,13 +106,16 @@ def get_card_balance(card_no):
 def return_deposit(**kwargs):
     """
     return deposit
-    :param data:
+    :param kwargs:
         card_no: card number
     :return:
     """
     card_no = kwargs["card_no"]
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
+    on_loan = Battery.select().where(Battery.user == card_no)
+    if on_loan:
+        raise Error("Battery in use")
     if deposit:
         result = VirtualCard.update(deposit=0
                                     ).where(VirtualCard.card_no == card_no)
@@ -119,7 +123,6 @@ def return_deposit(**kwargs):
         ConsumeRecord.create(card=card_no, consume_event="return deposit",
                              consume_date_time=datetime.now(),
                              consume_fee=-deposit, balance=balance)
-
         # 记录退款
         refund_table_service.add(
             user=kwargs["username"],
@@ -127,10 +130,9 @@ def return_deposit(**kwargs):
             account_type=kwargs["account_type"],
             type="退虚拟卡押金",
             value=deposit,
-            comment=kwargs["comment"]
+            comment=kwargs.get("comment")
         )
-        print("退虚拟卡押金" + deposit)
-
+        print("退虚拟卡押金" + str(deposit))
         return "Return deposit succeed"
     else:
         return "No deposit refundable"
@@ -240,4 +242,6 @@ if __name__ == '__main__':
     # print(consume_virtual_card("Shuo_Ren", "任性", 10000))
     # print(consume_virtual_card("Shuo_Ren", "不任性", 10))
     # print(get_virtual_card_info("Shuo_Ren"))
-    print(get_consume_record("Shuo_Ren"))
+    # print(get_consume_record("Shuo_Ren"))
+    return_deposit(card_no="bingwei", username="bingwei",
+                   account="123456", account_type="weChat")
