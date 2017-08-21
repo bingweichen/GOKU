@@ -18,7 +18,7 @@ from server.database.model import BatteryRecord
 from server.database.model import BatteryReport
 
 from server.utility.exception import *
-from server.utility.constant import *
+from server.utility.constant.custom_constant import get_custom_const
 #
 # from server.utility.json_utility import models_to_json
 # from playhouse.shortcuts import model_to_dict
@@ -87,12 +87,13 @@ def return_battery(username, serial_number):
     battery_records = battery.battery_records
     battery_record = get_using_record(battery_records)
     battery_record.return_date = datetime.now()
-    battery_record.price = BATTERY_RENT_PRICE
+    battery_record.price = get_custom_const("BATTERY_RENT_PRICE")
     battery_record.situation = "已归还"
     battery_record.save()
     # 扣款
     virtual_card_service.consume_virtual_card(
-        card_no=username, amount=BATTERY_RENT_PRICE)
+        card_no=username,
+        amount=get_custom_const("BATTERY_RENT_PRICE"))
     return battery_record
 
 

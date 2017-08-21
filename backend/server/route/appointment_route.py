@@ -32,7 +32,7 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 
 # ***************************** buy appointment ***************************** #
 # 1.提交生成 预约单
-@appointment_app.route('/', methods=['PUT'])
+@appointment_app.route('', methods=['PUT'])
 def add_appointment():
     """
     买车订单

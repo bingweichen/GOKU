@@ -1,3 +1,4 @@
+
 # """
 # 中文
 # """
@@ -43,6 +44,6 @@
 #     result = Test.get(id=2)
 #     print(result.array[0])
 #
-# if __name__ == '__main__':
-#     pass
-#     get()
+if __name__ == '__main__':
+    print(APPOINTMENT_STATUS)
+    pass

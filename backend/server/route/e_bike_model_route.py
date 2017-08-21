@@ -23,8 +23,8 @@ from playhouse.shortcuts import model_to_dict
 from server.service import e_bike_model_service
 from server.utility.logger import logger
 from server.utility.json_utility import models_to_json
-from server.utility.constant import *
-from server.service import const_service
+from server.utility.constant.custom_constant import get_custom_const
+# from server.service import const_service
 
 PREFIX = '/e_bike_model'
 

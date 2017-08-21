@@ -29,9 +29,12 @@ from server.service import refund_table_service
 
 # from server.service import e_bike_model_service
 
-from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
-from server.utility.constant import *
-from server.utility.json_utility import models_to_json
+from server.utility.exception import WrongSerialsNumber, Error
+
+from server.utility.constant.basic_constant import *
+from server.utility.constant.custom_constant import get_custom_const
+
+# from server.utility.json_utility import models_to_json
 
 
 # ***************************** buy appointment ***************************** #
@@ -91,7 +94,8 @@ def appointment_payment_success(user, appointment_id):
     appointment.status = APPOINTMENT_STATUS["1"]
     # 预付款后更改新的过期日期
     appointment.expired_date_time = \
-        datetime.now() + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
+        datetime.now() + timedelta(
+            days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
     return appointment.save()
 
 
@@ -199,7 +203,7 @@ def check_user_appointment(user, type):
             return False
         else:
             return True
-    if count >= MAXIMUM_APPOINTMENT:
+    if count >= get_custom_const("MAXIMUM_APPOINTMENT"):
         return False
     else:
         return True
@@ -298,7 +302,8 @@ def add(**kwargs):
     """
     # 生成到期时间
     date = datetime.now()
-    expired_date_time = date + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
+    expired_date_time = date + timedelta(
+        days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
 
     appointment = Appointment.create(
         date=date, expired_date_time=expired_date_time, **kwargs)
@@ -396,8 +401,8 @@ def add_template():
 
 
 if __name__ == '__main__':
-    print(models_to_json(
-        Appointment.select().where(Appointment.category == None)))
+    # print(models_to_json(
+    #     Appointment.select().where(Appointment.category == None)))
     # print(Appointment.get(Appointment.id == 1))
     # print(add_template())
     pass

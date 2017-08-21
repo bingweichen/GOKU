@@ -14,7 +14,9 @@ from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
 from server.service import refund_table_service
 
-from server.utility.constant import DEFAULT_DEPOSIT
+# from server.utility.constant.basic_constant import *
+from server.utility.constant.custom_constant import get_custom_const
+
 from server.utility.json_utility import models_to_json
 
 from server.utility.exception import *
@@ -56,7 +58,7 @@ def pay_deposit(**kwargs):
     deposit_fee = float(kwargs["deposit_fee"])
     deposit = get_deposit_status(card_no)
     balance = get_card_balance(card_no)
-    if deposit < DEFAULT_DEPOSIT:
+    if deposit < get_custom_const("DEFAULT_DEPOSIT"):
         result = VirtualCard.update(deposit=deposit_fee
                                     ).where(VirtualCard.card_no == card_no)
         result.execute()
@@ -195,7 +197,7 @@ def check_deposit(username):
     virtual_card = VirtualCard.get(VirtualCard.card_no == username)
     if virtual_card:
         deposit = virtual_card.deposit
-        if deposit >= DEFAULT_DEPOSIT:
+        if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
             return True
         else:
             raise Error("no enough deposit")
@@ -210,7 +212,7 @@ def check_value(card_no):
     :return: True if usable or raise an error
     """
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    if virtual_card.deposit < DEFAULT_DEPOSIT:
+    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
         raise Error("No enough deposit")
     if virtual_card.balance <= 0:
         raise Error("No Balance")
@@ -230,7 +232,8 @@ def add_template():
 
 
 if __name__ == '__main__':
-    print("hello world!")
+    pass
+    # print("hello world!")
     # add_template()
     # print(pay_deposit("Shuo_Ren", 199))
     # print(get_deposit_status("Shuo_Ren"))
@@ -240,4 +243,4 @@ if __name__ == '__main__':
     # print(consume_virtual_card("Shuo_Ren", "任性", 10000))
     # print(consume_virtual_card("Shuo_Ren", "不任性", 10))
     # print(get_virtual_card_info("Shuo_Ren"))
-    print(get_consume_record("Shuo_Ren"))
+    # print(get_consume_record("Shuo_Ren"))

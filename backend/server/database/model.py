@@ -14,7 +14,7 @@ import json
 from peewee import *
 
 from server.database.db import database
-from server.utility.basic_constant import *
+from server.utility.constant.basic_constant import DELIVERY, APPOINTMENT_STATUS
 
 
 class JSONField(TextField):
