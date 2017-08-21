@@ -33,14 +33,14 @@ def modify(key, value):
 
 
 def add_template():
-    template_JOSN = {
+    template_json = {
         "DEFAULT_DEPOSIT": 199.0,
         "MAXIMUM_APPOINTMENT": 5,
         "APPOINTMENT_EXPIRED_DAYS": 7,
         "BATTERY_RENT_PRICE": 1,
         "DEFAULT_APPOINTMENT_FEE": 100,
     }
-    for attr, value in template_JOSN.items():
+    for attr, value in template_json.items():
         add(attr, value)
 
 

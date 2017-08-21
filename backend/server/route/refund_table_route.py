@@ -25,10 +25,10 @@ refund_table = Blueprint("refund_table", __name__, url_prefix=PREFIX)
 
 # 获取所有退款记录
 @refund_table.route('/', methods=['GET'])
-def get_appointments():
+def get_refund_table():
     username = request.args.get("username")
     refund_tables = refund_table_service.get_all(username)
     return jsonify({
         'response': {
-            "appointments": models_to_json(refund_tables)
+            "refund_tables": models_to_json(refund_tables)
         }}), 200

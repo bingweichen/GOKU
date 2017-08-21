@@ -45,9 +45,6 @@ def get(*query, **kwargs):
 
 def get_all():
     users = User.select()
-    # new_users = []
-    # for user in users:
-    #     new_users.append(model_to_dict(user))
     return users
 
 

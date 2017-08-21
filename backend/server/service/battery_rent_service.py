@@ -2,12 +2,13 @@
 
 """
 @author: larry.shuoren@outlook.com
+@author: bingweiChen
+
 @time: 8/10/17
 @desc: battery rent service
 """
 
 from datetime import datetime, timedelta
-from playhouse.shortcuts import model_to_dict
 
 from server.service import serial_number_service
 from server.service import virtual_card_service
@@ -18,7 +19,9 @@ from server.database.model import BatteryReport
 
 from server.utility.exception import *
 from server.utility.constant import *
-from server.utility.json_utility import models_to_json
+#
+# from server.utility.json_utility import models_to_json
+# from playhouse.shortcuts import model_to_dict
 
 
 # ***************************** service ***************************** #
@@ -110,7 +113,7 @@ def add(**kwargs):
         serial_number=serial_number,
         **kwargs
     )
-    return model_to_dict(battery)
+    return battery
 
 
 def add_repair_report(serial_number):
@@ -172,7 +175,7 @@ def manager_get_history_record_by_id(serial_number, period):
     record = BatteryRecord.select().where(
         BatteryRecord.battery == serial_number,
         BatteryRecord.return_date >= before)
-    record = models_to_json(record)
+    record = record
     return record
 
 

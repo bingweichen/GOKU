@@ -58,7 +58,11 @@ def add():
 
 @report_table_app.route('/all', methods=['GET'])
 def get_all():
-    report_tables = report_table_service.get_all()
+    username = request.args.get("username")
+
+    report_tables = report_table_service.get_all(
+        user=username
+    )
 
     report_tables = models_to_json(report_tables)
     for i in range(len(report_tables)):

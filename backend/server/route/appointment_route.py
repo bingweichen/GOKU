@@ -75,8 +75,8 @@ def add_appointment():
             user=data.pop("username"),
             **data
         )
-        if appointment:
-            return jsonify({'response': model_to_dict(appointment)}), 200
+        # TODO 内容筛选
+        return jsonify({'response': model_to_dict(appointment)}), 200
 
     except Error as e:
         return jsonify(

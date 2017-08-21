@@ -15,13 +15,16 @@ from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 
 from server.database.db import database
-from server.manager_route import manager_route
+from server.manager_route import battery_query, \
+    appointment_query
+from server.manager_route.useless import manager_route
 from server.route import user_route, resource_route, \
     e_bike_model_route, appointment_route, coupon_route, \
     virtual_card_route, battery_rent_route, store_route, school_route, \
     const_route, \
-    appointment_query_route, battery_query_route, \
     refund_table_route, report_table_route
+
+from server.manager_route import appointment_query
 
 app = Flask(__name__, static_url_path='')
 
@@ -39,11 +42,13 @@ app.register_blueprint(store_route.store)
 
 app.register_blueprint(school_route.school_app)
 app.register_blueprint(const_route.const_app)
-app.register_blueprint(appointment_query_route.appointment_query)
-app.register_blueprint(battery_query_route.battery_query)
+app.register_blueprint(appointment_query.appointment_query)
+app.register_blueprint(battery_query.battery_query)
 app.register_blueprint(refund_table_route.refund_table)
 # app.register_blueprint(e_bike_rent_route.e_bike_rent)
 app.register_blueprint(report_table_route.report_table_app)
+
+app.register_blueprint(appointment_query.appointment_query)
 
 
 app.secret_key = 'super-super-secret'

@@ -151,6 +151,7 @@ class Appointment(BaseModel):
     reduced_price = FloatField(null=True)  # 优惠价格
 
     appointment_fee = FloatField(default=0)  # 预约金
+    rent_deposit = FloatField(default=0)  # 租车押金
     delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
@@ -247,7 +248,7 @@ class RefundTable(BaseModel):
 class ReportTable(BaseModel):
     appointment = ForeignKeyField(Appointment)
     user = ForeignKeyField(User)
-    address = CharField()
+    address = CharField()  # 报修地址
     comment = CharField()
     phone = BigIntegerField(null=True)
     date = DateTimeField()
@@ -261,7 +262,7 @@ class Const(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [CouponTemplate, Coupon]
+table_temp = [Appointment]
 
 
 def create_tables():
