@@ -15,40 +15,33 @@ from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 
 from server.database.db import database
-from server.manager_route import battery_query, \
-    appointment_query
-from server.manager_route.useless import manager_route
-from server.route import user_route, resource_route, \
+from server.manager_route import battery_setting, \
+    appointment_setting
+from server.route import user_route, \
     e_bike_model_route, appointment_route, coupon_route, \
     virtual_card_route, battery_rent_route, store_route, school_route, \
-    const_route, \
     refund_table_route, report_table_route
 
-from server.manager_route import appointment_query
+from server.manager_route import appointment_setting
 
 app = Flask(__name__, static_url_path='')
 
 CORS(app, supports_credentials=True)
 
 app.register_blueprint(user_route.user_app)
-app.register_blueprint(resource_route.resource_app)
 app.register_blueprint(e_bike_model_route.e_bike_model_app)
 app.register_blueprint(appointment_route.appointment_app)
 app.register_blueprint(virtual_card_route.virtual_card)
 app.register_blueprint(coupon_route.coupon)
 app.register_blueprint(battery_rent_route.battery_rent)
-app.register_blueprint(manager_route.manager)
-app.register_blueprint(store_route.store)
-
+app.register_blueprint(store_route.store_app)
 app.register_blueprint(school_route.school_app)
-app.register_blueprint(const_route.const_app)
-app.register_blueprint(appointment_query.appointment_query)
-app.register_blueprint(battery_query.battery_query)
-app.register_blueprint(refund_table_route.refund_table)
-# app.register_blueprint(e_bike_rent_route.e_bike_rent)
-app.register_blueprint(report_table_route.report_table_app)
 
-app.register_blueprint(appointment_query.appointment_query)
+
+app.register_blueprint(battery_setting.battery_setting)
+app.register_blueprint(refund_table_route.refund_table)
+app.register_blueprint(report_table_route.report_table_app)
+app.register_blueprint(appointment_setting.appointment_setting)
 
 
 app.secret_key = 'super-super-secret'

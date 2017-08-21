@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 """
 @author: larry.shuoren@outlook.com
+@author: bingweiChen
+
 @time: 8/11/17
 @desc: coupon service
 """
@@ -8,7 +10,7 @@
 from datetime import datetime, timedelta
 
 from server.database.model import Coupon, CouponTemplate, User
-from server.utility.json_utility import models_to_json, model_to_dict
+# from server.utility.json_utility import models_to_json, model_to_dict
 from server.utility.exception import *
 
 

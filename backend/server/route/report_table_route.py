@@ -4,7 +4,9 @@
 
 @time: 8/4/17
 
-@desc: report_table route
+@desc: report_table route 电动车报修
+
+带有过滤
 
 """
 
@@ -12,7 +14,7 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
-from playhouse.shortcuts import model_to_dict
+# from playhouse.shortcuts import model_to_dict
 from server.utility.json_utility import models_to_json
 from server.service import report_table_service
 
@@ -21,6 +23,7 @@ PREFIX = '/report_table'
 report_table_app = Blueprint("report_table_app", __name__, url_prefix=PREFIX)
 
 
+# 电动车报修
 @report_table_app.route('', methods=['PUT'])
 def add():
     """
@@ -56,15 +59,15 @@ def add():
     return jsonify({'response': report_table}), 200
 
 
+# 获取报修记录
 @report_table_app.route('/all', methods=['GET'])
 def get_all():
     username = request.args.get("username")
-
     report_tables = report_table_service.get_all(
         user=username
     )
-
     report_tables = models_to_json(report_tables)
+
     for i in range(len(report_tables)):
         report_tables[i]["user"] = report_tables[i]["user"]["username"]
         report_tables[i]["appointment"].pop("user")

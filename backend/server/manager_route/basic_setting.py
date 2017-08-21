@@ -29,7 +29,9 @@ from server.service import storage_service
 from server.service import const_service
 from server.service import coupon_service
 
-from server.utility.exception import Error
+from server.service import store_service
+from server.service import school_service
+
 from server.utility.json_utility import models_to_json
 
 PREFIX = '/manager/basic_setting'
@@ -40,6 +42,7 @@ basic_setting = Blueprint("basic_setting", __name__, url_prefix=PREFIX)
 # 对电动车售卖价格设置、库存设置；电动车租赁价格设置、库存设置；
 
 # ***************************** 电动车管理 ***************************** #
+# e_bike_model Add/Get/Modify/Remove
 # 1. 获取所有电动车
 @basic_setting.route('/e_bike_model/all', methods=['GET'])
 def get_all_e_bike_models():
@@ -75,6 +78,26 @@ def modify_e_bike_model(name):
     pass
 
 
+# 添加车型
+@basic_setting.route('/e_bike_model', methods=['PUT'])  # test complete
+def add_e_bike_model():
+    data = request.get_json()
+    e_bike_model = e_bike_model_service.add(**data)
+    if e_bike_model:
+        return jsonify({'response': e_bike_model}), 200
+
+
+# 删除车型
+@basic_setting.route('/e_bike_model/<string:name>',
+                     methods=['DELETE'])  # test complete
+def remove_e_bike_model(name):
+    result = e_bike_model_service.remove_by_name(name)
+    if result:
+        return jsonify({'response': "delete success"}), 200
+    else:
+        return jsonify({'response': "no e_bike_model find"}), 404
+
+
 # ***************************** 库存管理 ***************************** #
 # 1.获取库存
 @basic_setting.route('/storage/all', methods=['GET'])
@@ -94,7 +117,7 @@ def get_storage():
 
 
 # 3. 更改库存 (数量...)
-@basic_setting.route('/storage/', methods=['POST'])
+@basic_setting.route('/storage', methods=['POST'])
 def modify_storage():
     data = request.get_json()
     result = storage_service.modify_num(
@@ -105,12 +128,37 @@ def modify_storage():
     return jsonify({'response': result}), 200
 
 
+# 4.添加库存
+@basic_setting.route('/storage', methods=['PUT'])  # test complete
+def add_storage():
+    """
+    add storage
+
+    eg = {
+    "model": "E100小龟",
+    "color": "红",
+    "num": 50
+
+    }
+
+    :return:
+    :rtype:
+    """
+    data = request.get_json()
+    storage = storage_service.add(
+        model=data.pop("model"),
+        color=data.pop("color"),
+        num=data.pop("num"),
+    )
+    if storage:
+        return jsonify({'response': model_to_dict(storage)}), 200
+
 # 对闪充价格设置
 # 订单有效期时间设置、
 
 # ***************************** 参数设置 ***************************** #
 # 获取所有参数
-@basic_setting.route('/', methods=['GET'])
+@basic_setting.route('/const', methods=['GET'])
 def get():
     const = const_service.get_all()
     return jsonify({
@@ -120,7 +168,7 @@ def get():
 
 
 # 修改参数
-@basic_setting.route('/', methods=['POST'])
+@basic_setting.route('/const', methods=['POST'])
 def modify():
     """
     eg = {
@@ -143,7 +191,6 @@ def modify():
 
 
 # 优惠券设置
-
 # ***************************** 优惠券 ***************************** #
 # 1. 添加优惠劵模板
 @basic_setting.route('/coupon_template', methods=['PUT'])
@@ -199,3 +246,105 @@ def add_coupon_template_to_all_user():
             "error": e.args[1],
         }}), 400
 
+
+# 暂时没用
+# @coupon.route('', methods=['PUT'])
+# def add_coupon():
+#     """
+#     add a coupon to a user
+#
+#     eg = {
+#      "user": "bingwei",
+#      "situation": 1000,
+#      "value": 100,
+#      "expired" : "20170910"
+#     }
+#     :return:
+#     """
+#     data = request.get_json()
+#     expired = data.pop("expired")
+#     coup = coupon_service.add_coupon(
+#         expired=expired, **data
+#     )
+#     return jsonify({'response': coup}), 200
+
+
+# ***************************** 商铺管理 ***************************** #
+@basic_setting.route('/store', methods=['PUT'])  # test complete
+def add_store():
+    data = request.get_json()
+    store = store_service.add(**data)
+    if store:
+        return jsonify({'response': store}), 200
+    pass
+
+
+@basic_setting.route('/store', methods=['GET'])
+@basic_setting.route('/store/<string:name>',
+                     methods=['GET'])  # test complete
+def get_store(name=None):
+    if name is None:
+        stores = store_service.get_all()
+    else:
+        stores = [store_service.get_by_name(name)]
+    if stores:
+        return jsonify({'response': {"stores": stores}}), 200
+    else:
+        return jsonify({'response': "no store find"}), 404
+    pass
+
+
+@basic_setting.route('/store/<string:name>',
+                     methods=['POST'])  # test complete
+def modify_store(name):
+    data = request.get_json()
+    modify_json = data
+    result = store_service.modify_by_name(name, modify_json)
+    if result:
+        return jsonify({'response': "modify success"}), 200
+    else:
+        return jsonify({'response': "no store find"}), 404
+    pass
+
+
+@basic_setting.route('/store/<string:name>',
+                     methods=['DELETE'])  # test complete
+def remove_store(name):
+    result = store_service.remove_by_name(name)
+    if result:
+        return jsonify({'response': "delete success"}), 200
+    else:
+        return jsonify({'response': "no store find"}), 404
+
+
+# ***************************** 学校管理 ***************************** #
+@basic_setting.route('/school', methods=['PUT'])
+def add_school():
+    data = request.get_json()
+    school = school_service.add(**data)
+    if school:
+        return jsonify({'response': school}), 200
+
+
+@basic_setting.route('/school/<string:name>',
+                     methods=['POST'])  # test complete
+def modify_school(name):
+    data = request.get_json()
+    modify_json = data
+    result = school_service.modify_by_name(name, modify_json)
+    if result:
+        return jsonify({'response': "modify success"}), 200
+    else:
+        return jsonify({'response': "no school find"}), 404
+    pass
+
+
+@basic_setting.route('/school/<string:name>',
+                     methods=['DELETE'])  # test complete
+def remove_school(name):
+    result = school_service.remove_by_name(name)
+    if result:
+        return jsonify({'response': "delete success"}), 200
+    else:
+        return jsonify({'response': "no school find"}), 404
+    pass

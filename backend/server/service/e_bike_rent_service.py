@@ -2,6 +2,7 @@
 
 """
 @author: larry.shuoren@outlook.com
+@author: bingweiChen
 @time: 8/9/17
 @desc: e-bike rent service
 """

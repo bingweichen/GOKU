@@ -59,17 +59,31 @@
 1. 基础设置
 e_bike_model 查询，设置
 storage 查询，设置
-闪充价格设置
-订单有效期时间设置、
+参数设置
+优惠劵设置
+
+学校设置，商店设置
+
 
 2. 订单查询
 appointment
+查询所有订单
+租车，买车
+订单数量
+用户还车
+
 
 3. 个人中心
 appointment， refund_table, report_table, battery
 
 4. 闪充
 battery
+使用闪充的总人数
+正在使用人数
+输入闪充编号查询，查询闪充电池的使用状态和用户信息
+可查询历史记录：一周内、一月内、三个月内。
 
 6. 售后
 report_table， refund_table
+
+

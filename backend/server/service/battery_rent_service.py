@@ -19,7 +19,7 @@ from server.database.model import BatteryReport
 
 from server.utility.exception import *
 from server.utility.constant.custom_constant import get_custom_const
-#
+
 # from server.utility.json_utility import models_to_json
 # from playhouse.shortcuts import model_to_dict
 
@@ -120,9 +120,8 @@ def add(**kwargs):
 def add_repair_report(serial_number):
     """
     apply a repair report
-    :param data: 
-        b_id: battery id
-        owner: user of battery
+    :param serial_number:
+
     :return:
     """
     battery = Battery.get(serial_number=serial_number)
@@ -131,15 +130,6 @@ def add_repair_report(serial_number):
         current_owner=battery.user,
         report_time=datetime.now()
     )
-
-    # b_id = data["b_id"]
-    # owner = data["owner"]
-    # battery_info = model_to_dict(Battery.get(Battery.id == b_id))
-    # if battery_info["owner"] != data["owner"]:
-    #     return "Owner not matched"
-    # BatteryReport.create(battery=b_id, current_owner=owner,
-    #                      report_time=datetime.now())
-    # return "Report succeed"
 
 
 def add_record(battery):

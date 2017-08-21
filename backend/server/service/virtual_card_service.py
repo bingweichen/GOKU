@@ -6,19 +6,17 @@
 """
 from datetime import datetime
 
-from playhouse.shortcuts import model_to_dict
 
 from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
 from server.database.model import Battery
 from server.service import refund_table_service
 
-# from server.utility.constant.basic_constant import *
 from server.utility.constant.custom_constant import get_custom_const
-
-from server.utility.json_utility import models_to_json
-
 from server.utility.exception import *
+
+# from playhouse.shortcuts import model_to_dict
+# from server.utility.json_utility import models_to_json
 
 
 def add(**kwargs):
@@ -31,18 +29,19 @@ def add(**kwargs):
     return virtual_card
 
 
-def get_deposit_status(card_no):
+def get_deposit(card_no):
     """
     check if the card is deposited
     :param card_no: card number
     :return: True of False
     """
-    deposit = VirtualCard.get(VirtualCard.card_no == card_no)
-    if deposit:
-        deposit = model_to_dict(deposit)
-        return float(deposit["deposit"])
-    else:
-        return "No deposit found"
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    return virtual_card.deposit
+    # if deposit:
+    #     deposit = model_to_dict(deposit)
+    #     return float(deposit["deposit"])
+    # else:
+    #     return "No deposit found"
 
 
 def pay_deposit(**kwargs):
@@ -55,18 +54,37 @@ def pay_deposit(**kwargs):
     """
     card_no = kwargs["card_no"]
     deposit_fee = float(kwargs["deposit_fee"])
-    deposit = get_deposit_status(card_no)
-    balance = get_card_balance(card_no)
-    if deposit < get_custom_const("DEFAULT_DEPOSIT"):
-        result = VirtualCard.update(deposit=deposit_fee
-                                    ).where(VirtualCard.card_no == card_no)
-        result.execute()
-        ConsumeRecord.create(card=card_no, consume_event="deposit",
-                             consume_date_time=datetime.now(),
-                             consume_fee=deposit_fee, balance=balance)
-        return "Deposit succeed"
+
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    deposit = virtual_card.deposit
+    if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
+        raise Exception("You need not pay deposit")
     else:
-        return "You need not pay deposit"
+        virtual_card.deposit = deposit_fee
+        result = virtual_card.save()
+        record = ConsumeRecord.create(
+            card=card_no,
+            consume_event="deposit",
+            consume_date_time=datetime.now(),
+            consume_fee=deposit_fee,
+            balance=virtual_card.balance)
+        return result, record
+    #
+    # card_no = kwargs["card_no"]
+    # deposit_fee = float(kwargs["deposit_fee"])
+    # deposit = get_deposit_status(card_no)
+    #
+    # balance = get_card_balance(card_no)
+    # if deposit < get_custom_const("DEFAULT_DEPOSIT"):
+    #     result = VirtualCard.update(deposit=deposit_fee
+    #                                 ).where(VirtualCard.card_no == card_no)
+    #     result.execute()
+    #     ConsumeRecord.create(card=card_no, consume_event="deposit",
+    #                          consume_date_time=datetime.now(),
+    #                          consume_fee=deposit_fee, balance=balance)
+    #     return "Deposit succeed"
+    # else:
+    #     return "You need not pay deposit"
 
 
 def top_up(**kwargs):
@@ -79,7 +97,25 @@ def top_up(**kwargs):
     """
     card_no = kwargs["card_no"]
     top_up_fee = float(kwargs["top_up_fee"])
-    deposit = get_deposit_status(card_no)
+
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+
+    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
+        raise Exception("No deposit")
+    else:
+        balance = virtual_card.balance + top_up_fee
+        virtual_card.balance = balance
+        result = virtual_card.save()
+        record = ConsumeRecord.create(
+            card=card_no,
+            consume_event="top up",
+            consume_date_time=datetime.now(),
+            consume_fee=top_up_fee,
+            balance=balance)
+        return result, record
+
+
+    deposit = get_deposit(card_no)
     if not deposit:
         return "No deposit"
     result = VirtualCard.update(balance=VirtualCard.balance+top_up_fee
@@ -99,8 +135,8 @@ def get_card_balance(card_no):
     :param card_no: card number
     :return: balance
     """
-    balance = VirtualCard.get(VirtualCard.card_no == card_no)
-    return balance.balance
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    return virtual_card.balance
 
 
 def return_deposit(**kwargs):
@@ -111,20 +147,24 @@ def return_deposit(**kwargs):
     :return:
     """
     card_no = kwargs["card_no"]
-    deposit = get_deposit_status(card_no)
-    balance = get_card_balance(card_no)
     on_loan = Battery.select().where(Battery.user == card_no)
     if on_loan:
         raise Error("Battery in use")
-    if deposit:
-        result = VirtualCard.update(deposit=0
-                                    ).where(VirtualCard.card_no == card_no)
-        result.execute()
-        ConsumeRecord.create(card=card_no, consume_event="return deposit",
-                             consume_date_time=datetime.now(),
-                             consume_fee=-deposit, balance=balance)
+
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    deposit = virtual_card.deposit
+    if deposit <= 0:
+        raise Exception("No deposit refundable")
+    else:
+        virtual_card.deposit = 0
+        result = virtual_card.save()
+        record = ConsumeRecord.create(
+            card=card_no,
+            consume_event="return deposit",
+            consume_date_time=datetime.now(),
+            consume_fee=-deposit, balance=virtual_card.balance)
         # 记录退款
-        refund_table_service.add(
+        refund_record = refund_table_service.add(
             user=kwargs["username"],
             account=kwargs["account"],
             account_type=kwargs["account_type"],
@@ -133,9 +173,32 @@ def return_deposit(**kwargs):
             comment=kwargs.get("comment")
         )
         print("退虚拟卡押金" + str(deposit))
-        return "Return deposit succeed"
-    else:
-        return "No deposit refundable"
+        return result, record, refund_record
+    # deposit = get_deposit_status(card_no)
+    # balance = get_card_balance(card_no)
+    # on_loan = Battery.select().where(Battery.user == card_no)
+    # if on_loan:
+    #     raise Error("Battery in use")
+    # if deposit:
+    #     result = VirtualCard.update(deposit=0
+    #                                 ).where(VirtualCard.card_no == card_no)
+    #     result.execute()
+    #     ConsumeRecord.create(card=card_no, consume_event="return deposit",
+    #                          consume_date_time=datetime.now(),
+    #                          consume_fee=-deposit, balance=balance)
+    #     # 记录退款
+    #     refund_table_service.add(
+    #         user=kwargs["username"],
+    #         account=kwargs["account"],
+    #         account_type=kwargs["account_type"],
+    #         type="退虚拟卡押金",
+    #         value=deposit,
+    #         comment=kwargs.get("comment")
+    #     )
+    #     print("退虚拟卡押金" + str(deposit))
+    #     return "Return deposit succeed"
+    # else:
+    #     return "No deposit refundable"
 
 
 def get_consume_record(card_no):
@@ -145,7 +208,7 @@ def get_consume_record(card_no):
     :return: consume record
     """
     record = ConsumeRecord.select().where(ConsumeRecord.card == card_no)
-    return models_to_json(record)
+    return record
 
 
 def consume_virtual_card(**kwargs):
@@ -160,19 +223,35 @@ def consume_virtual_card(**kwargs):
     card_no = kwargs["card_no"]
     amount = float(kwargs["amount"])
 
-    deposit = get_deposit_status(card_no)
-    if not deposit:
-        return "No deposit"
-    balance = get_card_balance(card_no)
-    if balance <= 0:
-        return "Low Balance"
-    card = VirtualCard.update(balance=VirtualCard.balance-amount
-                              ).where(VirtualCard.card_no == card_no)
-    card.execute()
-    ConsumeRecord.create(card=card_no, consume_event="consume",
-                         consume_date_time=datetime.now(),
-                         consume_fee=-amount, balance=balance-amount)
-    return "Consume " + str(amount) + " succeed"
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    if virtual_card.deposit <= get_custom_const("DEFAULT_DEPOSIT"):
+        raise Exception("No enough deposit")
+    if virtual_card.balance <= 0:
+        raise Exception("Low Balance")
+    balance = virtual_card.balance - amount
+    virtual_card.balance = balance
+    result = virtual_card.save()
+    record = ConsumeRecord.create(
+        card=card_no,
+        consume_event="consume",
+        consume_date_time=datetime.now(),
+        consume_fee=-amount,
+        balance=balance)
+    return result, record
+
+    # deposit = get_deposit(card_no)
+    # if not deposit:
+    #     return "No deposit"
+    # balance = get_card_balance(card_no)
+    # if balance <= 0:
+    #     return "Low Balance"
+    # card = VirtualCard.update(balance=VirtualCard.balance-amount
+    #                           ).where(VirtualCard.card_no == card_no)
+    # card.execute()
+    # ConsumeRecord.create(card=card_no, consume_event="consume",
+    #                      consume_date_time=datetime.now(),
+    #                      consume_fee=-amount, balance=balance-amount)
+    # return "Consume " + str(amount) + " succeed"
 
 
 def get_virtual_card_info(card_no):

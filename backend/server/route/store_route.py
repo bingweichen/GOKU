@@ -20,10 +20,10 @@ from server.utility.json_utility import models_to_json
 
 PREFIX = '/store'
 
-store = Blueprint("store", __name__, url_prefix=PREFIX)
+store_app = Blueprint("store", __name__, url_prefix=PREFIX)
 
 
-@store.route('/all', methods=['GET'])  # test complete
+@store_app.route('/all', methods=['GET'])  # test complete
 def get_stores():
     """
     eg = http://localhost:5000/store/all?username=bingwei

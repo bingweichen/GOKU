@@ -64,8 +64,8 @@ class User(BaseModel):
 
 
 class VirtualCard(BaseModel):
-    card_no = ForeignKeyField(User, primary_key=True,
-                              related_name="virtual_cards")
+    card_no = ForeignKeyField(
+        User, primary_key=True, related_name="virtual_cards")
     deposit = FloatField(default=0.0)
     balance = FloatField(default=0.0)
 
@@ -185,7 +185,6 @@ class BatteryReport(BaseModel):
     # 当前使用人
     current_owner = ForeignKeyField(
         User, related_name='battery_report', null=True)
-
     report_time = DateTimeField()  # 保修单生成时间
     # reporter = ForeignKeyField(User, related_name=)
 

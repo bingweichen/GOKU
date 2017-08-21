@@ -330,9 +330,13 @@ def get_all(username=None):
     return appointments
 
 
-def get_by_type(type):
+def manager_get(type, period):
+    today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+    before = today-timedelta(days=period)
+
     appointments = Appointment.select().where(
         Appointment.type == type,
+        Appointment.date >= before
     )
     return appointments
 

@@ -11,9 +11,9 @@
 
 from flask import Blueprint
 from flask import jsonify
-from flask import request
+# from flask import request
 
-from playhouse.shortcuts import model_to_dict
+# from playhouse.shortcuts import model_to_dict
 from server.utility.json_utility import models_to_json
 from server.service import school_service
 
