@@ -42,7 +42,7 @@ def get_all_appointments():
         }}), 200
 
 
-@appointment_app.route('/', methods=['GET'])
+@appointment_app.route('', methods=['GET'])
 def get_appointment():
     username = request.args.get('username')
     appointment_id = request.args.get('appointment_id')
