@@ -29,6 +29,7 @@ PREFIX = '/manager/support'
 support_app = Blueprint("support", __name__, url_prefix=PREFIX)
 
 
+# ***************************** 报修表 ***************************** #
 # 获取所有报修
 @support_app.route('/report_table/all', methods=['GET'])
 def get_all_report_table():
@@ -40,6 +41,7 @@ def get_all_report_table():
     return jsonify({'response': report_tables}), 200
 
 
+# ***************************** 退款表 ***************************** #
 # 获取所有退款记录
 @support_app.route('/refund_table/all', methods=['GET'])
 def get_refund_table():

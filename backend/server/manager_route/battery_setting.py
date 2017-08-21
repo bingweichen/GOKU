@@ -68,7 +68,7 @@ def get_history_record_by_id(serial_number, days):
 
 
 # ***************************** 操作 ***************************** #
-# 添加电车
+# 添加电池
 @battery_setting.route('/battery', methods=['PUT'])
 def add_battery():
     """
