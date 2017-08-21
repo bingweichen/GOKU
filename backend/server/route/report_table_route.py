@@ -21,7 +21,7 @@ PREFIX = '/report_table'
 report_table_app = Blueprint("report_table_app", __name__, url_prefix=PREFIX)
 
 
-@report_table_app.route('/', methods=['PUT'])
+@report_table_app.route('', methods=['PUT'])
 def add():
     """
     eg = {

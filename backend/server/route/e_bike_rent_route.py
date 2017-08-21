@@ -18,7 +18,7 @@ PREFIX = '/e_bike_rent'
 e_bike_rent = Blueprint("e_bike_rent", __name__, url_prefix=PREFIX)
 
 
-@e_bike_rent.route('/', methods=['PUT'])
+@e_bike_rent.route('', methods=['PUT'])
 def add_e_bike():
     """
     add e-bike to database
@@ -29,7 +29,7 @@ def add_e_bike():
     return jsonify({'response': e_bike}), 200
 
 
-@e_bike_rent.route('/', methods=['POST'])
+@e_bike_rent.route('', methods=['POST'])
 def modify_user():
     """
     modify user of e-bike
@@ -43,7 +43,7 @@ def modify_user():
         return jsonify({'response': "no e_bike_model find"}), 404
 
 
-@e_bike_rent.route('/', method=['GET'])
+@e_bike_rent.route('', method=['GET'])
 def get_available_e_bike_models():
     """
     get available e-bike models

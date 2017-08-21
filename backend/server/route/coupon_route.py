@@ -19,7 +19,7 @@ PREFIX = '/coupon'
 coupon = Blueprint("coupon", __name__, url_prefix=PREFIX)
 
 
-@coupon.route('/', methods=['PUT'])
+@coupon.route('', methods=['PUT'])
 def add_coupon():
     """
     add a coupon to a user

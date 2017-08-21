@@ -32,7 +32,7 @@ e_bike_model_app = Blueprint("e_bike_model_app", __name__, url_prefix=PREFIX)
 
 
 # 1. 电动车类型列表
-@e_bike_model_app.route('/', methods=['GET'])
+@e_bike_model_app.route('', methods=['GET'])
 def get_e_bike_model():
     category = request.args.get('category')
     if category is None:
@@ -75,7 +75,7 @@ def get_e_bike_model_one(name):
 
 
 # ***************************** unit test ***************************** #
-@e_bike_model_app.route('/', methods=['PUT'])  # test complete
+@e_bike_model_app.route('', methods=['PUT'])  # test complete
 def add_e_bike_model():
     data = request.get_json()
     e_bike_model = e_bike_model_service.add(**data)

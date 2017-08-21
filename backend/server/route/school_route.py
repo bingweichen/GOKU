@@ -22,7 +22,7 @@ PREFIX = '/school'
 school_app = Blueprint("school_app", __name__, url_prefix=PREFIX)
 
 
-@school_app.route('/', methods=['GET'])
+@school_app.route('', methods=['GET'])
 def get():
     """
 

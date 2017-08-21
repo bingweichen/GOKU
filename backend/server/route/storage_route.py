@@ -25,7 +25,7 @@ storage_app = Blueprint("storage_app", __name__, url_prefix=PREFIX)
 
 # ***************************** storage ***************************** #
 # 通过 电动车型，颜色，数量添加
-@storage_app.route('/', methods=['PUT'])  # test complete
+@storage_app.route('', methods=['PUT'])  # test complete
 def add_storage():
     """
     add storage
@@ -47,7 +47,7 @@ def add_storage():
 
 
 # 通过型号，颜色获取库存
-@storage_app.route('/', methods=['GET'])
+@storage_app.route('', methods=['GET'])
 def get_storage():
     model = request.args.get('model')
     color = request.args.get('color')

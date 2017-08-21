@@ -23,7 +23,7 @@ const_app = Blueprint("const_app", __name__, url_prefix=PREFIX)
 
 
 # 获取所有参数
-@const_app.route('/', methods=['GET'])
+@const_app.route('', methods=['GET'])
 def get():
     const = const_service.get_all()
     return jsonify({
@@ -33,7 +33,7 @@ def get():
 
 
 # 修改参数
-@const_app.route('/', methods=['POST'])
+@const_app.route('', methods=['POST'])
 def modify():
     """
     eg = {

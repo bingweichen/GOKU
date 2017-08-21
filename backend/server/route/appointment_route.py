@@ -25,6 +25,7 @@ from playhouse.shortcuts import model_to_dict
 from server.service import appointment_service
 from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
 from server.utility.json_utility import models_to_json
+
 PREFIX = '/appointment'
 
 appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
@@ -129,7 +130,7 @@ def upload_code():
             user=data.pop("username"),
             appointment_id=data.pop("appointment_id"),
             serial_number=data.pop("serial_number")
-            )
+        )
         if result:
             return jsonify({'response': result}), 200
     except WrongSerialsNumber as e:
@@ -284,11 +285,6 @@ def get_appointment():
 
 
 # ***************************** unit test ***************************** #
-
-
-
-
-
 # 更改预约单状态
 @appointment_app.route('/modify_status/<string:appointment_id>/<string:status>',
                        methods=['POST'])
