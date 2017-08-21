@@ -22,8 +22,8 @@ def get_all():
     return Const.select()
 
 
-# def get(key):
-#     return Const.get(key=key)
+def get(key):
+    return Const.get(key=key)
 
 
 def modify(key, value):
@@ -32,4 +32,17 @@ def modify(key, value):
     return const.save()
 
 
-# def add_template():
+def add_template():
+    template_json = {
+        "DEFAULT_DEPOSIT": 199.0,
+        "MAXIMUM_APPOINTMENT": 5,
+        "APPOINTMENT_EXPIRED_DAYS": 7,
+        "BATTERY_RENT_PRICE": 1,
+        "DEFAULT_APPOINTMENT_FEE": 100,
+    }
+    for attr, value in template_json.items():
+        add(attr, value)
+
+
+if __name__ == "__main__":
+    add_template()

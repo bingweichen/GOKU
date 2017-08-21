@@ -8,7 +8,7 @@
 
 """
 from datetime import datetime
-from server.database.model import ReportTable
+from server.database.model import ReportTable, User
 
 
 def add(**kwargs):
@@ -18,13 +18,13 @@ def add(**kwargs):
     )
 
 
-def get_all():
-    report_table = ReportTable.select(
-        ReportTable.user,
-        ReportTable.id,
-        ReportTable.comment,
-        ReportTable.address,
-        ReportTable.phone,
-        ReportTable.date,
+def get_all(user):
+    report_table = ReportTable.select().where(
+        user=user
     )
+    return report_table
+
+
+def manager_get_all():
+    report_table = ReportTable.select()
     return report_table

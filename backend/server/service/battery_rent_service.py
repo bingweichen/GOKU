@@ -2,12 +2,13 @@
 
 """
 @author: larry.shuoren@outlook.com
+@author: bingweiChen
+
 @time: 8/10/17
 @desc: battery rent service
 """
 
 from datetime import datetime, timedelta
-from playhouse.shortcuts import model_to_dict
 
 from server.service import serial_number_service
 from server.service import virtual_card_service
@@ -17,8 +18,10 @@ from server.database.model import BatteryRecord
 from server.database.model import BatteryReport
 
 from server.utility.exception import *
-from server.utility.constant import *
-from server.utility.json_utility import models_to_json
+from server.utility.constant.custom_constant import get_custom_const
+
+# from server.utility.json_utility import models_to_json
+# from playhouse.shortcuts import model_to_dict
 
 
 # ***************************** service ***************************** #
@@ -84,12 +87,13 @@ def return_battery(username, serial_number):
     battery_records = battery.battery_records
     battery_record = get_using_record(battery_records)
     battery_record.return_date = datetime.now()
-    battery_record.price = BATTERY_RENT_PRICE
+    battery_record.price = get_custom_const("BATTERY_RENT_PRICE")
     battery_record.situation = "已归还"
     battery_record.save()
     # 扣款
     virtual_card_service.consume_virtual_card(
-        card_no=username, amount=BATTERY_RENT_PRICE)
+        card_no=username,
+        amount=get_custom_const("BATTERY_RENT_PRICE"))
     return battery_record
 
 
@@ -110,15 +114,14 @@ def add(**kwargs):
         serial_number=serial_number,
         **kwargs
     )
-    return model_to_dict(battery)
+    return battery
 
 
 def add_repair_report(serial_number):
     """
     apply a repair report
-    :param data: 
-        b_id: battery id
-        owner: user of battery
+    :param serial_number:
+
     :return:
     """
     battery = Battery.get(serial_number=serial_number)
@@ -127,15 +130,6 @@ def add_repair_report(serial_number):
         current_owner=battery.user,
         report_time=datetime.now()
     )
-
-    # b_id = data["b_id"]
-    # owner = data["owner"]
-    # battery_info = model_to_dict(Battery.get(Battery.id == b_id))
-    # if battery_info["owner"] != data["owner"]:
-    #     return "Owner not matched"
-    # BatteryReport.create(battery=b_id, current_owner=owner,
-    #                      report_time=datetime.now())
-    # return "Report succeed"
 
 
 def add_record(battery):
@@ -172,7 +166,7 @@ def manager_get_history_record_by_id(serial_number, period):
     record = BatteryRecord.select().where(
         BatteryRecord.battery == serial_number,
         BatteryRecord.return_date >= before)
-    record = models_to_json(record)
+    record = record
     return record
 
 

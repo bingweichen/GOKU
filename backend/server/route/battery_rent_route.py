@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 """
 @author: larry.shuoren@outlook.com
+@author: bingweiChen
+
 @time: 8/10/17
 @desc: battery rent route
 """
@@ -13,15 +15,16 @@ from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
 
 from server.service import battery_rent_service
-from server.utility.json_utility import models_to_json
 from server.utility.exception import *
+
+# from server.utility.json_utility import models_to_json
 
 PREFIX = '/battery_rent'
 
 battery_rent = Blueprint("battery_rent", __name__, url_prefix=PREFIX)
 
 
-# ***************************** service ***************************** #
+# ***************************** 查询 ***************************** #
 # 1. 扫一扫获取闪充信息
 @battery_rent.route('/battery/<string:serial_number>', methods=['GET'])
 def get_battery(serial_number):
@@ -42,7 +45,7 @@ def get_battery(serial_number):
 # 2. 获取用户现有 闪充电池
 @battery_rent.route('/battery', methods=['GET'])
 def get_user_battery():
-    username = request.args("username")
+    username = request.args.get("username")
     try:
         battery = battery_rent_service.get_user_battery(
             username=username
@@ -90,23 +93,7 @@ def return_battery():
             'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
-# 移动到管理员
-@battery_rent.route('/battery', methods=['PUT'])
-def add_battery():
-    """
-    add a battery
-
-    eg = {
-    "desc": "xxx"
-    }
-
-    :return:
-    """
-    data = request.get_json()
-    battery = battery_rent_service.add(**data)
-    return jsonify({'response': battery}), 200
-
-
+# 报修电池
 @battery_rent.route('/battery_report', methods=['PUT'])
 def add_repair_report():
     """
@@ -114,17 +101,12 @@ def add_repair_report():
 
     eg = {
     "serial_number": "A00001",
-
     }
     :return:
     """
-    # b_id: battery id
-    # owner: user
     data = request.get_json()
     result = battery_rent_service.add_repair_report(
         serial_number=data.pop("serial_number")
     )
     if result:
         return jsonify({'response': result}), 200
-
-

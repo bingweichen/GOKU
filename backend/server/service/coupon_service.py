@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 """
 @author: larry.shuoren@outlook.com
+@author: bingweiChen
+
 @time: 8/11/17
 @desc: coupon service
 """
@@ -8,8 +10,13 @@
 from datetime import datetime, timedelta
 
 from server.database.model import Coupon, CouponTemplate, User
-from server.utility.json_utility import models_to_json, model_to_dict
+# from server.utility.json_utility import models_to_json, model_to_dict
 from server.utility.exception import *
+
+
+def get_all_coupon_template():
+    coupon_template = CouponTemplate.select()
+    return coupon_template
 
 
 def add_coupon(**kwargs):
@@ -52,21 +59,23 @@ def use_coupon(user, c_id, before_price):
     :param before_price: price before using coupon
     :return: price after using coupon
     """
-    coupon_info = Coupon.get(Coupon.user == user)
-    if user != models_to_json(coupon_info)["user"]:
+    coupon = Coupon.get(Coupon.id == c_id)
+    if user != coupon.user.username:
         raise Error("User not matched")
-    if coupon_info["status"] != "可用":
+    if coupon.status != "可用":
         raise Error("This coupon cannot be used any more")
-    coupon = Coupon.update(status="已使用").where(Coupon.id == c_id)
-    coupon.execute()
-    after_price = Coupon.select().where(coupon.id == c_id)
-    after_price = before_price - models_to_json(after_price)["value"]
+    if coupon.situation > before_price:
+        raise Error("situation not suitable")
+    coupon.status = "已使用"
+    after_price = before_price - coupon.value
+    coupon.save()
     return after_price
 
 
 def add_coupon_template_to_all_user(template_id):
     template = CouponTemplate.get(CouponTemplate.id == template_id)
-    today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.today().replace(hour=0, minute=0,
+                                     second=0, microsecond=0)
     expired = today + timedelta(days=template.duration)
     data = {"desc": template.desc, "situation": template.situation,
             "value": template.value, "expired": expired,
@@ -74,6 +83,7 @@ def add_coupon_template_to_all_user(template_id):
     users = User.select(User.username)
     for u in users:
         Coupon.create(user=u.username, **data)
+    return True
 
 
 def add_coupon_template(**kwargs):

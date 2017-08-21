@@ -19,8 +19,6 @@ from server.service import appointment_service
 from server.service import user_service
 from server.service import e_bike_model_service
 from server.service import storage_service
-# from server.service import appointment_service
-
 
 from server.utility.exception import Error
 from server.utility.json_utility import models_to_json
@@ -30,6 +28,7 @@ PREFIX = '/manager'
 manager = Blueprint("manager", __name__, url_prefix=PREFIX)
 
 
+# ***************************** 订单管理 ***************************** #
 # 获取所有订单
 @manager.route('/appointments', methods=['GET'])
 def get_appointments():
@@ -70,6 +69,7 @@ def cancel_appointment():
     pass
 
 
+# ***************************** 电动车管理 ***************************** #
 # 电动车售卖价格设置
 # 1.获取所有电动车
 @manager.route('/e_bike_model/all', methods=['GET'])
@@ -106,6 +106,7 @@ def modify_e_bike_model(name):
     pass
 
 
+# ***************************** 库存管理 ***************************** #
 # 库存设置
 # 1.获取库存
 @manager.route('/storage/all', methods=['GET'])
@@ -141,6 +142,8 @@ def modify_storage():
 # 个人账户、押金金额、冻结账户设置（暂时忽略）
 
 
+# ***************************** 优惠劵管理 ***************************** #
+
 # 优惠券设置
 # 查看优惠劵类型
 
@@ -151,6 +154,8 @@ def add_coupon_to_users():
     coupon_template_id = data["coupon_template_id"]
     pass
 
+
+# ***************************** 用户管理 ***************************** #
 
 # 用户查看
 @manager.route('/users/', methods=['GET'])

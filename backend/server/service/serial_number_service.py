@@ -2,7 +2,6 @@ from playhouse.shortcuts import model_to_dict
 from server.service import store_service
 from server.database.model import SerialNumber
 
-# from server.utility.constant import *
 
 """
 1」学校代码：【浙大为A】、【浙工大、万向职业技术学院、浙江外国语学院为B】、【浙江科技学院、长征职业技术学院为C】

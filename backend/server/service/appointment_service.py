@@ -29,8 +29,12 @@ from server.service import refund_table_service
 
 # from server.service import e_bike_model_service
 
-from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
-from server.utility.constant import *
+from server.utility.exception import WrongSerialsNumber, Error
+
+from server.utility.constant.basic_constant import *
+from server.utility.constant.custom_constant import get_custom_const
+
+# from server.utility.json_utility import models_to_json
 
 
 # ***************************** buy appointment ***************************** #
@@ -84,14 +88,14 @@ def add_appointment(**kwargs):
 
 # 2. 预付款成功
 def appointment_payment_success(user, appointment_id):
-
     appointment = Appointment.get(
         id=appointment_id,
         user=user)
     appointment.status = APPOINTMENT_STATUS["1"]
     # 预付款后更改新的过期日期
     appointment.expired_date_time = \
-        datetime.now()+timedelta(days=APPOINTMENT_EXPIRED_DAYS)
+        datetime.now() + timedelta(
+            days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
     return appointment.save()
 
 
@@ -120,7 +124,7 @@ def total_payment_success(user, appointment_id):
         return appointment.save()
 
     else:
-        status = APPOINTMENT_STATUS["2"]
+        status = APPOINTMENT_STATUS["3"]
         appointment.status = status
         return appointment.save()
 
@@ -187,13 +191,19 @@ def check_serial_number(appointment, serial_number):
 # 检查用户订单数量
 def check_user_appointment(user, type):
     count = Appointment.select().where(
-        Appointment.user == user, Appointment.type == type).count()
+        Appointment.user == user,
+        Appointment.type == type,
+        ~(Appointment.status << [APPOINTMENT_STATUS["-1"],
+                                 APPOINTMENT_STATUS["-2"],
+                                 APPOINTMENT_STATUS["3"]
+                                 ])
+    ).count()
     if type == "租车":
         if count >= 1:
             return False
         else:
             return True
-    if count >= MAXIMUM_APPOINTMENT:
+    if count >= get_custom_const("MAXIMUM_APPOINTMENT"):
         return False
     else:
         return True
@@ -292,7 +302,8 @@ def add(**kwargs):
     """
     # 生成到期时间
     date = datetime.now()
-    expired_date_time = date + timedelta(days=APPOINTMENT_EXPIRED_DAYS)
+    expired_date_time = date + timedelta(
+        days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
 
     appointment = Appointment.create(
         date=date, expired_date_time=expired_date_time, **kwargs)
@@ -311,9 +322,22 @@ def get(*query, **kwargs):
 
 def get_all(username=None):
     if username:
-        appointments = Appointment.select().where(Appointment.user == username)
+        appointments = Appointment.select().where(
+            Appointment.user == username,
+        )
     else:
         appointments = Appointment.select()
+    return appointments
+
+
+def manager_get(type, period):
+    today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+    before = today-timedelta(days=period)
+
+    appointments = Appointment.select().where(
+        Appointment.type == type,
+        Appointment.date >= before
+    )
     return appointments
 
 
@@ -357,14 +381,22 @@ def remove_by_id(appointment_id):
     return query.execute()
 
 
+def count():
+    return Appointment.select().count()
+
+
 # ***************************** unit test ***************************** #
 def add_template():
     template_json = [
         {
-            "user": "bingwei",
+            "username": "bingwei",
+
             "e_bike_model": "小龟电动车 爆款 48V、12A",
             "color": "蓝",
-            "category": E_BIKE_MODEL_CATEGORY["0"],
+            "category": "小龟",
+            "type": "买车",
+            "note": "",
+            "coupon": None
         }
     ]
     for json in template_json:
@@ -373,6 +405,8 @@ def add_template():
 
 
 if __name__ == '__main__':
+    # print(models_to_json(
+    #     Appointment.select().where(Appointment.category == None)))
     # print(Appointment.get(Appointment.id == 1))
     # print(add_template())
     pass

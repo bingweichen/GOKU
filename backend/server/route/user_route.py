@@ -18,6 +18,7 @@ from flask_jwt_extended import create_access_token
 
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
+
 from server.service import user_service
 from server.utility.exception import PasswordError
 
@@ -66,7 +67,7 @@ def register():
             # account=data.pop("account"),
             # account_type=data.pop("account_type"),
             **data)
-        
+
         added_user = model_to_dict(added_user)
         added_user.pop('password')
         return jsonify({'response': added_user}), 200
@@ -147,4 +148,3 @@ def create_virtual_card():
         return jsonify({'response': model_to_dict(virtual_card)}), 200
     except Exception as e:
         return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400
-

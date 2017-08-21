@@ -14,7 +14,7 @@ import json
 from peewee import *
 
 from server.database.db import database
-from server.utility.constant import *
+from server.utility.constant.basic_constant import DELIVERY, APPOINTMENT_STATUS
 
 
 class JSONField(TextField):
@@ -64,8 +64,8 @@ class User(BaseModel):
 
 
 class VirtualCard(BaseModel):
-    card_no = ForeignKeyField(User, primary_key=True,
-                              related_name="virtual_cards")
+    card_no = ForeignKeyField(
+        User, primary_key=True, related_name="virtual_cards")
     deposit = FloatField(default=0.0)
     balance = FloatField(default=0.0)
 
@@ -151,6 +151,7 @@ class Appointment(BaseModel):
     reduced_price = FloatField(null=True)  # 优惠价格
 
     appointment_fee = FloatField(default=0)  # 预约金
+    rent_deposit = FloatField(default=0)  # 租车押金
     delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
@@ -184,7 +185,6 @@ class BatteryReport(BaseModel):
     # 当前使用人
     current_owner = ForeignKeyField(
         User, related_name='battery_report', null=True)
-
     report_time = DateTimeField()  # 保修单生成时间
     # reporter = ForeignKeyField(User, related_name=)
 
@@ -247,7 +247,7 @@ class RefundTable(BaseModel):
 class ReportTable(BaseModel):
     appointment = ForeignKeyField(Appointment)
     user = ForeignKeyField(User)
-    address = CharField()
+    address = CharField()  # 报修地址
     comment = CharField()
     phone = BigIntegerField(null=True)
     date = DateTimeField()
@@ -261,7 +261,7 @@ class Const(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [CouponTemplate, Coupon]
+table_temp = [Appointment]
 
 
 def create_tables():
