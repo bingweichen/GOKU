@@ -93,6 +93,7 @@ def appointment_payment_success(user, appointment_id):
         id=appointment_id,
         user=user)
     appointment.status = APPOINTMENT_STATUS["1"]
+    appointment.appointment_fee = get_custom_const("DEFAULT_APPOINTMENT_FEE")
     # 预付款后更改新的过期日期
     appointment.expired_date_time = \
         datetime.now() + timedelta(
@@ -121,6 +122,7 @@ def total_payment_success(user, appointment_id):
             datetime.now() + timedelta(
                 days=RENT_TIME_PERIOD[rent_time_period]*365)
         appointment.end_time = end_time
+        appointment.rent_deposit = get_custom_const("RENT_DEPOSIT")
         status = APPOINTMENT_STATUS["2"]
         appointment.status = status
         return appointment.save()
