@@ -31,6 +31,11 @@ class BaseModel(Model):
         database = database
 
 
+class Const(BaseModel):
+    key = CharField(primary_key=True)
+    value = JSONField()
+
+
 class Store(BaseModel):
     name = CharField(unique=True, primary_key=True)
     address = CharField(unique=True)
@@ -152,8 +157,13 @@ class Appointment(BaseModel):
     appointment_fee = FloatField(default=0)  # 预约金
     rent_deposit = FloatField(default=0)  # 租车押金
 
-    # appointment_fee_needed = FloatField(default=100)  # 需要的预约金
-    # rent_deposit_needed = FloatField(default=1000)  # 需要的押金
+    appointment_fee_needed = \
+        FloatField(default=Const.get(
+                key="DEFAULT_APPOINTMENT_FEE").value)  # 需要的预约金
+
+    rent_deposit_needed = \
+        FloatField(default=Const.get(
+            key="RENT_DEPOSIT").value)  # 需要的押金
 
     delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
@@ -256,15 +266,10 @@ class ReportTable(BaseModel):
     date = DateTimeField()
 
 
-class Const(BaseModel):
-    key = CharField(primary_key=True)
-    value = JSONField()
-
-
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [VirtualCard]
+table_temp = [Appointment]
 
 
 def create_tables():
