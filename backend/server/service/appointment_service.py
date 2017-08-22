@@ -120,7 +120,7 @@ def total_payment_success(user, appointment_id):
         end_time = \
             datetime.now() + timedelta(days=RENT_TIME_PERIOD[rent_time_period])
         appointment.end_time = end_time
-        status = APPOINTMENT_STATUS["2"]
+        status = RENT_APPOINTMENT_STATUS["2"]
         appointment.status = status
         return appointment.save()
 
