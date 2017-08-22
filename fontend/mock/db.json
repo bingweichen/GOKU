@@ -1,0 +1,75 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "cars": [
+    {
+      "image": "http://club-img.kdslife.com/attach/1k0/rv/6e/oab8pq-1iab.jpeg@1o_1l_600w_90q.jpg",
+      "title": "小龟电动车小龟电动车",
+      "price": "5000.00",
+      "visited": 111111,
+      "id": 1
+    },
+    {
+      "image": "http://club-img.kdslife.com/attach/1k0/rv/6e/oab8pq-1iab.jpeg@1o_1l_600w_90q.jpg",
+      "title": "小龟电动车小龟电动车",
+      "price": "5000.00",
+      "visited": 22222,
+      "id": 2
+    },
+    {
+      "image": "http://club-img.kdslife.com/attach/1k0/rv/6e/oab8pq-1iab.jpeg@1o_1l_600w_90q.jpg",
+      "title": "小龟电动车小龟电动车",
+      "price": "5000.00",
+      "visited": 33333,
+      "id": 3
+    },
+    {
+      "image": "http://club-img.kdslife.com/attach/1k0/rv/6e/oab8pq-1iab.jpeg@1o_1l_600w_90q.jpg",
+      "title": "小龟电动车小龟电动车",
+      "price": "5000.00",
+      "visited": 33333,
+      "id": 4
+    }
+  ],
+  "cardetail": [
+    {
+      "id": 1,
+      "images": [
+        "http://gw.alicdn.com/imgextra/i1/799071099/TB22_9ylFXXXXbwXXXXXXXXXXXX_!!799071099.jpg_760x760q50s150.jpg_.webp",
+        "http://gw.alicdn.com/imgextra/i3/TB15jekQXXXXXcjaFXXXXXXXXXX_!!0-item_pic.jpg_760x760q50s150.jpg_.webp"
+      ],
+      "price": 5000,
+      "title": "小龟电动车小龟电动车",
+      "visted": 20000,
+      "size": [
+        {
+          "value": "redcar",
+          "label": "红色的车"
+        },
+        {
+          "value": "bluecar",
+          "label": "蓝色的车"
+        }
+      ],
+      "introduce": [
+        "http://gw.alicdn.com/imgextra/i3/737551680/TB27tjejHBnpuFjSZFGXXX51pXa_!!737551680.jpg_970x970q50s150.jpg_.webp",
+        "http://gw.alicdn.com/imgextra/i3/737551680/TB2kPaNi4BmpuFjSZFDXXXD8pXa_!!737551680.jpg_970x970q50s150.jpg_.webp"
+      ]
+    }
+  ]
+}
