@@ -118,7 +118,8 @@ def total_payment_success(user, appointment_id):
     if appointment.type == "租车":  # 租车
         rent_time_period = appointment.rent_time_period
         end_time = \
-            datetime.now() + timedelta(days=RENT_TIME_PERIOD[rent_time_period])
+            datetime.now() + timedelta(
+                days=RENT_TIME_PERIOD[rent_time_period]*365)
         appointment.end_time = end_time
         status = APPOINTMENT_STATUS["2"]
         appointment.status = status

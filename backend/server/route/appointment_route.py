@@ -114,8 +114,8 @@ def add_appointment():
     except Exception as e:
         return jsonify(
             {'response': {
-                'message': '%s' % e.args,
-                'error': "生成订单失败"
+                'error': "生成订单失败",
+                'message': '%s' % e.args
             }}), 400
 
 
