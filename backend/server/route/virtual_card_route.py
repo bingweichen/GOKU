@@ -17,12 +17,31 @@ from server.utility.json_utility import models_to_json
 
 PREFIX = '/virtual_card'
 
-virtual_card = Blueprint("virtual_card", __name__, url_prefix=PREFIX)
+virtual_card_app = Blueprint("virtual_card", __name__, url_prefix=PREFIX)
 
+
+# ***************************** 虚拟卡 ***************************** #
+# 获取虚拟卡
+@virtual_card_app.route('', methods=['GET'])
+def get_virtual_card():
+    username = request.args.get("username")
+    try:
+        virtual_card = virtual_card_service.get_virtual_card(
+            card_no=username
+        )
+        return jsonify({'response': virtual_card}), 200
+
+    except DoesNotExist as e:
+        return jsonify({
+            'response': {
+                'error': e.args,
+                'message': '未开通虚拟消费卡'
+            }
+        })
 
 # ***************************** 押金 ***************************** #
 # 获取押金数额
-@virtual_card.route('/deposit', methods=['GET'])
+@virtual_card_app.route('/deposit', methods=['GET'])
 def get_deposit():
     """
     check if the card deposited
@@ -46,7 +65,7 @@ def get_deposit():
 
 
 # 支付押金
-@virtual_card.route('/deposit', methods=['POST'])
+@virtual_card_app.route('/deposit', methods=['POST'])
 def pay_deposit():
     """
     pay deposit
@@ -69,7 +88,7 @@ def pay_deposit():
 
 
 # 退还押金
-@virtual_card.route('/deposit/return_deposit', methods=['POST'])
+@virtual_card_app.route('/deposit/return_deposit', methods=['POST'])
 def return_deposit():
     """
     eg = {
@@ -97,7 +116,7 @@ def return_deposit():
 
 # ***************************** 余额 ***************************** #
 # 获取余额
-@virtual_card.route('/balance', methods=['GET'])
+@virtual_card_app.route('/balance', methods=['GET'])
 def get_card_balance():
     """
     get card balance
@@ -123,31 +142,31 @@ def get_card_balance():
         })
 
 
-# 消费余额
-@virtual_card.route('/balance/consume', methods=['POST'])
-def consume_virtual_card():
-    """
-    consume virtual card
-
-    eg = {
-    "username": "bingwei",
-    "amount": 120
-    }
-    :return:
-    """
-    data = request.get_json()
-    result, record = virtual_card_service.consume_virtual_card(
-        card_no=data["username"],
-        amount=data["amount"],
-    )
-    return jsonify({'response': {
-        "result": result,
-        "record": model_to_dict(record)
-    }}), 200
+# # 消费余额
+# @virtual_card.route('/balance/consume', methods=['POST'])
+# def consume_virtual_card():
+#     """
+#     consume virtual card
+#
+#     eg = {
+#     "username": "bingwei",
+#     "amount": 120
+#     }
+#     :return:
+#     """
+#     data = request.get_json()
+#     result, record = virtual_card_service.consume_virtual_card(
+#         card_no=data["username"],
+#         amount=data["amount"],
+#     )
+#     return jsonify({'response': {
+#         "result": result,
+#         "record": model_to_dict(record)
+#     }}), 200
 
 
 # 充值
-@virtual_card.route('/balance/top_up', methods=['POST'])
+@virtual_card_app.route('/balance/top_up', methods=['POST'])
 def top_up():
     """
     top up virtual card
@@ -171,7 +190,7 @@ def top_up():
 
 # ***************************** 消费记录 ***************************** #
 # 获取消费记录
-@virtual_card.route('/consume_record', methods=['GET'])
+@virtual_card_app.route('/consume_record', methods=['GET'])
 def get_consume_record():
     """
     get consume records

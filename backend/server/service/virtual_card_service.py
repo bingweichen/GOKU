@@ -11,6 +11,7 @@ from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
 from server.database.model import Battery
 from server.service import refund_table_service
+from server.service import battery_rent_service
 
 from server.utility.constant.custom_constant import get_custom_const
 from server.utility.exception import *
@@ -35,13 +36,17 @@ def get_deposit(card_no):
     :param card_no: card number
     :return: True of False
     """
+    # 检查电池租用情况，超过一个月冻结账户
+
+    if not battery_rent_service.check_on_load_batter_rent_date(
+            username=card_no):
+        # 冻结账号
+        result = freeze(card_no)
+        if not result:
+            print("冻结失败", card_no)
+        raise Exception("账号已冻结")
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     return virtual_card.deposit
-    # if deposit:
-    #     deposit = model_to_dict(deposit)
-    #     return float(deposit["deposit"])
-    # else:
-    #     return "No deposit found"
 
 
 def pay_deposit(**kwargs):
@@ -115,18 +120,18 @@ def top_up(**kwargs):
         return result, record
 
 
-    deposit = get_deposit(card_no)
-    if not deposit:
-        return "No deposit"
-    result = VirtualCard.update(balance=VirtualCard.balance+top_up_fee
-                                ).where(VirtualCard.card_no == card_no)
-    balance = get_card_balance(card_no)
-    result.execute()
-    ConsumeRecord.create(card=card_no, consume_event="top up",
-                         consume_date_time=datetime.now(),
-                         consume_fee=top_up_fee,
-                         balance=balance+top_up_fee)
-    return "Top up succeed"
+    # deposit = get_deposit(card_no)
+    # if not deposit:
+    #     return "No deposit"
+    # result = VirtualCard.update(balance=VirtualCard.balance+top_up_fee
+    #                             ).where(VirtualCard.card_no == card_no)
+    # balance = get_card_balance(card_no)
+    # result.execute()
+    # ConsumeRecord.create(card=card_no, consume_event="top up",
+    #                      consume_date_time=datetime.now(),
+    #                      consume_fee=top_up_fee,
+    #                      balance=balance+top_up_fee)
+    # return "Top up succeed"
 
 
 def get_card_balance(card_no):
@@ -254,17 +259,14 @@ def consume_virtual_card(**kwargs):
     # return "Consume " + str(amount) + " succeed"
 
 
-def get_virtual_card_info(card_no):
+def get_virtual_card(card_no):
     """
     get virtual card information
     :param card_no: card number
     :return: card number, deposit and balance
     """
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    info = model_to_dict(virtual_card)
-    return {"card no": info["card_no"]["username"],
-            "deposit": info["deposit"],
-            "balance": info["balance"]}
+    return virtual_card
 
 
 def check_deposit(username):
@@ -279,7 +281,7 @@ def check_deposit(username):
         if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
             return True
         else:
-            raise Error("no enough deposit")
+            raise Error("没有足够的押金")
     else:
         raise Error("no virtual card")
 
@@ -297,6 +299,18 @@ def check_value(card_no):
         raise Error("No Balance")
     return True
 
+
+# 冻结账号
+def freeze(card_no):
+    virtual_card = VirtualCard.get(card_no=card_no)
+    virtual_card.situation = "冻结"
+    return virtual_card.save()
+
+
+def normal(card_no):
+    virtual_card = VirtualCard.get(card_no=card_no)
+    virtual_card.situation = "正常"
+    return virtual_card.save()
 
 # ***************************** for test ***************************** #
 def add_template():

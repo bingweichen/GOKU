@@ -68,8 +68,7 @@ class VirtualCard(BaseModel):
         User, primary_key=True, related_name="virtual_cards")
     deposit = FloatField(default=0.0)
     balance = FloatField(default=0.0)
-
-    # situation = CharField(default="正常")  # 冻结
+    situation = CharField(default="正常")  # 冻结
 
 
 class ConsumeRecord(BaseModel):
@@ -261,7 +260,7 @@ class Const(BaseModel):
 table_list = [User, School, Store, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, BatteryReport, Battery]
 
-table_temp = [Appointment]
+table_temp = [VirtualCard]
 
 
 def create_tables():

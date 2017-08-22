@@ -133,7 +133,7 @@ def create_virtual_card():
     """
 
     eg = {
-     card_no = "bingwei"
+    "card_no": "Shuo_Ren"
     }
 
     :return:
