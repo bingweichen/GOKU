@@ -21,6 +21,7 @@ from flask import jsonify
 from flask import request
 
 from playhouse.shortcuts import model_to_dict
+from peewee import DoesNotExist
 
 from server.service import appointment_service
 from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
@@ -103,9 +104,19 @@ def add_appointment():
         # TODO 内容筛选
         return jsonify({'response': model_to_dict(appointment)}), 200
 
-    except Error as e:
+    except DoesNotExist as e:
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(DoesNotExist), e.args),
+                "message": "未开通虚拟消费卡"
+            }}), 400
+
+    except Exception as e:
         return jsonify(
-            {'response': '%s: %s' % (str(Error), e.args)}), 400
+            {'response': {
+                'message': '%s' % e.args,
+                'error': "生成订单失败"
+            }}), 400
 
 
 # 2. 提交预约款付款成功
@@ -216,4 +227,3 @@ def cancel_appointment():
         return jsonify({'response': result}), 200
 
 # ***************************** unit test ***************************** #
-

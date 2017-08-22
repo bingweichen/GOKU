@@ -281,7 +281,7 @@ def check_deposit(username):
         if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
             return True
         else:
-            raise Error("no enough deposit")
+            raise Error("没有足够的押金")
     else:
         raise Error("no virtual card")
 
