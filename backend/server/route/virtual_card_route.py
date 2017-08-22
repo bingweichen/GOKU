@@ -29,6 +29,7 @@ def get_virtual_card():
         virtual_card = virtual_card_service.get_virtual_card(
             card_no=username
         )
+        virtual_card = model_to_dict(virtual_card)
         return jsonify({'response': virtual_card}), 200
 
     except DoesNotExist as e:
@@ -38,6 +39,7 @@ def get_virtual_card():
                 'message': '未开通虚拟消费卡'
             }
         })
+
 
 # ***************************** 押金 ***************************** #
 # 获取押金数额
