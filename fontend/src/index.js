@@ -11,11 +11,11 @@ const app = dva();
 // app.model(require('./models/example'));
 app.model(require('./models/IndexPage'));
 
-app.model(require("./models/person"));
+app.model(require('./models/person'));
 
-app.model(require("./models/order"));
+app.model(require('./models/order'));
 
-app.model(require("./models/shop"));
+app.model(require('./models/shop'));
 
 // 4. Router
 app.router(require('./router'));
