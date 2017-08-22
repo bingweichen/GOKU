@@ -34,6 +34,7 @@ from server.utility.exception import WrongSerialsNumber, Error
 from server.utility.constant.basic_constant import *
 from server.utility.constant.custom_constant import get_custom_const
 
+
 # from server.utility.json_utility import models_to_json
 
 
@@ -130,28 +131,31 @@ def total_payment_success(user, appointment_id):
 
 
 # 取消订单
-def cancel_appointment(username, appointment_id, **kwargs):
+def cancel_appointment(appointment_id, username=None, **kwargs):
     appointment = Appointment.get(id=appointment_id)
-    # 退还押金
-    return_appointment_fee(username, appointment, **kwargs)
+    if username and username != appointment.user:
+        raise Exception("not your appointment")
 
-    # 更改 serial number
-    serial_number_service.modify_available_appointment(
-        appointment.serial_number, True, None
-    )
-    # 退还库存
-    status = APPOINTMENT_STATUS["-1"]
-    increment_storage(appointment_id)
-    appointment.status = status
-    return appointment.save()
+    terminate_appointment(appointment_id, appointment, **kwargs)
+
+    appointment.status = APPOINTMENT_STATUS["-1"]
+    result = appointment.save()
+    return result
 
 
 # 订单过期
 def expired_appointment(appointment_id):
     appointment = Appointment.get(id=appointment_id)
-    status = APPOINTMENT_STATUS["-2"]
-    increment_storage(appointment_id)
-    appointment.status = status
+
+    terminate_appointment(
+        appointment_id,
+        appointment,
+        account="",
+        account_type="",
+        comment=""
+    )
+
+    appointment.status = APPOINTMENT_STATUS["-2"]
     return appointment.save()
 
 
@@ -175,10 +179,11 @@ def return_appointment_fee(username, appointment, **kwargs):
 # 退还库存
 def increment_storage(appointment_id):
     appointment = Appointment.get(id=appointment_id)
-    storage_service.increment_num(
+    result = storage_service.increment_num(
         model=appointment.e_bike_model,
         color=appointment.color
     )
+    return result
 
 
 # 检查提车码
@@ -265,21 +270,17 @@ def check_valid(appointment):
 
 
 # 4. 用户还车，由管理员执行
-def return_e_bike(appointment_id, serial_number):
+def return_e_bike(appointment_id, serial_number, **kwargs):
     appointment = Appointment.get(id=appointment_id)
-    if check_serial_number(
+    if not check_serial_number(
             serial_number=serial_number,
             appointment=appointment):
-        appointment.status = RENT_APPOINTMENT_STATUS["3"]
-        increment_storage(appointment_id)
-        # 更改 serial number
-        serial_number_service.modify_available_appointment(
-            code=appointment.serial_number,
-            available=True,
-            appointment=None
-        )
-        return appointment.save()
-    raise Error("wrong serial number")
+        raise Error("wrong serial number")
+
+    appointment.status = RENT_APPOINTMENT_STATUS["3"]
+    result = appointment.save()
+    terminate_appointment(appointment_id, appointment, **kwargs)
+    return result
 
 
 # ***************************** general ***************************** #
@@ -330,14 +331,16 @@ def get_all(username=None):
     return appointments
 
 
-def manager_get(type, period):
+def manager_get(type, period, **kwargs):
     today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
-    before = today-timedelta(days=period)
+    before = today - timedelta(days=period)
 
     appointments = Appointment.select().where(
         Appointment.type == type,
         Appointment.date >= before
-    )
+    ).paginate(
+        offset=kwargs["offset"],
+        limit=kwargs["limit"])
     return appointments
 
 
@@ -383,6 +386,24 @@ def remove_by_id(appointment_id):
 
 def count():
     return Appointment.select().count()
+
+
+def terminate_appointment(appointment_id, appointment, **kwargs):
+    # 增加库存
+    increment_storage(appointment_id)
+    # 更改 serial number
+    serial_number_service.modify_available_appointment(
+        code=appointment.serial_number,
+        available=True,
+        appointment=None
+    )
+    # 退还押金
+    username = appointment.user
+    return_appointment_fee(
+        username,
+        appointment,
+        **kwargs
+    )
 
 
 # ***************************** unit test ***************************** #

@@ -35,6 +35,7 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 @appointment_app.route('/all', methods=['GET'])
 def get_all_appointments():
     username = request.args.get('username')
+
     appointments = appointment_service.get_all(username)
     return jsonify({
         'response': {
@@ -46,6 +47,7 @@ def get_all_appointments():
 def get_appointment():
     username = request.args.get('username')
     appointment_id = request.args.get('appointment_id')
+
     appointment = appointment_service.get_by_id(
         appointment_id=appointment_id, username=username)
     return jsonify({

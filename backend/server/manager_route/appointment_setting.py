@@ -2,7 +2,7 @@
 """
 @author: larry.shuoren@outlook.com
 @time: 8/16/17
-@desc: appointment query route
+@desc: 订单管理
 
 """
 
@@ -13,17 +13,23 @@ from flask import request
 from server.service import appointment_service
 
 from server.utility.json_utility import models_to_json
-
+from server.utility.constant.basic_constant import *
 PREFIX = '/manager/appointment_setting'
 
-appointment_setting = Blueprint("appointment_setting", __name__, url_prefix=PREFIX)
+appointment_setting = Blueprint(
+    "appointment_setting", __name__, url_prefix=PREFIX)
 
 
 # ***************************** 查询 ***************************** #
-# 查询所有订单
-@appointment_setting.route('/appointments/all', methods=['GET'])
+# 查询所有订单 (分页）
+@appointment_setting.route('/appointments/all/', methods=['GET'])
 def get_appointments():
-    appointments = appointment_service.get_all()
+    offset, limit = request.args.get("offset"), request.args.get("limit")
+
+    appointments = appointment_service.get_all_paginate(
+        int(offset),
+        int(limit)
+    )
     return jsonify({
         'response': {
             "appointments": models_to_json(appointments)
@@ -41,9 +47,12 @@ def get_appointment_by_type():
     """
     appointment_type = request.args.get("appointment_type")
     period = request.args.get("period")
+
     appointments = appointment_service.manager_get(
         type=appointment_type,
-        period=period
+        period=period,
+        offset=request.args.get("offset"),
+        limit=request.args.get("limit")
     )
     return jsonify({
         'response': {
@@ -66,11 +75,23 @@ def count_appointments():
 # 用户还车，由管理员执行，（到期日前还车成功）
 @appointment_setting.route('/appointment/return_e_bike', methods=['POST'])
 def return_e_bike():
+    """
+    eg = {
+    "appointment_id": 1,
+    "serial_number": "A00001"
+    }
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     try:
         result = appointment_service.return_e_bike(
             appointment_id=data["appointment_id"],
-            serial_number=data["serial_number"]
+            serial_number=data["serial_number"],
+
+            account=data.pop("account"),
+            account_type=data.pop("account_type"),
+            comment=data.pop("comment")
         )
         if result:
             return jsonify({'response': result}), 200
@@ -79,27 +100,40 @@ def return_e_bike():
             {'response': '%s: %s' % (str(Exception), e.args)}), 400
 
 
-# 更改预约单状态
-@appointment_setting.route('/modify_status/<string:appointment_id>/<string:status>',
-                       methods=['POST'])
+# 更改订单状态
+@appointment_setting.route(
+    '/modify_status/<string:appointment_id>/<string:status>', methods=['POST'])
 def modify_appointment_status(appointment_id, status):
-    # data = request.get_json()
-    # status = data
+    """
+
+    :param appointment_id:
+    :type appointment_id:
+    :param status:
+    :type status:
+    :return:
+    :rtype:
+    """
     result = appointment_service.modify_status(appointment_id, status)
     if result:
         return jsonify({'response': "modify success"}), 200
     else:
         return jsonify({'response': "no appointment find"}), 404
-    pass
 
 
 # 删除订单
-@appointment_setting.route('/<string:appointment_id>',
-                       methods=['DELETE'])  # test complete
+@appointment_setting.route('/<string:appointment_id>', methods=['DELETE'])
 def remove_appointment(appointment_id):
     result = appointment_service.remove_by_id(appointment_id)
     if result:
         return jsonify({'response': "delete success"}), 200
     else:
         return jsonify({'response': "no appointment find"}), 404
-    pass
+
+
+# 订单状态列表
+@appointment_setting.route('/appointments/status', methods=['GET'])
+def get_appointment_status_list():
+    return jsonify({'response': {
+        "buy": APPOINTMENT_STATUS,
+        "rent": RENT_APPOINTMENT_STATUS
+    }}), 200
