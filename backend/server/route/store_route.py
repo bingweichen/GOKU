@@ -23,7 +23,7 @@ PREFIX = '/store'
 store_app = Blueprint("store", __name__, url_prefix=PREFIX)
 
 
-@store_app.route('/all', methods=['GET'])  # test complete
+@store_app.route('/all', methods=['GET'])
 def get_stores():
     """
     eg = http://localhost:5000/store/all?username=bingwei
