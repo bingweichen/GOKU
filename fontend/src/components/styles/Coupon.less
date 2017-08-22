@@ -1,0 +1,54 @@
+.coupon {
+    display: flex;
+    height: 1.7rem;
+    position: relative;
+    background-color: #ffffff;
+    margin-bottom: .4rem;
+}
+
+.coupon .left {
+    border-left: .08rem solid red;
+    border-top: 1px solid #333333;
+    border-bottom: 1px solid;
+    border-right: 1px dashed;
+    padding: .08rem .21rem;
+    flex: 1;
+}
+
+.coupon .left .desc,
+.coupon .left .time,
+{
+    color: #666666;
+    font-size: .23rem;
+}
+
+.coupon .right {
+    width: 1.7rem;
+    border: 1px solid #666666;
+    line-height: 1.7rem;
+    text-align: center;
+    font-size: .45rem;
+    color: red;
+    border-left: none;
+}
+
+.coupon .top,
+.coupon .bottom {
+    border-radius: .1rem;
+    position: absolute;
+    right: 1.6rem;
+    background: #ffffff;
+    width: .2rem;
+    height: .2rem;
+}
+
+.coupon .top {
+    box-shadow: 0rem 0.02rem 0rem 0rem #BEBEBE;
+    ;
+    top: -0.1rem;
+}
+
+.coupon .bottom {
+    box-shadow: 0px -2px 0px 0px #BEBEBE;
+    bottom: -0.1rem;
+}

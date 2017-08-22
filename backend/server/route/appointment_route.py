@@ -141,7 +141,7 @@ def upload_code():
     eg = {
     "username": "bingwei",
     "appointment_id": 3,
-    "serials_number": "AM0002"
+    "serial_number": "AM0002"
     }
 
     :return: 1 for success
