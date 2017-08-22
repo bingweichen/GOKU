@@ -151,6 +151,10 @@ class Appointment(BaseModel):
 
     appointment_fee = FloatField(default=0)  # 预约金
     rent_deposit = FloatField(default=0)  # 租车押金
+
+    # appointment_fee_needed = FloatField(default=100)  # 需要的预约金
+    # rent_deposit_needed = FloatField(default=1000)  # 需要的押金
+
     delivery = CharField(default=DELIVERY["0"])
     status = CharField(default=APPOINTMENT_STATUS["0"])
 
