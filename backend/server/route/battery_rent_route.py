@@ -53,7 +53,11 @@ def get_user_battery():
         return jsonify({'response': model_to_dict(battery)}), 200
     except DoesNotExist as e:
         return jsonify({
-            'response': '%s: %s' % (str(DoesNotExist), e.args)}), 400
+            'response': {
+                'error': e.args,
+                'message': '无租用电池'
+            }
+        }), 400
 
 
 # 3. 租用电池

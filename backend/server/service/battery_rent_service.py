@@ -16,6 +16,7 @@ from server.service import virtual_card_service
 from server.database.model import Battery
 from server.database.model import BatteryRecord
 from server.database.model import BatteryReport
+from server.database.model import User
 
 from server.utility.exception import *
 from server.utility.constant.custom_constant import get_custom_const
@@ -52,6 +53,10 @@ def rent_battery(**kwargs):
 
     serial_number = kwargs["serial_number"]
     username = kwargs["username"]
+
+    # 检查是否已经租用电池
+    if check_user_on_load(username):
+        raise Error("还未归还电池")
     if not virtual_card_service.check_deposit(username):
         raise Error("没有足够的押金")
     battery = Battery.get(serial_number=serial_number)
@@ -274,9 +279,17 @@ def get_on_load_battery(username=None):
         return battery
 
 
+def check_user_on_load(username):
+    user = User.get(username=username)
+    battery = user.battery
+    if battery:
+        return True
+    else:
+        return False
+
 if __name__ == "__main__":
     pass
-    add_script()
+    print(check_on_load("Bingwei"))
     # print(calculate_price(datetime(2017, 8, 1, 6), datetime(2017, 8, 16, 5)))
     # rent_battery(username="bingwei", serial_number="A00001")
     # return_battery("bingwei", "A00001")
