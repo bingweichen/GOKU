@@ -39,7 +39,11 @@ def get_battery(serial_number):
 
 def get_user_battery(username):
     battery = Battery.get(Battery.user == username)
-    return battery
+    battery_record = BatteryRecord.get(
+        battery=battery,
+        situation="借用中"
+    )
+    return battery, battery_record
 
 
 def rent_battery(**kwargs):

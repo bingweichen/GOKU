@@ -47,10 +47,21 @@ def get_battery(serial_number):
 def get_user_battery():
     username = request.args.get("username")
     try:
-        battery = battery_rent_service.get_user_battery(
+        battery, battery_record = battery_rent_service.get_user_battery(
             username=username
         )
-        return jsonify({'response': model_to_dict(battery)}), 200
+        # battery = model_to_dict(battery)
+        # battery_record = model_to_dict(battery_record)
+        battery = {
+            "serial_number": battery.serial_number,
+            "rent_date": battery_record.rent_date
+        }
+        return jsonify({
+            'response': {
+                "battery": battery,
+                # "battery_record": battery_record
+            }
+        }), 200
     except DoesNotExist as e:
         return jsonify({
             'response': {
