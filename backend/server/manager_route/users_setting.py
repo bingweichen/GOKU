@@ -26,6 +26,7 @@ from server.service import refund_table_service
 from server.service import report_table_service
 from server.service import virtual_card_service
 from server.service import battery_record_service
+from server.service import battery_rent_service
 
 
 
@@ -116,5 +117,19 @@ def get_battery_record():
 
 
 # ***************************** 个人现在使用的闪充 ***************************** #
+@user_setting.route('/on_load_battery', methods=['GET'])
+def get_on_load_battery():
+    username = request.args.get("username")
+    try:
+        battery = battery_rent_service.get_on_load_battery(
+            username=username
+        )
+        battery = model_to_dict(battery)
+        return jsonify({'response': battery}), 200
+    except Exception as e:
+        return jsonify({'response': {
+            "message": "没有正在使用的电池",
+            "error": e.args,
+        }}), 400
 
 

@@ -283,7 +283,7 @@ def check_deposit(username):
         else:
             raise Error("没有足够的押金")
     else:
-        raise Error("no virtual card")
+        raise Error("未开通虚拟卡")
 
 
 def check_value(card_no):

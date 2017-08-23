@@ -111,9 +111,8 @@ def add_e_bike_model():
     data = request.get_json()
     try:
         e_bike_model = e_bike_model_service.add(**data)
-        if e_bike_model:
-            e_bike_model = model_to_dict(e_bike_model)
-            return jsonify({'response': e_bike_model}), 200
+        e_bike_model = model_to_dict(e_bike_model)
+        return jsonify({'response': e_bike_model}), 200
     except Exception as e:
         return jsonify({'response': {
             "message": "错误",
@@ -138,7 +137,6 @@ def remove_e_bike_model(name):
 def get_all_storage():
     storage = storage_service.get_all()
     return jsonify({'response': models_to_json(storage)}), 200
-    pass
 
 
 # 2. 获取单个库存

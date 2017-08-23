@@ -61,10 +61,14 @@ def get_user_battery():
 def rent_battery():
     """
     modify the user of e-bike
+
+    eg = {
+    "username": "bingwei",
+    "serial_number": "A00001"
+    }
+
     :return:
     """
-    # b_id: battery id
-    # owner: user
     data = request.get_json()
     try:
         modified = battery_rent_service.rent_battery(
@@ -72,9 +76,20 @@ def rent_battery():
             serial_number=data["serial_number"]
         )
         return jsonify({'response': modified}), 200
-    except Error as e:
+    except DoesNotExist as e:
         return jsonify({
-            'response': '%s: %s' % (str(Error), e.args)}), 400
+            'response': {
+                'error': e.args,
+                'message': '未开通虚拟消费卡'
+            }
+        }), 400
+    except Error as e:
+        return jsonify(
+            {'response': {
+                'error': '%s' % e.args,
+                'message': '%s' % e.args
+            }}), 400
+
 
 
 # 4. 归还电池 （还没想清楚如何归还，用户点击归还就还了吗？）

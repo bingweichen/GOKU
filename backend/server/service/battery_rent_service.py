@@ -53,10 +53,10 @@ def rent_battery(**kwargs):
     serial_number = kwargs["serial_number"]
     username = kwargs["username"]
     if not virtual_card_service.check_deposit(username):
-        raise Error("no deposit")
+        raise Error("没有足够的押金")
     battery = Battery.get(serial_number=serial_number)
     if battery.on_loan:
-        raise Error("Battery is on loan")
+        raise Error("电池已被租用")
 
     battery.on_loan = True
     battery.user = username
@@ -98,7 +98,7 @@ def return_battery(username, serial_number):
 
     # 30分钟内不允许归还
     if convert_timedelta(
-                    battery_record.return_date-battery_record.rent_date) < 30:
+                    battery_record.return_date - battery_record.rent_date) < 30:
         raise Exception("30分钟内无法归还")
 
     battery.save()
@@ -184,14 +184,16 @@ def manager_get_current_uses_amount():
     return current_use or 0
 
 
-def manager_get_use_status_by_id(serial_number):
+# 获取相册
+def manager_get_battery(serial_number):
     battery = Battery.select().where(Battery.serial_number == serial_number)
-    loan = battery.on_loan
-    if loan:
-        user = battery.user_id
-        return {"on_loan": True, "user": user}
-    else:
-        return {"on_loan": False}
+    return battery
+    # loan = battery.on_loan
+    # if loan:
+    #     user = battery.user_id
+    #     return {"on_loan": True, "user": user}
+    # else:
+    #     return {"on_loan": False}
 
 
 def manager_get_history_record_by_id(serial_number, period):
@@ -200,7 +202,6 @@ def manager_get_history_record_by_id(serial_number, period):
     record = BatteryRecord.select().where(
         BatteryRecord.battery == serial_number,
         BatteryRecord.return_date >= before)
-    record = record
     return record
 
 
@@ -233,7 +234,7 @@ def calculate_price(rent_date, return_date):
 #
 def convert_timedelta(duration):
     days, seconds = duration.days, duration.seconds
-    total_minutes = days*3600+seconds/60
+    total_minutes = days * 3600 + seconds / 60
     return total_minutes
     # print(days, seconds)
     # hours = seconds // 3600
@@ -263,12 +264,12 @@ def get_on_load_battery(username=None):
     if username:
         battery = Battery.get(
             user=username,
-            on_load=True
+            on_loan=True
         )
         return battery
     else:
         battery = Battery.select().where(
-            on_load=True
+            Battery.on_loan == True
         )
         return battery
 
