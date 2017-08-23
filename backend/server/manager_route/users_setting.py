@@ -24,6 +24,10 @@ from server.service import user_service
 from server.service import appointment_service
 from server.service import refund_table_service
 from server.service import report_table_service
+from server.service import virtual_card_service
+from server.service import battery_record_service
+
+
 
 
 PREFIX = '/manager/user_setting'
@@ -31,7 +35,7 @@ PREFIX = '/manager/user_setting'
 user_setting = Blueprint("user_setting", __name__, url_prefix=PREFIX)
 
 
-# ***************************** 个人中心 ***************************** #
+# ***************************** 查看用户 ***************************** #
 # 获取所有用户
 @user_setting.route('/users', methods=['GET'])
 def get_appointments():
@@ -43,11 +47,11 @@ def get_appointments():
         }}), 200
 
 
-# 订单查询（买车、租车情况、(某个人的订单)。。。
+# ***************************** 个人订单 ***************************** #
 # 获取用户的订单情况
 @user_setting.route('/user/appointment', methods=['GET'])
 def get_user_appointment():
-    username = request.args.get()
+    username = request.args.get("username")
     appointments = appointment_service.get_all(username=username)
     appointments = models_to_json(appointments)
     return jsonify({
@@ -56,40 +60,61 @@ def get_user_appointment():
         }}), 200
 
 
-# # ***************************** 退款表 ***************************** #
-# # 获取所有退款记录
-# @user_setting.route('/refund_table', methods=['GET'])
-# def get_refund_table():
-#     refund_tables = refund_table_service.get_all()
-#     refund_tables = models_to_json(refund_tables)
-#     return jsonify({
-#         'response': {
-#             "refund_tables": refund_tables
-#         }}), 200
-#
-#
-# # 确认退款
-# @user_setting.route('/refund_table/status', methods=['POST'])
-# def modify_refund_table_status():
-#     data = request.get_json()
-#     result = refund_table_service.modify_status(
-#         refund_table_id=data.pop("refund_table_id"),
-#         status="已退款"
-#     )
-#     return jsonify({
-#         'response': {
-#             "result": result
-#         }}), 200
-#
-#
-# # 售后维修记录等）、
-# # ***************************** 报修表 ***************************** #
-# @user_setting.route('/report_table', methods=['GET'])
-# def get_report_table():
-#     report_table = report_table_service.get_all()
-#     report_table = models_to_json(report_table)
-#     return jsonify({
-#         'response': {
-#             "report_table": report_table
-#         }}), 200
+# ***************************** 个人消费记录 ***************************** #
+@user_setting.route('/consume_record', methods=['GET'])
+def get_consume_record():
+    """
+    get consume records
+    :param card_no: card number
+    :return: consume records
+    """
+    username = request.args.get("username")
+    record = virtual_card_service.get_consume_record(
+        card_no=username
+    )
+    if record:
+        return jsonify({'response': models_to_json(record)}), 200
+    else:
+        return jsonify({'response': 'No record found'}), 404
+
+
+# ***************************** 个人退款 ***************************** #
+@user_setting.route('/refund_table', methods=['GET'])
+def get_refund_table():
+    username = request.args.get("username")
+    refund_tables = refund_table_service.get_all(username)
+    return jsonify({
+        'response': {
+            "refund_tables": models_to_json(refund_tables)
+        }}), 200
+
+
+# ***************************** 个人电动车报修 ***************************** #
+@user_setting.route('/report_table', methods=['GET'])
+def get_report_table():
+    username = request.args.get("username")
+    report_tables = report_table_service.get_all(
+        user=username
+    )
+    report_tables = models_to_json(report_tables)
+
+    for i in range(len(report_tables)):
+        report_tables[i]["user"] = report_tables[i]["user"]["username"]
+        report_tables[i]["appointment"].pop("user")
+    return jsonify({'response': report_tables}), 200
+
+
+# ***************************** 个人闪充记录 ***************************** #
+@user_setting.route('/battery_record', methods=['GET'])
+def get_battery_record():
+    username = request.args.get("username")
+    battery_record = battery_record_service.get_all(
+        username=username
+    )
+    battery_record = models_to_json(battery_record)
+    return jsonify({'response': battery_record}), 200
+
+
+# ***************************** 个人现在使用的闪充 ***************************** #
+
 

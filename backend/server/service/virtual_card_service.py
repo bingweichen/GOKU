@@ -70,7 +70,7 @@ def pay_deposit(**kwargs):
         record = ConsumeRecord.create(
             card=card_no,
             consume_event="deposit",
-            consume_date_time=datetime.now(),
+            consume_date_time=datetime.utcnow(),
             consume_fee=deposit_fee,
             balance=virtual_card.balance)
         return result, record
@@ -85,7 +85,7 @@ def pay_deposit(**kwargs):
     #                                 ).where(VirtualCard.card_no == card_no)
     #     result.execute()
     #     ConsumeRecord.create(card=card_no, consume_event="deposit",
-    #                          consume_date_time=datetime.now(),
+    #                          consume_date_time=datetime.utcnow(),
     #                          consume_fee=deposit_fee, balance=balance)
     #     return "Deposit succeed"
     # else:
@@ -114,7 +114,7 @@ def top_up(**kwargs):
         record = ConsumeRecord.create(
             card=card_no,
             consume_event="top up",
-            consume_date_time=datetime.now(),
+            consume_date_time=datetime.utcnow(),
             consume_fee=top_up_fee,
             balance=balance)
         return result, record
@@ -128,7 +128,7 @@ def top_up(**kwargs):
     # balance = get_card_balance(card_no)
     # result.execute()
     # ConsumeRecord.create(card=card_no, consume_event="top up",
-    #                      consume_date_time=datetime.now(),
+    #                      consume_date_time=datetime.utcnow(),
     #                      consume_fee=top_up_fee,
     #                      balance=balance+top_up_fee)
     # return "Top up succeed"
@@ -166,7 +166,7 @@ def return_deposit(**kwargs):
         record = ConsumeRecord.create(
             card=card_no,
             consume_event="return deposit",
-            consume_date_time=datetime.now(),
+            consume_date_time=datetime.utcnow(),
             consume_fee=-deposit, balance=virtual_card.balance)
         # 记录退款
         refund_record = refund_table_service.add(
@@ -189,7 +189,7 @@ def return_deposit(**kwargs):
     #                                 ).where(VirtualCard.card_no == card_no)
     #     result.execute()
     #     ConsumeRecord.create(card=card_no, consume_event="return deposit",
-    #                          consume_date_time=datetime.now(),
+    #                          consume_date_time=datetime.utcnow(),
     #                          consume_fee=-deposit, balance=balance)
     #     # 记录退款
     #     refund_table_service.add(
@@ -239,7 +239,7 @@ def consume_virtual_card(**kwargs):
     record = ConsumeRecord.create(
         card=card_no,
         consume_event="consume",
-        consume_date_time=datetime.now(),
+        consume_date_time=datetime.utcnow(),
         consume_fee=-amount,
         balance=balance)
     return result, record
@@ -254,7 +254,7 @@ def consume_virtual_card(**kwargs):
     #                           ).where(VirtualCard.card_no == card_no)
     # card.execute()
     # ConsumeRecord.create(card=card_no, consume_event="consume",
-    #                      consume_date_time=datetime.now(),
+    #                      consume_date_time=datetime.utcnow(),
     #                      consume_fee=-amount, balance=balance-amount)
     # return "Consume " + str(amount) + " succeed"
 
@@ -312,6 +312,7 @@ def normal(card_no):
     virtual_card.situation = "正常"
     return virtual_card.save()
 
+
 # ***************************** for test ***************************** #
 def add_template():
     template_json = [
@@ -326,16 +327,5 @@ def add_template():
 
 if __name__ == '__main__':
     pass
-    # print("hello world!")
-    # add_template()
-    # print(pay_deposit("Shuo_Ren", 199))
-    # print(get_deposit_status("Shuo_Ren"))
-    # print(top_up("Shuo_Ren", 200))
-    # print(get_card_balance("Shuo_Ren"))
-    # return_deposit("Shuo_Ren")
-    # print(consume_virtual_card("Shuo_Ren", "任性", 10000))
-    # print(consume_virtual_card("Shuo_Ren", "不任性", 10))
-    # print(get_virtual_card_info("Shuo_Ren"))
-    # print(get_consume_record("Shuo_Ren"))
     return_deposit(card_no="bingwei", username="bingwei",
                    account="123456", account_type="weChat")

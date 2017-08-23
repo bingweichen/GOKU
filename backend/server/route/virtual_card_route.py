@@ -13,7 +13,7 @@ from peewee import DoesNotExist
 from server.service import virtual_card_service
 
 from playhouse.shortcuts import model_to_dict
-from server.utility.json_utility import models_to_json
+from server.utility.json_utility import models_to_json, custom_models_to_json
 
 PREFIX = '/virtual_card'
 
@@ -203,7 +203,13 @@ def get_consume_record():
     record = virtual_card_service.get_consume_record(
         card_no=username
     )
+    new_records = custom_models_to_json(record, [
+        "consume_date_time",
+        "consume_event",
+        "consume_fee",
+        "id"
+    ])
     if record:
-        return jsonify({'response': models_to_json(record)}), 200
+        return jsonify({'response': new_records}), 200
     else:
         return jsonify({'response': 'No record found'}), 404

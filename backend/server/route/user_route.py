@@ -133,17 +133,17 @@ def create_virtual_card():
     """
 
     eg = {
-    "card_no": "Shuo_Ren"
+    "username": "Shuo_Ren"
     }
 
     :return:
     :rtype:
     """
     data = request.get_json()
-    card_no = data.pop("card_no")
     try:
         virtual_card = user_service.create_virtual_card(
-            card_no=card_no, **data
+            card_no=data.pop("username"),
+            **data
         )
         return jsonify({'response': model_to_dict(virtual_card)}), 200
     except Exception as e:

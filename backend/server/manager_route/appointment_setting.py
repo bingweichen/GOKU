@@ -24,11 +24,11 @@ appointment_setting = Blueprint(
 # 查询所有订单 (分页）
 @appointment_setting.route('/appointments/all/', methods=['GET'])
 def get_appointments():
-    offset, limit = request.args.get("offset"), request.args.get("limit")
-
+    page = request.args.get("page")
+    paginate_by = request.args.get("paginate_by")
     appointments = appointment_service.get_all_paginate(
-        int(offset),
-        int(limit)
+        int(page),
+        int(paginate_by)
     )
     return jsonify({
         'response': {
@@ -41,6 +41,8 @@ def get_appointments():
 def get_appointment_by_type():
     """
 
+    eg = ?appointment_type=租车&period=7&page=1&paginate_by=3
+
     # 如果想集成一个，获取所有使用 in ["租车"，"买车"]
     :return:
     :rtype:
@@ -50,9 +52,9 @@ def get_appointment_by_type():
 
     appointments = appointment_service.manager_get(
         type=appointment_type,
-        period=period,
-        offset=request.args.get("offset"),
-        limit=request.args.get("limit")
+        period=int(period),
+        page=int(request.args.get("page")),
+        paginate_by=int(request.args.get("paginate_by"))
     )
     return jsonify({
         'response': {
@@ -76,6 +78,7 @@ def count_appointments():
 @appointment_setting.route('/appointment/return_e_bike', methods=['POST'])
 def return_e_bike():
     """
+
     eg = {
     "appointment_id": 1,
     "serial_number": "A00001"
@@ -105,6 +108,7 @@ def return_e_bike():
     '/modify_status/<string:appointment_id>/<string:status>', methods=['POST'])
 def modify_appointment_status(appointment_id, status):
     """
+    eg = 1/已完成
 
     :param appointment_id:
     :type appointment_id:
@@ -130,7 +134,7 @@ def remove_appointment(appointment_id):
         return jsonify({'response': "no appointment find"}), 404
 
 
-# 订单状态列表
+# 获取订单状态 对应表
 @appointment_setting.route('/appointments/status', methods=['GET'])
 def get_appointment_status_list():
     return jsonify({'response': {

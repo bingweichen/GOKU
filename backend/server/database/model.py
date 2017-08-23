@@ -267,9 +267,9 @@ class ReportTable(BaseModel):
 
 
 table_list = [User, School, Store, VirtualCard, EBikeModel,
-              Storage, EBike, Appointment, BatteryReport, Battery]
+              Storage, EBike, Appointment, BatteryReport, Battery, SerialNumber]
 
-table_temp = [Appointment]
+table_temp = [SerialNumber]
 
 
 def create_tables():

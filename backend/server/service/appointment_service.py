@@ -96,7 +96,7 @@ def appointment_payment_success(user, appointment_id):
     appointment.appointment_fee = get_custom_const("DEFAULT_APPOINTMENT_FEE")
     # 预付款后更改新的过期日期
     appointment.expired_date_time = \
-        datetime.now() + timedelta(
+        datetime.utcnow() + timedelta(
             days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
     return appointment.save()
 
@@ -119,7 +119,7 @@ def total_payment_success(user, appointment_id):
     if appointment.type == "租车":  # 租车
         rent_time_period = appointment.rent_time_period
         end_time = \
-            datetime.now() + timedelta(
+            datetime.utcnow() + timedelta(
                 days=RENT_TIME_PERIOD[rent_time_period]*365)
         appointment.end_time = end_time
         appointment.rent_deposit = get_custom_const("RENT_DEPOSIT")
@@ -226,7 +226,7 @@ def check_valid(appointment):
     :return: True is valid
     :rtype: bool
     """
-    now = datetime.now()
+    now = datetime.utcnow()
     if now >= appointment.expired_date_time:
         return False
     else:
@@ -305,7 +305,7 @@ def add(**kwargs):
     :rtype: json
     """
     # 生成到期时间
-    date = datetime.now()
+    date = datetime.utcnow()
     expired_date_time = date + timedelta(
         days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
 
@@ -342,13 +342,13 @@ def manager_get(type, period, **kwargs):
         Appointment.type == type,
         Appointment.date >= before
     ).paginate(
-        offset=kwargs["offset"],
-        limit=kwargs["limit"])
+        page=kwargs["page"],
+        paginate_by=kwargs["paginate_by"])
     return appointments
 
 
-def get_all_paginate(offset, limit):
-    appointments = Appointment.select().paginate(offset, limit)
+def get_all_paginate(page, paginate_by):
+    appointments = Appointment.select().paginate(page, paginate_by)
     new_appointments = []
     for appointment in appointments:
         new_appointments.append(appointment)

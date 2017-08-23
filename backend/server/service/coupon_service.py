@@ -40,7 +40,7 @@ def get_my_coupons(user):
     :param user: user of coupon
     :return: valid coupons
     """
-    now = datetime.now()
+    now = datetime.utcnow()
     coupon = Coupon.update(status="过期").where(
         Coupon.user == user, Coupon.status == "可用", Coupon.expired < now)
     coupon.execute()

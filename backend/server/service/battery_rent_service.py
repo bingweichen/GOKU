@@ -89,7 +89,7 @@ def return_battery(username, serial_number):
     # 通过电池，找到借用中电池记录，更改状态
     battery_records = battery.battery_records
     battery_record = get_using_record(battery_records)
-    battery_record.return_date = datetime.now()
+    battery_record.return_date = datetime.utcnow()
     # 扣款计算
     price = calculate_price(battery_record.rent_date,
                             battery_record.return_date)
@@ -124,7 +124,7 @@ def check_on_load_batter_rent_date(username):
     battery_records = battery.battery_records
     battery_record = get_using_record(battery_records)
     rent_date = battery_record.rent_date
-    now = datetime.now()
+    now = datetime.utcnow()
     if (now - rent_date).days > 31:
         return False
     return True
@@ -136,6 +136,7 @@ def get_using_record(records):
             return record
 
 
+# 添加电池
 def add(**kwargs):
     """
     add new virtual card to database
@@ -161,13 +162,13 @@ def add_repair_report(serial_number):
     return BatteryReport.create(
         battery=serial_number,
         current_owner=battery.user,
-        report_time=datetime.now()
+        report_time=datetime.utcnow()
     )
 
 
 def add_record(battery):
     BatteryRecord.create(
-        rent_date=datetime.now(),
+        rent_date=datetime.utcnow(),
         battery=battery,
     )
 
@@ -241,8 +242,40 @@ def convert_timedelta(duration):
     # return days, hours, minutes, seconds
 
 
+# 添加电池脚本
+def add_script():
+    """
+    add new virtual card to database
+    :param kwargs: parameters to insert to database
+    :return:
+    """
+    for count in range(0, 800):
+        serial_number = serial_number_service.get_available_battery_code()
+        battery = Battery.create(
+            serial_number=serial_number,
+        )
+        print(count)
+        print(battery)
+
+
+# 现在使用的闪充
+def get_on_load_battery(username=None):
+    if username:
+        battery = Battery.get(
+            user=username,
+            on_load=True
+        )
+        return battery
+    else:
+        battery = Battery.select().where(
+            on_load=True
+        )
+        return battery
+
+
 if __name__ == "__main__":
     pass
+    add_script()
     # print(calculate_price(datetime(2017, 8, 1, 6), datetime(2017, 8, 16, 5)))
     # rent_battery(username="bingwei", serial_number="A00001")
     # return_battery("bingwei", "A00001")

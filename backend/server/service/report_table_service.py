@@ -13,7 +13,7 @@ from server.database.model import ReportTable, User
 
 def add(**kwargs):
     return ReportTable.create(
-        date=datetime.now(),
+        date=datetime.utcnow(),
         **kwargs
     )
 

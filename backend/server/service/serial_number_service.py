@@ -2,7 +2,6 @@ from playhouse.shortcuts import model_to_dict
 from server.service import store_service
 from server.database.model import SerialNumber
 
-
 """
 1」学校代码：【浙大为A】、【浙工大、万向职业技术学院、浙江外国语学院为B】、【浙江科技学院、长征职业技术学院为C】
 2」业务代码：买车为M、租车的代码为Z（mini租特殊，为P）闪充没有业务代码（只有区域代码，方便区分投放区域）
@@ -19,57 +18,16 @@ STORE_CODE = {
 E_BIKE_MODEL_TYPE_CODE = {
     "买车": "M",
     "租车": "Z",
+    "MINI租": "P"
 }
-
-
-# store_code A
-# category_code M
-# e_bike_code 0000
-# eg: AM0000
-def generate_serial_number():
-    stores = store_service.get_all()
-    for store in stores:
-        store_code = STORE_CODE[store["name"]]
-
-        category_code = "M"
-        # 生成100个
-        for i in range(100):
-            e_bike_code = str(i).zfill(4)
-            serial_number = SerialNumber.create(
-                code=store_code + category_code + e_bike_code,
-                store=store["name"],
-                store_code=store_code,
-                category_code=category_code
-            )
-            print(serial_number)
-
-        category_code = "Z"
-        for i in range(100):
-            e_bike_code = str(i).zfill(4)
-            serial_number = SerialNumber.create(
-                code=store_code + category_code + e_bike_code,
-                store=store["name"],
-                store_code=store_code,
-                category_code=category_code
-            )
-            print(serial_number)
-
-        # 电池序列号
-        for i in range(100):
-            battery_code = str(i).zfill(5)
-            serial_number = SerialNumber.create(
-                code=store_code + battery_code,
-                store=store["name"],
-                store_code=store_code,
-            )
-            print(serial_number)
-    pass
 
 
 def get_available_code(appointment):
     store = appointment.user.school.store
     type = appointment.type
     category_code = E_BIKE_MODEL_TYPE_CODE[type]
+    if appointment.category == "MINI租":
+        category_code = E_BIKE_MODEL_TYPE_CODE[appointment.category]
     serial_number = SerialNumber.get(
         store=store,
         category_code=category_code,
@@ -85,7 +43,7 @@ def get_available_code(appointment):
 
 def get_available_battery_code():
     serial_number = SerialNumber.select().where(
-        SerialNumber.category_code.not_in(["M", "Z"]),
+        SerialNumber.category_code.not_in(["M", "Z", "P"]),
         SerialNumber.available == True).get()
 
     # 更改被使用的serial number
@@ -128,8 +86,135 @@ def get_empty_code(store_code, category_code):
     pass
 
 
+REQUIREMENTS = [
+    {
+        "key": "A",
+        "store": "浙大Goku出行",
+        "value": [
+            {
+                "key": "M",
+                "value": [1, 101]
+            },
+            {
+                "key": "Z",
+                "value": [1, 101]
+            },
+            {
+                "key": "P",
+                "value": [1, 21]
+            }
+        ]
+    },
+
+    {
+        "key": "B",
+        "store": "浙工大Goku出行",
+        "value": [
+            {
+                "key": "M",
+                "value": [1, 201]
+            },
+            {
+                "key": "Z",
+                "value": [1, 201]
+            },
+            {
+                "key": "P",
+                "value": [1, 51]
+            }
+        ]
+    },
+
+    {
+        "key": "C",
+        "store": "浙科院Goku出行",
+        "value": [
+            {
+                "key": "M",
+                "value": [1, 201]
+            },
+            {
+                "key": "Z",
+                "value": [1, 201]
+            },
+            {
+                "key": "P",
+                "value": [1, 51]
+            }
+        ]
+    }
+]
+
+
+def generate_by_requirement():
+    for req in REQUIREMENTS:
+        store = store_service.get(name=req["store"])
+        store_code = STORE_CODE[store.name]
+        for category in req["value"]:
+            category_code = category["key"]
+            for i in range(
+                    int(category["value"][0]),
+                    int(category["value"][1])):
+                e_bike_code = str(i).zfill(4)
+                serial_number = SerialNumber.create(
+                    code=store_code + category_code + e_bike_code,
+                    store=store.name,
+                    store_code=store_code,
+                    category_code=category_code
+                )
+                print(serial_number)
+
+
+BATTERY_REQUIREMENT = [
+    {
+        "key": "A",
+        "store": "浙大Goku出行",
+        "value": [1, 201]
+    },
+    {
+        "key": "B",
+        "store": "浙工大Goku出行",
+        "value": [1, 301]
+    },
+    {
+        "key": "C",
+        "store": "浙科院Goku出行",
+        "value": [1, 301]
+    },
+]
+
+
+def generate_battery_serial_number():
+    for req in BATTERY_REQUIREMENT:
+        store = store_service.get(name=req["store"])
+        store_code = STORE_CODE[store.name]
+        for i in range(
+                int(req["value"][0]),
+                int(req["value"][1])):
+            battery_code = str(i).zfill(5)
+            serial_number = SerialNumber.create(
+                code=store_code + battery_code,
+                store=store.name,
+                store_code=store_code,
+            )
+            print(serial_number)
+    #
+    # stores = store_service.get_all()
+    # for store in stores:
+    #     store_code = STORE_CODE[store.name]
+    #     # 电池序列号
+    #     for i in range(1, 201):
+    #         battery_code = str(i).zfill(5)
+    #         serial_number = SerialNumber.create(
+    #             code=store_code + battery_code,
+    #             store=store.name,
+    #             store_code=store_code,
+    #         )
+    #         print(serial_number)
+
+
 # ***************************** test ***************************** #
-def get_available_code_test():
+def get_available_code_t():
     from server.service import appointment_service
     appointment = appointment_service.get_by_id(6)
     get_available_code(appointment)
@@ -137,5 +222,6 @@ def get_available_code_test():
 
 if __name__ == "__main__":
     pass
-    print(get_available_battery_code())
+    print(generate_battery_serial_number())
+    generate_by_requirement()
     # generate_serial_number()

@@ -65,13 +65,25 @@ def get_e_bike_model(name):
 
 
 # 2. 更改电动车 (价格...)
-@basic_setting.route('/e_bike_model/<string:name>', methods=['POST'])
-def modify_e_bike_model(name):
+@basic_setting.route('/e_bike_model', methods=['POST'])
+def modify_e_bike_model():
+    """
+    eg = {
+     "name": "小龟电动车 爆款 48V、12A",
+     "price": 1799,
+     "colors": "["\u9ed1", "\u767d", "\u84dd", "\u7d2b", "\u8ff7\u5f69"]"
+    }
+
+    :param name:
+    :type name:
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     result = e_bike_model_service.modify_by_name(
-        name,
-        price=data.pop("price"),
-        colors=data.pop("colors"),
+        name=data.pop("name"),
+        # price=data.pop("price"),
+        # colors=data.pop("colors"),
         **data
     )
     return jsonify({'response': result}), 200
@@ -81,10 +93,32 @@ def modify_e_bike_model(name):
 # 添加车型
 @basic_setting.route('/e_bike_model', methods=['PUT'])  # test complete
 def add_e_bike_model():
+    """
+    eg = {
+            "name": "小龟电动车 爆款 48V、12A1111",
+            "colors": ["黑"、"白"、"蓝"、"紫"、"迷彩"],
+            "configure": "低配",
+            "battery": "48V、12A",
+            "distance": "30KM",
+            "price": "1699",
+            "category": "小龟",
+            "type": "买车"
+        }
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
-    e_bike_model = e_bike_model_service.add(**data)
-    if e_bike_model:
-        return jsonify({'response': e_bike_model}), 200
+    try:
+        e_bike_model = e_bike_model_service.add(**data)
+        if e_bike_model:
+            e_bike_model = model_to_dict(e_bike_model)
+            return jsonify({'response': e_bike_model}), 200
+    except Exception as e:
+        return jsonify({'response': {
+            "message": "错误",
+            "error": e.args[1],
+        }}), 400
 
 
 # 删除车型
@@ -129,7 +163,7 @@ def modify_storage():
 
 
 # 4.添加库存
-@basic_setting.route('/storage', methods=['PUT'])  # test complete
+@basic_setting.route('/storage', methods=['PUT'])
 def add_storage():
     """
     add storage
@@ -153,8 +187,6 @@ def add_storage():
     if storage:
         return jsonify({'response': model_to_dict(storage)}), 200
 
-# 对闪充价格设置
-# 订单有效期时间设置、
 
 # ***************************** 参数设置 ***************************** #
 # 获取所有参数
@@ -247,27 +279,6 @@ def add_coupon_template_to_all_user():
         }}), 400
 
 
-# 暂时没用
-# @coupon.route('', methods=['PUT'])
-# def add_coupon():
-#     """
-#     add a coupon to a user
-#
-#     eg = {
-#      "user": "bingwei",
-#      "situation": 1000,
-#      "value": 100,
-#      "expired" : "20170910"
-#     }
-#     :return:
-#     """
-#     data = request.get_json()
-#     expired = data.pop("expired")
-#     coup = coupon_service.add_coupon(
-#         expired=expired, **data
-#     )
-#     return jsonify({'response': coup}), 200
-
 
 # ***************************** 商铺管理 ***************************** #
 @basic_setting.route('/store', methods=['PUT'])  # test complete
@@ -348,3 +359,25 @@ def remove_school(name):
     else:
         return jsonify({'response': "no school find"}), 404
     pass
+
+
+# 暂时没用
+# @coupon.route('', methods=['PUT'])
+# def add_coupon():
+#     """
+#     add a coupon to a user
+#
+#     eg = {
+#      "user": "bingwei",
+#      "situation": 1000,
+#      "value": 100,
+#      "expired" : "20170910"
+#     }
+#     :return:
+#     """
+#     data = request.get_json()
+#     expired = data.pop("expired")
+#     coup = coupon_service.add_coupon(
+#         expired=expired, **data
+#     )
+#     return jsonify({'response': coup}), 200

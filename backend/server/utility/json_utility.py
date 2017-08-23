@@ -19,3 +19,13 @@ def models_to_json(models):
 def print_array(array):
     for i in array:
         print(i)
+
+
+def custom_models_to_json(models, fields):  # filter array
+    new_array = []
+    for model in models:
+        new_obj = {}
+        for field in fields:
+            new_obj[field] = getattr(model, field)
+        new_array.append(new_obj)
+    return new_array
