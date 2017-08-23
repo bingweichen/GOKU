@@ -12,6 +12,8 @@ export default {
     color: '',
     colors: [],
     num_view: '', // 浏览量
+    introduction_image_urls: [], // 商品介绍
+    type: '', // 租车还是买车？
   },
   reducers: {
     // setId(state, action) {

@@ -8,3 +8,9 @@ export const orderStatus = {
   waitBack: '待归还',
 };
 
+export const moneyType = {
+  deposit: '充值押金',
+  consume: '消费',
+  'return deposit': '返回押金',
+  'top up': '充值',
+};
