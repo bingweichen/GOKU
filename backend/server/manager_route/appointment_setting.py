@@ -30,6 +30,8 @@ def get_appointments():
         int(page),
         int(paginate_by)
     )
+
+
     return jsonify({
         'response': {
             "appointments": models_to_json(appointments)

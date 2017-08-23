@@ -135,8 +135,10 @@ def add_repair_report():
     :return:
     """
     data = request.get_json()
-    result = battery_rent_service.add_repair_report(
+    battery_report = battery_rent_service.add_repair_report(
         serial_number=data.pop("serial_number")
     )
-    if result:
-        return jsonify({'response': result}), 200
+    battery_report = model_to_dict(battery_report)
+    return jsonify({'response': {
+        "battery_report": battery_report
+    }}), 200
