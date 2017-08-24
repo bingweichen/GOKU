@@ -1,0 +1,26 @@
+{
+  "entry": "src/index.js",
+  "env": {
+    "development": {
+      "extraBabelPlugins": [
+        "dva-hmr",
+        "transform-runtime",
+        ["import", { "libraryName": "antd", "style": true }]
+      ]
+    },
+    "production": {
+      "extraBabelPlugins": [
+        "transform-runtime",
+        "dva-hmr",
+        ["import", { "libraryName": "antd", "style": true }]
+      ]
+    }
+  },
+  "proxy": {
+  "/api": {
+    "target": "http://jsonplaceholder.typicode.com/",
+    "changeOrigin": true,
+    "pathRewrite": { "^/api" : "" }
+  }
+}
+}
