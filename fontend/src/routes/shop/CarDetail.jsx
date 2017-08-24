@@ -12,18 +12,19 @@ class CarDetail extends Component {
     color: '',
   }
 
-  handClickOrder = (type, carType) => {
+  handClickOrder = (type) => {
     if (this.state.color === '') {
       Toast.info('请先选择颜色!!!');
       return;
     }
+    const buyType = (type === '租车') ? 'rent' : 'buy';
     hashHistory.push({
-      pathname: `/orderdetail?type=${type}&&carType=${this.props.name}&&color=${this.state.color}`,
+      pathname: `/orderdetail?type=${buyType}&&carType=${this.props.name}&&color=${this.state.color}`,
     });
   }
 
   render() {
-    const { image_urls, name, price, num_view, colors } = this.props;
+    const { image_urls, name, price, num_view, colors, introduction_image_urls, type } = this.props;
     const carColors = colors.map(color => ({
       value: color,
       label: color,
@@ -34,7 +35,9 @@ class CarDetail extends Component {
         <div className={styles.header}>
           <p className={styles.title}>{name}</p>
           <p style={{ marginBottom: 0 }}>
-            <span className={styles.price}>￥{price}</span>
+            <span className={styles.price}>
+              ￥{typeof price === 'number' ? price : `${price['学期']}/学期,￥${price['年']}/年`}
+            </span>
             <span className={styles.visited}>{num_view}浏览</span>
           </p>
         </div>
@@ -49,12 +52,16 @@ class CarDetail extends Component {
           </Picker>
         </div>
         <div>
-          <img src="https://img10.360buyimg.com/cms/jfs/t3490/20/841716619/331496/a8a0c938/5819a2a2N0ad6bc8a.jpg" alt="" style={{ width: '100%' }} />
+          {
+            introduction_image_urls.map(img => (
+              <img src={img} alt="" style={{ width: '100%' }} key={img} />
+            ))
+          }
         </div>
         <Footer
           title="去预约"
           onClick={
-            () => { this.handClickOrder('buy'); }
+            () => { this.handClickOrder(type); }
           }
         />
       </div>

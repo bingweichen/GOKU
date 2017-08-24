@@ -29,4 +29,8 @@
       "experimentalObjectRestSpread": true
     }
   },
+  "env":{
+    "mocha":true,
+    "browser": true
+  }
 }

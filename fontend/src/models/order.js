@@ -61,17 +61,9 @@ export default {
     // 提交买车预订
     *submitBuyCarOrder(action, { select, call }) {
       const { person } = yield select();
-      const { e_bike_model, color, category, orderType, note, coupon } = action;
+      const { submitData } = action;
       try {
-        const { data } = yield call(orderService.buyCarOrder, {
-          e_bike_model,
-          color,
-          category,
-          note,
-          coupon,
-          username: person.id,
-          type: orderType,
-        });
+        const { data } = yield call(orderService.buyCarOrder, submitData, person.id);
         console.log(data);
       } catch (error) {
         console.log(error);

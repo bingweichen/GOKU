@@ -1,9 +1,8 @@
-import request from '../utils/request';
 import axios from 'axios';
+import request from '../utils/request';
 
 export function getCars(type) {
   const url = `/api/e_bike_model?category=${type}`;
-  console.log(url);
   return axios.get(url);
 }
 

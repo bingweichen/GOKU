@@ -6,20 +6,13 @@ export function getPickUpSite(id) {
   return request(url);
 }
 
-export function buyCarOrder({
-  username, e_bike_model, color, category, type, note, coupon,
-}) {
+export function buyCarOrder(submitData, id) {
   return axios({
     method: 'PUT',
     url: '/api/appointment',
     data: {
-      username,
-      e_bike_model,
-      color,
-      category,
-      type,
-      note,
-      coupon,
+      username: id,
+      ...submitData,
     },
   });
 }

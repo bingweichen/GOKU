@@ -33,6 +33,7 @@ export default function Item({ order }) {
           className={styles.contact}
         >
           <span style={{ display: order.status === orderStatus.waitPayAppointment ? 'inline' : 'none' }}>去支付</span>
+          <span style={{ display: order.status === orderStatus.waitBack ? 'inline' : 'none' }}>去还车</span>
           <span
             onClick={() => { hashHistory.push(`/pickupcar?id=${order.id}`); }}
             style={{ display: order.status === orderStatus.waitPickUp ? 'inline' : 'none' }}

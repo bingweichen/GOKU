@@ -1,12 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default function button({ children, onClick, style }) {
+export default function button({ children, onClick, style, active }) {
   return (
     <div
       onClick={onClick}
       style={{
         background: '#FF5B55',
-        color: '#ffffff',
+        color: active ? '#C5C5C5' : '#ffffff',
         width: '2.5rem',
         height: '.6rem',
         textAlign: 'center',
@@ -20,3 +21,9 @@ export default function button({ children, onClick, style }) {
   );
 }
 
+button.PropTypes = {
+  chilren: PropTypes.string,
+  onClick: PropTypes.func,
+  style: PropTypes.object,
+  active: PropTypes.bool,
+};

@@ -1,14 +1,14 @@
 import React from 'react';
-import { Button } from 'antd-mobile';
 import { connect } from 'dva';
 import styles from './IndexPage.css';
 import Footer from '../components/MainLayout/Footer.jsx';
 
 
-function IndexPage() {
+function IndexPage({ location }) {
+  const tab = location.query.tab ? location.query.tab : 'shop';
   return (
     <div >
-      <Footer />
+      <Footer tab={tab} />
     </div>
   );
 }

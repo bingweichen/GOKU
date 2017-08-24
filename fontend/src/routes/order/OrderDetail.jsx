@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Picker, List } from 'antd-mobile';
 import { hashHistory } from 'dva/router';
-import  PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { connect } from 'dva';
 import BuyFooter from '../../components/CarDetail/BuyFooter';
 import styles from './OrderDetail.less';
@@ -11,8 +11,10 @@ class OrderDetail extends Component {
   state = {
     useCoupons: '',
     note: '',
+    selectType: ['学期'], // 租用时间
   }
 
+  // 优惠卷
   getUserCoupons(coupons) {
     const formatCoupons = [];
     coupons.forEach((val) => {
@@ -29,26 +31,34 @@ class OrderDetail extends Component {
     return formatCoupons;
   }
 
+  // 提交订单
   submitOrder = () => {
-    const { orderDetail, carInfo, submitBuyCarOrder } = this.props;
-    submitBuyCarOrder({
+    const { orderDetail, carInfo, submitBuyCarOrder, location } = this.props;
+    const { type } = location.query; // 判断为买车还是租车
+    const submitData = {
       e_bike_model: orderDetail.carType,
       color: orderDetail.color,
       category: carInfo.category,
-      orderType: '买车',
+      type: '买车',
       note: this.state.note,
       coupon: null,
-    });
+    };
+    if (type === 'rent') {
+      submitData.type = '租车';
+      submitData.rent_time_period = this.state.selectType[0];
+    }
+    submitBuyCarOrder(submitData);
   }
 
   render() {
     const { orderDetail, carInfo, coupons } = this.props;
-    const { useCoupons } = this.state;
+    const { price } = carInfo;
+    const { useCoupons, selectType } = this.state;
     const rentTime = [{
-      value: '1', label: '一个月',
+      value: '学期', label: '一学期',
     },
     {
-      value: '2', label: '两个月',
+      value: '年', label: '一年',
     }];
     const convey = [{
       value: '自提', label: '自提',
@@ -66,7 +76,12 @@ class OrderDetail extends Component {
           </div>
         </div>
         <div className={styles.item} style={{ display: orderDetail.type === 'rent' ? 'block' : 'none' }}>
-          <Picker data={rentTime} cols={1}>
+          <Picker
+            data={rentTime}
+            cols={1}
+            value={selectType}
+            onChange={(val) => { this.setState({ selectType: val }); }}
+          >
             <List.Item arrow="horizontal">租用时间</List.Item>
           </Picker>
         </div>
@@ -102,7 +117,9 @@ class OrderDetail extends Component {
             }}
           >
             <span >商品总额:</span>
-            <span style={{ float: 'right' }}>￥{carInfo.price}</span>
+            <span style={{ float: 'right' }}>
+              ￥{typeof price === 'number' ? price : price[selectType]}
+            </span>
           </p>
           <p
             style={{
@@ -116,7 +133,8 @@ class OrderDetail extends Component {
           </p>
           <p style={{ overflow: 'hidden' }}>
             <span className={styles.payprice}>
-              实付款:￥{carInfo.price - (useCoupons && JSON.parse(useCoupons).value)}
+              实付款:￥
+              {typeof price === 'number' ? price : price[selectType] - (useCoupons && JSON.parse(useCoupons).value)}
             </span>
           </p>
         </div>
@@ -142,7 +160,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getCoupons: () => { dispatch({ type: 'order/getCoupons' }); },
-    submitBuyCarOrder: (order) => { dispatch({ ...order, type: 'order/submitBuyCarOrder' }); },
+    submitBuyCarOrder: (order) => { dispatch({ submitData: order, type: 'order/submitBuyCarOrder' }); },
   };
 };
 

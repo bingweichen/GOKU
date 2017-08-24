@@ -11,7 +11,7 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
+      return history.listen(({ pathname }) => {
         if (pathname === '/') {
           dispatch({ type: 'getCar' });
         }
@@ -20,9 +20,10 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetch({ payload }, { put }) {
       yield put({ type: 'save' });
     },
+    // 根据车子的类型得到车
     *getCar({ payload }, { call, put, select }) {
       const { carType } = yield select(state => state.IndexPage);
       const { data } = yield call(carService.getCars, carType);

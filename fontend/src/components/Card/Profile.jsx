@@ -1,4 +1,5 @@
 import React from 'react';
+import LazyLoad from 'react-lazyload';
 import { Link } from 'dva/router';
 import styles from './Profile.less';
 
@@ -17,7 +18,9 @@ export default function Profile({ car }) {
     <div style={{ background: '#ffffff' }}>
       <Link to={{ pathname: `cardetail/${name}` }}>
         <div className={styles.container}>
-          <img src={image_urls[0]} alt="" className={styles.image} />
+          <LazyLoad height={300}>
+            <img src={image_urls[0]} alt="" className={styles.image} />
+          </LazyLoad>
         </div>
         <div className={styles.footer}>
           <p className={styles.title}>{name}</p>
