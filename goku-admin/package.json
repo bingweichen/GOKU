@@ -4,7 +4,8 @@
     "start": "roadhog server",
     "build": "roadhog build",
     "lint": "eslint --ext .js src test",
-    "precommit": "npm run lint"
+    "precommit": "npm run lint",
+    "test": "mocha --compilers js:babel-core/register --watch"
   },
   "engines": {
     "install-node": "6.9.2"
@@ -15,14 +16,20 @@
     "babel-runtime": "^6.26.0",
     "dva": "^1.2.1",
     "dva-loading": "^0.2.1",
+    "moment": "^2.18.1",
     "react": "^15.4.0",
     "react-dom": "^15.4.0"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
     "babel-eslint": "^7.1.1",
     "babel-plugin-dva-hmr": "^0.3.2",
     "babel-plugin-import": "^1.4.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^4.1.1",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",

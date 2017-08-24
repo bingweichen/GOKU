@@ -1,4 +1,4 @@
-{
+export default {
   "entry": "src/index.js",
   "env": {
     "development": {
@@ -17,10 +17,11 @@
     }
   },
   "proxy": {
-  "/api": {
-    "target": "http://jsonplaceholder.typicode.com/",
-    "changeOrigin": true,
-    "pathRewrite": { "^/api" : "" }
+    "/api": {
+      // "target": "http://jsonplaceholder.typicode.com/",
+      "target": "http://localhost:5000",
+      "changeOrigin": true,
+      "pathRewrite": { "^/api": "" }
+    }
   }
-}
 }
