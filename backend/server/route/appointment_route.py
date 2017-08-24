@@ -44,6 +44,7 @@ def get_all_appointments():
         }}), 200
 
 
+# from peewee import *
 @appointment_app.route('', methods=['GET'])
 def get_appointment():
     username = request.args.get('username')
@@ -51,9 +52,11 @@ def get_appointment():
 
     appointment = appointment_service.get_by_id(
         appointment_id=appointment_id, username=username)
+    appointment = model_to_dict(appointment, recurse=False)
+    print("appointment", appointment)
     return jsonify({
         'response': {
-            "appointment": model_to_dict(appointment)}}), 200
+            "appointment": appointment}}), 200
 
 
 # ************************** appointment procedure ********************** #

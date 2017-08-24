@@ -9,10 +9,10 @@ Date: 2017.05.17
 from playhouse.shortcuts import model_to_dict
 
 
-def models_to_json(models):
+def models_to_json(models, recurse=True, **kwargs):
     new_models = []
     for model in models:
-        new_models.append(model_to_dict(model))
+        new_models.append(model_to_dict(model, recurse=recurse, **kwargs))
     return new_models
 
 
@@ -29,3 +29,12 @@ def custom_models_to_json(models, fields):  # filter array
             new_obj[field] = getattr(model, field)
         new_array.append(new_obj)
     return new_array
+
+
+def custom_model_to_json(model, fields):  # filter array
+    new_obj = {}
+    for field in fields:
+        new_obj[field] = getattr(model, field)
+    return new_obj
+
+

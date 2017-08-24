@@ -49,7 +49,7 @@ def get_all_e_bike_models():
     e_bike_models = e_bike_model_service.get_all()
     return jsonify({
         'response': {
-            "appointments": models_to_json(e_bike_models)
+            "appointments": models_to_json(e_bike_models, recurse=False)
         }}), 200
 
 
@@ -59,7 +59,7 @@ def get_e_bike_model(name):
     e_bike_model = e_bike_model_service.get_by_name(name)
     return jsonify({
         'response': {
-            "e_bike_model": model_to_dict(e_bike_model),
+            "e_bike_model": model_to_dict(e_bike_model, recurse=False),
         }
     }), 200
 
@@ -82,8 +82,8 @@ def modify_e_bike_model():
     data = request.get_json()
     result = e_bike_model_service.modify_by_name(
         name=data.pop("name"),
-        # price=data.pop("price"),
-        # colors=data.pop("colors"),
+        price=float(data.pop("price")),
+        colors=data.pop("colors"),
         **data
     )
     return jsonify({'response': result}), 200
@@ -136,7 +136,8 @@ def remove_e_bike_model(name):
 @basic_setting.route('/storage/all', methods=['GET'])
 def get_all_storage():
     storage = storage_service.get_all()
-    return jsonify({'response': models_to_json(storage)}), 200
+    storage = models_to_json(storage, recurse=False)
+    return jsonify({'response': storage}), 200
 
 
 # 2. 获取单个库存
@@ -183,7 +184,7 @@ def add_storage():
         num=data.pop("num"),
     )
     if storage:
-        return jsonify({'response': model_to_dict(storage)}), 200
+        return jsonify({'response': model_to_dict(storage, recurse=False)}), 200
 
 
 # ***************************** 参数设置 ***************************** #
@@ -250,6 +251,7 @@ def add_coupon_template():
 @basic_setting.route('/coupon_template/all', methods=['GET'])
 def get_coupon_template():
     coupon_template = coupon_service.get_all_coupon_template()
+    coupon_template = models_to_json(coupon_template)
     return jsonify({'response': coupon_template}), 200
 
 
@@ -288,19 +290,35 @@ def add_store():
     pass
 
 
-@basic_setting.route('/store', methods=['GET'])
-@basic_setting.route('/store/<string:name>',
-                     methods=['GET'])  # test complete
-def get_store(name=None):
-    if name is None:
-        stores = store_service.get_all()
-    else:
-        stores = [store_service.get_by_name(name)]
-    if stores:
-        return jsonify({'response': {"stores": stores}}), 200
-    else:
-        return jsonify({'response': "no store find"}), 404
-    pass
+@basic_setting.route('/store/all', methods=['GET'])
+def get_stores():
+    """
+
+    :return:
+    :rtype:
+    """
+    stores = store_service.get_all()
+    return jsonify({
+        'response': {
+            "stores": models_to_json(stores),
+        }}), 200
+
+# @basic_setting.route('/store', methods=['GET'])
+# @basic_setting.route('/store/<string:name>',
+#                      methods=['GET'])  # test complete
+# def get_store(name=None):
+#     if name is None:
+#         stores = store_service.get_all()
+#     else:
+#         stores = [store_service.get_by_name(name)]
+#
+#
+#     if stores:
+#
+#         return jsonify({'response': {"stores": stores}}), 200
+#     else:
+#         return jsonify({'response': "no store find"}), 404
+#     pass
 
 
 @basic_setting.route('/store/<string:name>',
@@ -327,6 +345,19 @@ def remove_store(name):
 
 
 # ***************************** 学校管理 ***************************** #
+@basic_setting.route('/school/all', methods=['GET'])
+def get_schools():
+    """
+
+    :return:
+    :rtype:
+    """
+    school = school_service.get_all()
+    return jsonify({
+        'response': {
+            "schools": models_to_json(school, recurse=False),
+        }}), 200
+
 @basic_setting.route('/school', methods=['PUT'])
 def add_school():
     data = request.get_json()

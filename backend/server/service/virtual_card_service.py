@@ -229,7 +229,7 @@ def consume_virtual_card(**kwargs):
     amount = float(kwargs["amount"])
 
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    if virtual_card.deposit <= get_custom_const("DEFAULT_DEPOSIT"):
+    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
         raise Exception("No enough deposit")
     if virtual_card.balance <= 0:
         raise Exception("Low Balance")

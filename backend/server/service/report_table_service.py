@@ -20,7 +20,7 @@ def add(**kwargs):
 
 def get_all(user):
     report_table = ReportTable.select().where(
-        user=user
+        ReportTable.user == user
     )
     return report_table
 

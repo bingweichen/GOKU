@@ -20,7 +20,7 @@ from server.service import battery_rent_service
 from server.utility.json_utility import models_to_json
 from playhouse.shortcuts import model_to_dict
 
-PREFIX = '/manager//battery_setting'
+PREFIX = '/manager/battery_setting'
 
 battery_setting = Blueprint("battery_setting", __name__, url_prefix=PREFIX)
 
@@ -50,7 +50,8 @@ def get_current_uses_amount():
 @battery_setting.route('/use_status/<string:serial_number>', methods=['GET'])
 def get_use_status_by_id(serial_number):
     battery = battery_rent_service.manager_get_battery(serial_number)
-    battery = model_to_dict(battery)
+
+    battery = model_to_dict(battery, recurse=False)
     return jsonify({
         'response': {
             "battery": battery
@@ -63,7 +64,7 @@ def get_use_status_by_id(serial_number):
 def get_history_record_by_id(serial_number, days):
     records = battery_rent_service.manager_get_history_record_by_id(
         serial_number, days)
-    records = models_to_json(records)
+    records = models_to_json(records, recurse=False)
     return jsonify({
         'response': {
             "records": records

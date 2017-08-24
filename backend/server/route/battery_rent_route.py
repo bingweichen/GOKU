@@ -98,7 +98,7 @@ def rent_battery():
                 'message': '未开通虚拟消费卡'
             }
         }), 400
-    except Error as e:
+    except Exception as e:
         return jsonify(
             {'response': {
                 'error': '%s' % e.args,
@@ -106,10 +106,18 @@ def rent_battery():
             }}), 400
 
 
-
 # 4. 归还电池 （还没想清楚如何归还，用户点击归还就还了吗？）
 @battery_rent.route('/return', methods=['POST'])
 def return_battery():
+    """
+    eg = {
+    "username": "bingwei",
+    "serial_number": "A00001"
+    }
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     try:
         batter_record = battery_rent_service.return_battery(
@@ -118,7 +126,7 @@ def return_battery():
         )
         return jsonify({
             'response': model_to_dict(batter_record)}), 200
-    except Error as e:
+    except Exception as e:
         return jsonify({
             'response': '%s: %s' % (str(Error), e.args)}), 400
 
