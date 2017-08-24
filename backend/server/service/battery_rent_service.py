@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 from server.service import serial_number_service
 from server.service import virtual_card_service
+from server.service import battery_record_service
 
 from server.database.model import Battery
 from server.database.model import BatteryRecord
@@ -70,7 +71,7 @@ def rent_battery(**kwargs):
     battery.on_loan = True
     battery.user = username
 
-    add_record(battery)
+    battery_record_service.add_record(username, battery)
     return battery.save()
 
     # battery_info = Battery.get()
@@ -175,13 +176,6 @@ def add_repair_report(serial_number):
     )
 
 
-def add_record(battery):
-    BatteryRecord.create(
-        rent_date=datetime.utcnow(),
-        battery=battery,
-    )
-
-
 def manager_get_total_uses_amount():
     total_number = int(BatteryRecord.select().count())
     return total_number or 0
@@ -193,9 +187,9 @@ def manager_get_current_uses_amount():
     return current_use or 0
 
 
-# 获取相册
+# 获取电池
 def manager_get_battery(serial_number):
-    battery = Battery.select().where(Battery.serial_number == serial_number)
+    battery = Battery.get(serial_number=serial_number)
     return battery
     # loan = battery.on_loan
     # if loan:
@@ -210,7 +204,7 @@ def manager_get_history_record_by_id(serial_number, period):
     before = today - timedelta(days=period)
     record = BatteryRecord.select().where(
         BatteryRecord.battery == serial_number,
-        BatteryRecord.return_date >= before)
+        BatteryRecord.rent_date >= before)
     return record
 
 
@@ -291,9 +285,11 @@ def check_user_on_load(username):
     else:
         return False
 
+
 if __name__ == "__main__":
     pass
-    print(check_on_load("Bingwei"))
+    # print(check_on_load("Bingwei"))
+
     # print(calculate_price(datetime(2017, 8, 1, 6), datetime(2017, 8, 16, 5)))
     # rent_battery(username="bingwei", serial_number="A00001")
     # return_battery("bingwei", "A00001")

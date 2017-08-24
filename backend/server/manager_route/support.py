@@ -34,10 +34,10 @@ support_app = Blueprint("support", __name__, url_prefix=PREFIX)
 @support_app.route('/report_table/all', methods=['GET'])
 def get_all_report_table():
     report_tables = report_table_service.manager_get_all()
-    report_tables = models_to_json(report_tables)
-    for i in range(len(report_tables)):
-        report_tables[i]["user"] = report_tables[i]["user"]["username"]
-        report_tables[i]["appointment"].pop("user")
+    report_tables = models_to_json(report_tables, recurse=False)
+    # for i in range(len(report_tables)):
+    #     report_tables[i]["user"] = report_tables[i]["user"]["username"]
+    #     report_tables[i]["appointment"].pop("user")
     return jsonify({'response': report_tables}), 200
 
 
@@ -48,7 +48,7 @@ def get_refund_table():
     refund_tables = refund_table_service.get_all()
     return jsonify({
         'response': {
-            "refund_tables": models_to_json(refund_tables)
+            "refund_tables": models_to_json(refund_tables, recurse=False)
         }}), 200
 
 

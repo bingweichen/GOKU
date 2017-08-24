@@ -13,7 +13,7 @@ from server.database.model import RefundTable
 def get_all(username=None):
     if username:
         refund_table = RefundTable.select().where(
-            user=username
+            RefundTable.user == username
         )
         return refund_table
     refund_table = RefundTable.select()
@@ -28,4 +28,3 @@ def modify_status(refund_table_id, status):
 
 def add(**kwargs):
     return RefundTable.create(**kwargs)
-

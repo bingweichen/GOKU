@@ -64,6 +64,10 @@ def create_virtual_card(**kwargs):
     return virtual_card
 
 
+# def get_battery_records(username):
+#     user = User.get(username=username)
+#     battery_records = user.ba
+
 # ***************************** test ***************************** #
 # def add_test():
 #     result = add(username="bingwei111", password="123456",

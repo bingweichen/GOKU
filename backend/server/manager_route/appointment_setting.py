@@ -12,7 +12,7 @@ from flask import request
 
 from server.service import appointment_service
 
-from server.utility.json_utility import models_to_json
+from server.utility.json_utility import models_to_json, custom_model_to_json
 from server.utility.constant.basic_constant import *
 PREFIX = '/manager/appointment_setting'
 
@@ -30,11 +30,12 @@ def get_appointments():
         int(page),
         int(paginate_by)
     )
-
-
+    appointments = models_to_json(appointments, recurse=False)
+    fields = list(appointments[0])
     return jsonify({
         'response': {
-            "appointments": models_to_json(appointments)
+            "appointments": appointments,
+            "fields": fields
         }}), 200
 
 
@@ -43,7 +44,7 @@ def get_appointments():
 def get_appointment_by_type():
     """
 
-    eg = ?appointment_type=租车&period=7&page=1&paginate_by=3
+    eg = http://localhost:5000/manager/appointment_setting/appointments/?appointment_type=%E7%A7%9F%E8%BD%A6&period=1&page=1&paginate_by=5
 
     # 如果想集成一个，获取所有使用 in ["租车"，"买车"]
     :return:
@@ -58,9 +59,10 @@ def get_appointment_by_type():
         page=int(request.args.get("page")),
         paginate_by=int(request.args.get("paginate_by"))
     )
+    appointments = models_to_json(appointments, recurse=False)
     return jsonify({
         'response': {
-            "appointments": models_to_json(appointments)
+            "appointments": appointments
         }}), 200
 
 

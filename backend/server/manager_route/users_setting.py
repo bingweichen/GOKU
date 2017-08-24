@@ -28,9 +28,6 @@ from server.service import virtual_card_service
 from server.service import battery_record_service
 from server.service import battery_rent_service
 
-
-
-
 PREFIX = '/manager/user_setting'
 
 user_setting = Blueprint("user_setting", __name__, url_prefix=PREFIX)
@@ -38,10 +35,12 @@ user_setting = Blueprint("user_setting", __name__, url_prefix=PREFIX)
 
 # ***************************** 查看用户 ***************************** #
 # 获取所有用户
-@user_setting.route('/users', methods=['GET'])
+@user_setting.route('/users/all', methods=['GET'])
 def get_appointments():
     users = user_service.get_all()
-    users = models_to_json(users)
+    users = models_to_json(users, recurse=False)
+    for i in range(len(users)):
+        users[i].pop("password")
     return jsonify({
         'response': {
             "users": users
@@ -54,7 +53,7 @@ def get_appointments():
 def get_user_appointment():
     username = request.args.get("username")
     appointments = appointment_service.get_all(username=username)
-    appointments = models_to_json(appointments)
+    appointments = models_to_json(appointments, recurse=False)
     return jsonify({
         'response': {
             "appointments": appointments
@@ -74,7 +73,7 @@ def get_consume_record():
         card_no=username
     )
     if record:
-        return jsonify({'response': models_to_json(record)}), 200
+        return jsonify({'response': models_to_json(record, recurse=False)}), 200
     else:
         return jsonify({'response': 'No record found'}), 404
 
@@ -86,7 +85,7 @@ def get_refund_table():
     refund_tables = refund_table_service.get_all(username)
     return jsonify({
         'response': {
-            "refund_tables": models_to_json(refund_tables)
+            "refund_tables": models_to_json(refund_tables, recurse=False)
         }}), 200
 
 
@@ -97,11 +96,7 @@ def get_report_table():
     report_tables = report_table_service.get_all(
         user=username
     )
-    report_tables = models_to_json(report_tables)
-
-    for i in range(len(report_tables)):
-        report_tables[i]["user"] = report_tables[i]["user"]["username"]
-        report_tables[i]["appointment"].pop("user")
+    report_tables = models_to_json(report_tables, recurse=False)
     return jsonify({'response': report_tables}), 200
 
 
@@ -131,5 +126,3 @@ def get_on_load_battery():
             "message": "没有正在使用的电池",
             "error": e.args,
         }}), 400
-
-
