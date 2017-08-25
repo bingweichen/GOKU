@@ -57,6 +57,11 @@ def get_all_paginate(page, paginate_by):
     return storage
 
 
+def count_all():
+    count = Storage.select().count()
+    return count
+
+
 def get_by_id(store_list_id):
     return Storage.get(Storage.id == store_list_id)
 

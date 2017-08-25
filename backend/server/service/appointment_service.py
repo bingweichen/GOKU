@@ -34,7 +34,6 @@ from server.utility.exception import WrongSerialsNumber, Error
 from server.utility.constant.basic_constant import *
 from server.utility.constant.custom_constant import get_custom_const
 
-
 # from server.utility.json_utility import models_to_json
 
 
@@ -120,7 +119,7 @@ def total_payment_success(user, appointment_id):
         rent_time_period = appointment.rent_time_period
         end_time = \
             datetime.utcnow() + timedelta(
-                days=RENT_TIME_PERIOD[rent_time_period]*365)
+                days=RENT_TIME_PERIOD[rent_time_period] * 365)
         appointment.end_time = end_time
         appointment.rent_deposit = get_custom_const("RENT_DEPOSIT")
         status = APPOINTMENT_STATUS["2"]
@@ -347,12 +346,20 @@ def manager_get(type, period, **kwargs):
     return appointments
 
 
-def get_all_paginate(page, paginate_by):
-    appointments = Appointment.select().paginate(page, paginate_by)
-    # new_appointments = []
-    # for appointment in appointments:
-    #     new_appointments.append(appointment)
-    return appointments
+def get_all_paginate(page, paginate_by, period):
+    total = Appointment.select().count()
+    if period == 0:
+        appointments = Appointment.select().paginate(page, paginate_by)
+    else:
+        if period > 0:
+            period -= 1
+        today = datetime.today().replace(hour=0, minute=0, second=0,
+                                         microsecond=0)
+        before = today - timedelta(days=period)
+        appointments = Appointment.select().where(
+            Appointment.date >= before
+        ).paginate(page, paginate_by)
+    return appointments, total
 
 
 def get_by_id(appointment_id, username=None):

@@ -55,6 +55,10 @@ def get_all_paginate():
     return e_bike_models
 
 
+def count_all():
+    count = EBikeModel.select().count()
+    return count
+
 def get_by_name(name):
     return EBikeModel.get(EBikeModel.name == name)
 

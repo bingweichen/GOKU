@@ -28,6 +28,8 @@ from server.service import virtual_card_service
 from server.service import battery_record_service
 from server.service import battery_rent_service
 
+from server.utility.exception import Error
+
 PREFIX = '/manager/user_setting'
 
 user_setting = Blueprint("user_setting", __name__, url_prefix=PREFIX)
