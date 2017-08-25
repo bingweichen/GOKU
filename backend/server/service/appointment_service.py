@@ -347,15 +347,18 @@ def manager_get(type, period, **kwargs):
 
 
 def get_all_paginate(page, paginate_by, period):
-    total = Appointment.select().count()
     if period == 0:
         appointments = Appointment.select().paginate(page, paginate_by)
+        total = Appointment.select().count()
     else:
         if period > 0:
             period -= 1
         today = datetime.today().replace(hour=0, minute=0, second=0,
                                          microsecond=0)
         before = today - timedelta(days=period)
+        total = Appointment.select().where(
+            Appointment.date >= before
+        ).count()
         appointments = Appointment.select().where(
             Appointment.date >= before
         ).paginate(page, paginate_by)
