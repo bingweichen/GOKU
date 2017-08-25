@@ -33,6 +33,7 @@ from server.service import store_service
 from server.service import school_service
 
 from server.utility.json_utility import models_to_json
+from server.utility.exception import Error
 
 PREFIX = '/manager/basic_setting'
 
@@ -46,7 +47,12 @@ basic_setting = Blueprint("basic_setting", __name__, url_prefix=PREFIX)
 # 1. 获取所有电动车
 @basic_setting.route('/e_bike_model/all', methods=['GET'])
 def get_all_e_bike_models():
-    e_bike_models = e_bike_model_service.get_all()
+    page = request.args.get("page")
+    paginate_by = request.args.get("paginate_by")
+    e_bike_models = e_bike_model_service.get_all(
+        int(page),
+        int(paginate_by)
+    )
     return jsonify({
         'response': {
             "e_bike_models": models_to_json(e_bike_models, recurse=False)
@@ -71,7 +77,18 @@ def modify_e_bike_model():
     eg = {
      "name": "小龟电动车 爆款 48V、12A",
      "price": 1799,
-     "colors": "["\u9ed1", "\u767d", "\u84dd", "\u7d2b", "\u8ff7\u5f69"]"
+     "colors": ["\u9ed1", "\u767d", "\u84dd", "\u7d2b", "\u8ff7\u5f69"]
+
+
+"name": "小龟电动车 GB 48V、12A",
+"price": 1980,
+     "colors": [
+                    "黑",
+                    "白",
+                    "蓝",
+                    "紫",
+                    "迷彩"
+                ],
     }
 
     :param name:
@@ -83,7 +100,7 @@ def modify_e_bike_model():
     result = e_bike_model_service.modify_by_name(
         name=data.pop("name"),
         price=float(data.pop("price")),
-        colors=data.pop("colors"),
+        # colors=data.pop("colors"),
         **data
     )
     return jsonify({'response': result}), 200
@@ -135,7 +152,12 @@ def remove_e_bike_model(name):
 # 1.获取库存
 @basic_setting.route('/storage/all', methods=['GET'])
 def get_all_storage():
-    storage = storage_service.get_all()
+    page = request.args.get("page")
+    paginate_by = request.args.get("paginate_by")
+    storage = storage_service.get_all_paginate(
+        int(page),
+        int(paginate_by)
+    )
     storage = models_to_json(storage, recurse=False)
     return jsonify({'response': storage}), 200
 

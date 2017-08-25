@@ -45,7 +45,12 @@ def get(*query, **kwargs):
     return e_bike_model
 
 
-def get_all():
+def get_all(page, paginate_by):
+    e_bike_models = EBikeModel.select().paginate(page, paginate_by)
+    return e_bike_models
+
+
+def get_all_paginate():
     e_bike_models = EBikeModel.select()
     return e_bike_models
 

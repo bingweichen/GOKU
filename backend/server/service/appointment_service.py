@@ -349,10 +349,10 @@ def manager_get(type, period, **kwargs):
 
 def get_all_paginate(page, paginate_by):
     appointments = Appointment.select().paginate(page, paginate_by)
-    new_appointments = []
-    for appointment in appointments:
-        new_appointments.append(appointment)
-    return new_appointments
+    # new_appointments = []
+    # for appointment in appointments:
+    #     new_appointments.append(appointment)
+    return appointments
 
 
 def get_by_id(appointment_id, username=None):
