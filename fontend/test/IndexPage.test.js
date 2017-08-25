@@ -1,8 +1,8 @@
 import 'babel-polyfill';
-import { put, call } from 'redux-saga/effects';
+import { put, call, select } from 'redux-saga/effects';
 import { expect } from 'chai';
 import IndexPage from '../src/models/IndexPage';
-// import * as carService from '../src/services/car';
+import * as carService from '../src/services/car';
 
 
 describe('IndexPageModel', () => {
@@ -13,11 +13,18 @@ describe('IndexPageModel', () => {
       expect(gen.next().value).to.deep.equal(put({ type: 'save' }));
       expect(gen.next()).to.deep.equal({ done: true, value: undefined });
     });
-    // it('it should get car data', () => {
-    //   const gen = effects.getCar({ payload: { carType: '小龟' } }, { call, select });
-    //   expect(gen.next().value.SELECT.selector({ IndexPage: '小龟' })).to.equal('小龟');
-    //   expect(gen.next(1, 1).value).to.deep.equal(call(carService.getCars, 1));
-    // });
+    it('it should get car data', () => {
+      const gen = effects.getCar({ payload: { carType: '小龟' } }, { call, select, put });
+      expect(gen.next().value.SELECT.selector({ IndexPage: '小龟' })).to.equal('小龟');
+      expect(gen.next({ carType: '小龟' }).value).to.deep.equal(call(carService.getCars, '小龟'));
+      expect(gen.next({ data: { response: { e_bike_models: 123 } } }).value)
+        .to.deep.equal(put({
+          type: 'loadCar',
+          payload: {
+            cars: 123,
+          },
+        }));
+    });
   });
   describe('test reducer', () => {
     const reducers = IndexPage.reducers;
