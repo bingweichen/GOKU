@@ -52,16 +52,16 @@ def add_appointment(**kwargs):
 
     # 检查库存量，虽然库存不足时前端会生不成订单
     if not storage_service.check_storage(model=e_bike_model, color=color):
-        raise Exception("没有足够的库存")
+        raise Error("没有足够的库存")
 
     # 检查该用户是否存在订单 (买车订单数）
     if not check_user_appointment(user=user, type=e_bike_type):
-        raise Exception("订单数目过多")
+        raise Error("订单数目过多")
 
     # 租车订单 检查是否存在押金
     if e_bike_type == "租车":
         if not virtual_card_service.check_deposit(username=user):
-            raise Exception("虚拟消费卡无押金")
+            raise Error("虚拟消费卡无押金")
 
     if e_bike_type == "租车":
         price = e_bike_model.price[rent_time_period]
@@ -137,7 +137,7 @@ def total_payment_success(user, appointment_id):
 def cancel_appointment(appointment_id, username=None, **kwargs):
     appointment = Appointment.get(id=appointment_id)
     if username and username != appointment.user:
-        raise Exception("not your appointment")
+        raise Error("not your appointment")
 
     terminate_appointment(appointment_id, appointment, **kwargs)
 

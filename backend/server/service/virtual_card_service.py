@@ -44,7 +44,7 @@ def get_deposit(card_no):
         result = freeze(card_no)
         if not result:
             print("冻结失败", card_no)
-        raise Exception("账号已冻结")
+        raise Error("账号已冻结")
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     return virtual_card.deposit
 
@@ -63,7 +63,7 @@ def pay_deposit(**kwargs):
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
     if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
-        raise Exception("You need not pay deposit")
+        raise Error("You need not pay deposit")
     else:
         virtual_card.deposit = deposit_fee
         result = virtual_card.save()
@@ -106,7 +106,7 @@ def top_up(**kwargs):
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
 
     if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
-        raise Exception("No deposit")
+        raise Error("No deposit")
     else:
         balance = virtual_card.balance + top_up_fee
         virtual_card.balance = balance
@@ -159,7 +159,7 @@ def return_deposit(**kwargs):
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
     if deposit <= 0:
-        raise Exception("No deposit refundable")
+        raise Error("No deposit refundable")
     else:
         virtual_card.deposit = 0
         result = virtual_card.save()
@@ -230,9 +230,9 @@ def consume_virtual_card(**kwargs):
 
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
-        raise Exception("No enough deposit")
+        raise Error("No enough deposit")
     if virtual_card.balance <= 0:
-        raise Exception("Low Balance")
+        raise Error("Low Balance")
     balance = virtual_card.balance - amount
     virtual_card.balance = balance
     result = virtual_card.save()

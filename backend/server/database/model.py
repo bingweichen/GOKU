@@ -10,7 +10,7 @@
 
 """
 import json
-
+from datetime import datetime
 from peewee import *
 
 from server.database.db import database
@@ -66,9 +66,9 @@ class User(BaseModel):
     phone = BigIntegerField(unique=True, null=True)
     identify_number = CharField(unique=True)  # 身份证号
 
-    we_chat_id = CharField()  # 微信号
-    account = CharField()  # 退款账号
-    account_type = CharField()  # 账号类型
+    we_chat_id = CharField(verbose_name='微信号', null=True, default=None)  # 微信号
+    account = CharField(verbose_name='账号', null=True, default=None)  # 退款账号
+    account_type = CharField(verbose_name='账号类型', null=True, default=None)  # 账号类型
 
     status = CharField(default="empty")  # 租用状态
 
@@ -156,19 +156,20 @@ class Appointment(BaseModel):
     expired_date_time = DateTimeField()  # 有效期限
     serial_number = CharField(null=True)  # 车序列号
 
-    rent_time_period = CharField()  # 租期：学期，年
-    end_time = DateTimeField()  # 租用结束日期
-
     price = FloatField()  # 最终价格
 
     reduced_price = FloatField(null=True)  # 优惠价格
+
+    rent_time_period = CharField(default="无", null=True)  # 租期：学期，年
+    end_time = DateTimeField(default=None, null=True)  # 租用结束日期
+
 
     appointment_fee = FloatField(default=0)  # 预约金
     rent_deposit = FloatField(default=0)  # 租车押金
 
     appointment_fee_needed = \
         FloatField(default=Const.get(
-                key="DEFAULT_APPOINTMENT_FEE").value)  # 需要的预约金
+            key="DEFAULT_APPOINTMENT_FEE").value)  # 需要的预约金
 
     rent_deposit_needed = \
         FloatField(default=Const.get(
@@ -275,10 +276,12 @@ class ReportTable(BaseModel):
     date = DateTimeField()
 
 
-table_list = [User, School, Store, VirtualCard, EBikeModel,
-              Storage, EBike, Appointment, BatteryReport, Battery, SerialNumber]
+table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
+              Storage, EBike, Appointment, Battery, BatteryRecord,
+              BatteryReport, CouponTemplate, Coupon, SerialNumber,
+              RefundTable, ReportTable]
 
-table_temp = [BatteryRecord]
+table_temp = [Appointment]
 
 
 def create_tables():
@@ -329,5 +332,6 @@ def recreate_tables():
 if __name__ == '__main__':
     pass
     # create_table(Storage)
+    # create_table(Appointment)
     print(recreate_tables())
     #

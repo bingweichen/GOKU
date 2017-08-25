@@ -21,7 +21,7 @@ from peewee import DoesNotExist
 
 from server.service import user_service
 from server.utility.exception import PasswordError
-
+from server.utility.exception import Error
 PREFIX = '/user'
 
 user_app = Blueprint("user_app", __name__, url_prefix=PREFIX)
@@ -32,16 +32,25 @@ def register():
     """
 
     eg = {
-            "username": 'bingwei',
+           "username": "bingwei",
             "password": "123456",
             "name": "陈炳蔚",
             "phone": 15988731660,
             "school": "浙江大学",
-            "student_id": "12358"
+            "student_id": "12358",
 
             "identify_number": "30032323232322"
 
         }
+
+    "username": "Shuo_Ren",
+            "password": "123456",
+            "name": "Ren",
+            "phone": 15701683747,
+            "school": "浙江大学",
+            "student_id": "00001",
+
+            "identify_number": "3003232323232211"
 
 
     :return:
@@ -71,7 +80,13 @@ def register():
         added_user = model_to_dict(added_user)
         added_user.pop('password')
         return jsonify({'response': added_user}), 200
+    except Error:
+        return jsonify({'response': {
+            "message": "xxx",
+            "error": Error,
+        }}), 400
     except Exception as e:
+        print(e)
         error = e.args[1]
         message = "字段错误"
         if "PRIMARY" in error:
@@ -146,5 +161,5 @@ def create_virtual_card():
             **data
         )
         return jsonify({'response': model_to_dict(virtual_card)}), 200
-    except Exception as e:
-        return jsonify({'response': '%s: %s' % (str(Exception), e.args)}), 400
+    except Error as e:
+        return jsonify({'response': '%s: %s' % (str(Error), e.args)}), 400

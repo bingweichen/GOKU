@@ -14,6 +14,7 @@ from server.service import appointment_service
 
 from server.utility.json_utility import models_to_json, custom_model_to_json
 from server.utility.constant.basic_constant import *
+from server.utility.exception import Error
 PREFIX = '/manager/appointment_setting'
 
 appointment_setting = Blueprint(
@@ -102,7 +103,7 @@ def return_e_bike():
         )
         if result:
             return jsonify({'response': result}), 200
-    except Exception as e:
+    except Error as e:
         return jsonify(
             {'response': '%s: %s' % (str(Exception), e.args)}), 400
 

@@ -109,7 +109,7 @@ def return_battery(username, serial_number):
     # 30分钟内不允许归还
     if convert_timedelta(
                     battery_record.return_date - battery_record.rent_date) < 30:
-        raise Exception("30分钟内无法归还")
+        raise Error("30分钟内无法归还")
 
     battery.save()
     battery_record.save()

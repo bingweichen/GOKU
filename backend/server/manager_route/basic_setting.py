@@ -49,7 +49,7 @@ def get_all_e_bike_models():
     e_bike_models = e_bike_model_service.get_all()
     return jsonify({
         'response': {
-            "appointments": models_to_json(e_bike_models, recurse=False)
+            "e_bike_models": models_to_json(e_bike_models, recurse=False)
         }}), 200
 
 
@@ -113,7 +113,7 @@ def add_e_bike_model():
         e_bike_model = e_bike_model_service.add(**data)
         e_bike_model = model_to_dict(e_bike_model)
         return jsonify({'response': e_bike_model}), 200
-    except Exception as e:
+    except Error as e:
         return jsonify({'response': {
             "message": "错误",
             "error": e.args[1],

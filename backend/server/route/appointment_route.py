@@ -114,7 +114,7 @@ def add_appointment():
                 "message": "未开通虚拟消费卡"
             }}), 400
 
-    except Exception as e:
+    except Error as e:
         return jsonify(
             {'response': {
                 'error': "生成订单失败",

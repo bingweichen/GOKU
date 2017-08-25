@@ -121,7 +121,7 @@ def get_on_load_battery():
         )
         battery = model_to_dict(battery)
         return jsonify({'response': battery}), 200
-    except Exception as e:
+    except Error as e:
         return jsonify({'response': {
             "message": "没有正在使用的电池",
             "error": e.args,

@@ -98,7 +98,7 @@ def rent_battery():
                 'message': '未开通虚拟消费卡'
             }
         }), 400
-    except Exception as e:
+    except Error as e:
         return jsonify(
             {'response': {
                 'error': '%s' % e.args,
@@ -125,8 +125,8 @@ def return_battery():
             serial_number=data["serial_number"]
         )
         return jsonify({
-            'response': model_to_dict(batter_record)}), 200
-    except Exception as e:
+            'response': model_to_dict(batter_record, recurse=False)}), 200
+    except Error as e:
         return jsonify({
             'response': '%s: %s' % (str(Error), e.args)}), 400
 

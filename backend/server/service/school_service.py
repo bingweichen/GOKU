@@ -76,12 +76,12 @@ def remove_by_name(name):
 
 
 # ***************************** unit test ***************************** #
-def add_test():
+def add_t():
     result = add(**{"name": "", "address": "cx12"})
     print(result)
 
 
-def get_test():
+def get_t():
     result = get_by_name("2")
     print(result)
 
