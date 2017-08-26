@@ -1,4 +1,5 @@
 export const order = {
+  id: '订单号',
   appointment_fee: '已支付',
   appointment_fee_needed: '需交预约金',
   category: '种类',
@@ -18,3 +19,16 @@ export const order = {
   type: '订单类型',
   user: '用户',
 };
+export const carConstant = {
+  battery: '电池',
+  category: '类型',
+  configure: '配置',
+  distance: '续航',
+  // introduction: '商品简介',
+  name: '名称',
+  num_sold: '销量',
+  num_view: '浏览量',
+  price: '价格',
+  type: '类型',
+};
+

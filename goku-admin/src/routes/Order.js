@@ -13,17 +13,24 @@ const colunms = Object.keys(orderConstant).map((key) => {
 
 class Order extends Component {
 
-  componentDidMount() {
-    // this.props.dispatch({ type: 'order/getDataSource', number: 10, page: 1 });
-  }
-
   render() {
+    const { dispatch, total } = this.props;
     return (
       <div>
         <Table
           columns={colunms}
           dataSource={this.props.dataSource}
           loading={this.props.loading}
+          pagination={{
+            onChange(page, pageSize) {
+              dispatch({
+                page,
+                type: 'car/getDataSource',
+                number: pageSize,
+              });
+            },
+            total,
+          }}
         />
       </div>
     );

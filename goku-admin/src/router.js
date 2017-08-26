@@ -64,6 +64,16 @@ function RouterConfig({ history, app }) {
             });
           },
         },
+        {
+          path: 'car',
+          name: 'carPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/car'));
+              cb(null, require('./routes/car'));
+            });
+          },
+        },
       ],
     },
   ];
