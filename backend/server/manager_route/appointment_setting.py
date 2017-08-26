@@ -27,16 +27,21 @@ appointment_setting = Blueprint(
 def get_appointments():
     page = request.args.get("page")
     paginate_by = request.args.get("paginate_by")
-    appointments = appointment_service.get_all_paginate(
+
+    days = request.args.get("days")
+
+    appointments, total = appointment_service.get_all_paginate(
         int(page),
-        int(paginate_by)
+        int(paginate_by),
+        int(days)
     )
     appointments = models_to_json(appointments, recurse=False)
-    fields = list(appointments[0])
+    # fields = list(appointments[0])
     return jsonify({
         'response': {
             "appointments": appointments,
-            "fields": fields
+            "total": total
+            # "fields": fields
         }}), 200
 
 

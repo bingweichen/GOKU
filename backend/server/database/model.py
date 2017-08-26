@@ -281,7 +281,7 @@ table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable]
 
-table_temp = [Appointment]
+table_temp = [Coupon]
 
 
 def create_tables():

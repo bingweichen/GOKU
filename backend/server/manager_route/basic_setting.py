@@ -53,8 +53,10 @@ def get_all_e_bike_models():
         int(page),
         int(paginate_by)
     )
+    total = e_bike_model_service.count_all()
     return jsonify({
         'response': {
+            "total": total,
             "e_bike_models": models_to_json(e_bike_models, recurse=False)
         }}), 200
 
@@ -158,8 +160,12 @@ def get_all_storage():
         int(page),
         int(paginate_by)
     )
+    total = storage_service.count_all()
     storage = models_to_json(storage, recurse=False)
-    return jsonify({'response': storage}), 200
+    return jsonify({'response': {
+        "total": total,
+        "storage": storage
+    }}), 200
 
 
 # 2. 获取单个库存
@@ -252,6 +258,8 @@ def add_coupon_template():
     eg = {
     "situation": 1000,
     "value": 100
+
+    "duration": 30
     }
 
     :return:
@@ -266,6 +274,7 @@ def add_coupon_template():
         value=data.pop("value"),
         **data
     )
+    coupon_template = model_to_dict(coupon_template)
     return jsonify({'response': coupon_template}), 200
 
 
@@ -293,13 +302,15 @@ def add_coupon_template_to_all_user():
         result = coupon_service.add_coupon_template_to_all_user(
             template_id=data.pop("template_id")
         )
-        return jsonify({'response': result}), 200
+        return jsonify({'response': {
+            "result": result,
+            "message": "添加优惠劵成功"
+        }}), 200
     except Exception as e:
         return jsonify({'response': {
             "message": "错误",
             "error": e.args[1],
         }}), 400
-
 
 
 # ***************************** 商铺管理 ***************************** #
