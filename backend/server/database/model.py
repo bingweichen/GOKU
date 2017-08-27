@@ -72,9 +72,8 @@ class User(BaseModel):
 
     status = CharField(default="empty")  # 租用状态
 
-    # 什么效果？
-    def __unicode__(self):
-        return self.username
+    # def __unicode__(self):
+    #     return self.username
 
 
 class VirtualCard(BaseModel):
