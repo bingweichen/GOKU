@@ -18,7 +18,20 @@ def get_all(username=None):
             BatteryRecord.user==username
         )
         return battery_record
-    battery_record = BatteryRecord.select()
+
+
+def get_all_paginate(period):
+    if period == 0:
+        battery_record = BatteryRecord.select()
+    else:
+        if period > 0:
+            period -= 1
+
+        today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+        before = today - timedelta(days=period)
+        battery_record = BatteryRecord.select().where(
+            BatteryRecord.rent_date >= before
+        )
     return battery_record
 
 
@@ -28,3 +41,10 @@ def add_record(username, battery):
         battery=battery,
         user=username
     )
+
+
+def get(*query, **kwargs):
+    battery_record = BatteryRecord.get(*query, **kwargs)
+    return battery_record
+
+

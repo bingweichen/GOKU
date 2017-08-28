@@ -28,9 +28,10 @@ from server.service import e_bike_model_service
 from server.service import storage_service
 from server.service import const_service
 from server.service import coupon_service
-
 from server.service import store_service
 from server.service import school_service
+from server.service import serial_number_service
+
 
 from server.utility.json_utility import models_to_json
 from server.utility.exception import Error
@@ -180,6 +181,15 @@ def get_storage():
 # 3. 更改库存 (数量...)
 @basic_setting.route('/storage', methods=['POST'])
 def modify_storage():
+    """
+    eg = {
+    "model": "小龟电动车 爆款 48V、12A",
+    "color": "黑",
+    "num": 100
+    }
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     result = storage_service.modify_num(
         model=data.pop("model"),
@@ -421,6 +431,20 @@ def remove_school(name):
     else:
         return jsonify({'response': "no school find"}), 404
     pass
+
+
+# ***************************** 编号管理 ***************************** #
+@basic_setting.route('/serial_number/all', methods=['GET'])
+def get_all_serial_number():
+
+    serial_number = serial_number_service.get_all(
+        page=int(request.args.get("page")),
+        paginate_by=int(request.args.get("paginate_by"))
+    )
+    return jsonify({'response': {
+        "serial_number": models_to_json(serial_number, recurse=False)
+    }}), 200
+
 
 
 # 暂时没用

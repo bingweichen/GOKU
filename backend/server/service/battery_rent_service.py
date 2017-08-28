@@ -28,6 +28,11 @@ from server.utility.constant.custom_constant import get_custom_const
 
 
 # ***************************** service ***************************** #
+def get_all(page, paginate_by):
+    battery = Battery.select().paginate(page=page, paginate_by=paginate_by)
+    return battery
+
+
 def get_battery(serial_number):
     """
     get battery rent information
@@ -288,6 +293,7 @@ def check_user_on_load(username):
 
 if __name__ == "__main__":
     pass
+    add_script()
     # print(check_on_load("Bingwei"))
 
     # print(calculate_price(datetime(2017, 8, 1, 6), datetime(2017, 8, 16, 5)))

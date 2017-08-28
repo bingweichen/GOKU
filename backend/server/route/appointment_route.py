@@ -44,7 +44,6 @@ def get_all_appointments():
         }}), 200
 
 
-# from peewee import *
 @appointment_app.route('', methods=['GET'])
 def get_appointment():
     username = request.args.get('username')
@@ -172,8 +171,12 @@ def upload_code():
         if result:
             return jsonify({'response': result}), 200
     except WrongSerialsNumber as e:
-        return jsonify(
-            {'response': '%s: %s' % (str(WrongSerialsNumber), e.args)}), 400
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(WrongSerialsNumber), e.args),
+                "message": '%s' % e.args
+            }
+        }), 400
 
 
 # 4. 提交付款成功

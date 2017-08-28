@@ -53,8 +53,13 @@ def get_refund_table():
 
 
 # 更改退款记录状态
-@support_app.route('/refund_table/', methods=['POST'])
+@support_app.route('/refund_table/set_success_refund_status', methods=['POST'])
 def modify_refund_table():
+    """
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
     result = refund_table_service.modify_status(
         refund_table_id=data.pop("refund_table_id"),

@@ -22,6 +22,12 @@ E_BIKE_MODEL_TYPE_CODE = {
 }
 
 
+def get_all(page, paginate_by):
+    serial_number = SerialNumber.select().paginate(
+        page=page, paginate_by=paginate_by)
+    return serial_number
+
+
 def get_available_code(appointment):
     store = appointment.user.school.store
     type = appointment.type
@@ -43,7 +49,8 @@ def get_available_code(appointment):
 
 def get_available_battery_code():
     serial_number = SerialNumber.select().where(
-        SerialNumber.category_code.not_in(["M", "Z", "P"]),
+        SerialNumber.category_code == None,
+        # SerialNumber.category_code.not_in(["M", "Z", "P"]),
         SerialNumber.available == True).get()
 
     # 更改被使用的serial number
@@ -211,6 +218,11 @@ def generate_battery_serial_number():
     #             store_code=store_code,
     #         )
     #         print(serial_number)
+
+
+def set_available_to_false():
+    result = SerialNumber.update(avaiable=False)
+    return result
 
 
 # ***************************** test ***************************** #

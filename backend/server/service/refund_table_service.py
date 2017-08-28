@@ -7,6 +7,7 @@
 @desc: 退款表格
 
 """
+from datetime import datetime
 from server.database.model import RefundTable
 
 
@@ -27,4 +28,7 @@ def modify_status(refund_table_id, status):
 
 
 def add(**kwargs):
-    return RefundTable.create(**kwargs)
+    date = datetime.utcnow()
+    return RefundTable.create(
+        date=date,
+        **kwargs)

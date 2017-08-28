@@ -194,7 +194,8 @@ class BatteryRecord(BaseModel):
     user = ForeignKeyField(User)
     battery = ForeignKeyField(Battery, related_name="battery_records")
     rent_date = DateTimeField()
-    return_date = DateTimeField()
+
+    return_date = DateTimeField(default=None, null=True)
     price = FloatField(default=0)
     situation = CharField(default="借用中")  # 借用中，已归还
 
@@ -247,7 +248,8 @@ class SerialNumber(BaseModel):
     code = CharField(primary_key=True)
     store = ForeignKeyField(Store)
     store_code = CharField()
-    category_code = CharField()
+
+    category_code = CharField(default=None, null=True)
     available = BooleanField(default=True)
     appointment = ForeignKeyField(Appointment, null=True)
     battery = ForeignKeyField(Battery, null=True)
@@ -263,6 +265,10 @@ class RefundTable(BaseModel):
     date = DateTimeField()  # 日期
     comment = CharField(null=True)  # 备注
     status = CharField(default="未处理")  # 状态：已退款
+
+    # @classmethod
+    # def create(cls, **kwargs):
+    #     return RefundTable.create(**kwargs)
 
 
 # 报修表格 电动车点击报修
@@ -280,7 +286,7 @@ table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable]
 
-table_temp = [Coupon]
+table_temp = [BatteryReport]
 
 
 def create_tables():

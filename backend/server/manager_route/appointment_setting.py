@@ -23,7 +23,7 @@ appointment_setting = Blueprint(
 
 # ***************************** 查询 ***************************** #
 # 查询所有订单 (分页）
-@appointment_setting.route('/appointments/all/', methods=['GET'])
+@appointment_setting.route('/appointments/all', methods=['GET'])
 def get_appointments():
     page = request.args.get("page")
     paginate_by = request.args.get("paginate_by")
@@ -36,51 +36,49 @@ def get_appointments():
         int(days)
     )
     appointments = models_to_json(appointments, recurse=False)
-    # fields = list(appointments[0])
     return jsonify({
         'response': {
             "appointments": appointments,
             "total": total
-            # "fields": fields
         }}), 200
 
 
-# 查询租车或买车订单
-@appointment_setting.route('/appointments/', methods=['GET'])
-def get_appointment_by_type():
-    """
+# # 查询租车或买车订单
+# @appointment_setting.route('/appointments/', methods=['GET'])
+# def get_appointment_by_type():
+#     """
+#
+#     eg = http://localhost:5000/manager/appointment_setting/appointments/?appointment_type=%E7%A7%9F%E8%BD%A6&period=1&page=1&paginate_by=5
+#
+#     # 如果想集成一个，获取所有使用 in ["租车"，"买车"]
+#     :return:
+#     :rtype:
+#     """
+#     appointment_type = request.args.get("appointment_type")
+#     period = request.args.get("period")
+#
+#     appointments = appointment_service.manager_get(
+#         type=appointment_type,
+#         period=int(period),
+#         page=int(request.args.get("page")),
+#         paginate_by=int(request.args.get("paginate_by"))
+#     )
+#     appointments = models_to_json(appointments, recurse=False)
+#     return jsonify({
+#         'response': {
+#             "appointments": appointments
+#         }}), 200
 
-    eg = http://localhost:5000/manager/appointment_setting/appointments/?appointment_type=%E7%A7%9F%E8%BD%A6&period=1&page=1&paginate_by=5
 
-    # 如果想集成一个，获取所有使用 in ["租车"，"买车"]
-    :return:
-    :rtype:
-    """
-    appointment_type = request.args.get("appointment_type")
-    period = request.args.get("period")
-
-    appointments = appointment_service.manager_get(
-        type=appointment_type,
-        period=int(period),
-        page=int(request.args.get("page")),
-        paginate_by=int(request.args.get("paginate_by"))
-    )
-    appointments = models_to_json(appointments, recurse=False)
-    return jsonify({
-        'response': {
-            "appointments": appointments
-        }}), 200
-
-
-# 查询订单数量
-@appointment_setting.route('/appointments/count', methods=['GET'])
-def count_appointments():
-    # appointment_type = request.args.get("appointment_type")
-    count = appointment_service.count()
-    return jsonify({
-        'response': {
-            "count": count
-        }}), 200
+# # 查询订单数量
+# @appointment_setting.route('/appointments/count', methods=['GET'])
+# def count_appointments():
+#     # appointment_type = request.args.get("appointment_type")
+#     count = appointment_service.count()
+#     return jsonify({
+#         'response': {
+#             "count": count
+#         }}), 200
 
 
 # ***************************** 操作 ***************************** #
@@ -91,7 +89,10 @@ def return_e_bike():
 
     eg = {
     "appointment_id": 1,
-    "serial_number": "A00001"
+    "serial_number": "AZ0002",
+    "account": "11",
+    "account_type": "11",
+    "comment": "111"
     }
     :return:
     :rtype:
@@ -106,17 +107,21 @@ def return_e_bike():
             account_type=data.pop("account_type"),
             comment=data.pop("comment")
         )
-        if result:
-            return jsonify({'response': result}), 200
+        return jsonify({'response': result}), 200
+
     except Error as e:
-        return jsonify(
-            {'response': '%s: %s' % (str(Exception), e.args)}), 400
+        return jsonify({
+            'response': {
+                'error': e.args,
+                'message': '%s' % e.args
+            }
+        }), 400
 
 
 # 更改订单状态
 @appointment_setting.route(
-    '/modify_status/<string:appointment_id>/<string:status>', methods=['POST'])
-def modify_appointment_status(appointment_id, status):
+    '/modify_status/<string:appointment_id>', methods=['POST'])
+def modify_appointment_status(appointment_id):
     """
     eg = 1/已完成
 
@@ -127,7 +132,11 @@ def modify_appointment_status(appointment_id, status):
     :return:
     :rtype:
     """
-    result = appointment_service.modify_status(appointment_id, status)
+    data = request.get_json()
+    result = appointment_service.modify_status(
+        appointment_id,
+        status=data.pop("status")
+    )
     if result:
         return jsonify({'response': "modify success"}), 200
     else:

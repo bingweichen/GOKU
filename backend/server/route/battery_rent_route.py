@@ -39,7 +39,11 @@ def get_battery(serial_number):
         return jsonify({'response': model_to_dict(battery)}), 200
     except DoesNotExist as e:
         return jsonify({
-            'response': '%s: %s' % (str(DoesNotExist), e.args)}), 400
+            'response': {
+                "error": '%s: %s' % (str(DoesNotExist), e.args),
+                "message": '%s' % e.args
+            }
+        }), 400
 
 
 # 2. 获取用户现有 闪充电池

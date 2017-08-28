@@ -29,5 +29,5 @@ def get_refund_table():
     refund_tables = refund_table_service.get_all(username)
     return jsonify({
         'response': {
-            "refund_tables": models_to_json(refund_tables)
+            "refund_tables": models_to_json(refund_tables, recurse=False)
         }}), 200

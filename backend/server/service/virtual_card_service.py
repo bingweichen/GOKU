@@ -63,7 +63,7 @@ def pay_deposit(**kwargs):
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
     if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
-        raise Error("You need not pay deposit")
+        raise Error("无需充值押金")
     else:
         virtual_card.deposit = deposit_fee
         result = virtual_card.save()
@@ -159,7 +159,7 @@ def return_deposit(**kwargs):
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
     if deposit <= 0:
-        raise Error("No deposit refundable")
+        raise Error("无可退还押金")
     else:
         virtual_card.deposit = 0
         result = virtual_card.save()
@@ -167,7 +167,8 @@ def return_deposit(**kwargs):
             card=card_no,
             consume_event="return deposit",
             consume_date_time=datetime.utcnow(),
-            consume_fee=-deposit, balance=virtual_card.balance)
+            consume_fee=-deposit,
+            balance=virtual_card.balance)
         # 记录退款
         refund_record = refund_table_service.add(
             user=kwargs["username"],
@@ -307,10 +308,17 @@ def freeze(card_no):
     return virtual_card.save()
 
 
-def normal(card_no):
+# 解冻账号
+def re_freeze(card_no):
     virtual_card = VirtualCard.get(card_no=card_no)
     virtual_card.situation = "正常"
     return virtual_card.save()
+
+
+# def normal(card_no):
+#     virtual_card = VirtualCard.get(card_no=card_no)
+#     virtual_card.situation = "正常"
+#     return virtual_card.save()
 
 
 # ***************************** for test ***************************** #

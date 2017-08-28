@@ -14,6 +14,8 @@ from server.service import virtual_card_service
 
 from playhouse.shortcuts import model_to_dict
 from server.utility.json_utility import models_to_json, custom_models_to_json
+from server.utility.exception import *
+
 
 PREFIX = '/virtual_card'
 
@@ -29,7 +31,7 @@ def get_virtual_card():
         virtual_card = virtual_card_service.get_virtual_card(
             card_no=username
         )
-        virtual_card = model_to_dict(virtual_card)
+        virtual_card = model_to_dict(virtual_card, recurse=False)
         return jsonify({'response': virtual_card}), 200
 
     except DoesNotExist as e:
@@ -42,28 +44,28 @@ def get_virtual_card():
 
 
 # ***************************** 押金 ***************************** #
-# 获取押金数额
-@virtual_card_app.route('/deposit', methods=['GET'])
-def get_deposit():
-    """
-    check if the card deposited
-    :param card_no: card number
-    :return: True of False
-    """
-    username = request.args.get("username")
-    try:
-        deposit = virtual_card_service.get_deposit(
-            card_no=username
-        )
-        return jsonify({'response': deposit}), 200
-
-    except DoesNotExist as e:
-        return jsonify({
-            'response': {
-                'error': e.args,
-                'message': '未开通虚拟消费卡'
-            }
-        })
+# # 获取押金数额
+# @virtual_card_app.route('/deposit', methods=['GET'])
+# def get_deposit():
+#     """
+#     check if the card deposited
+#     :param card_no: card number
+#     :return: True of False
+#     """
+#     username = request.args.get("username")
+#     try:
+#         deposit = virtual_card_service.get_deposit(
+#             card_no=username
+#         )
+#         return jsonify({'response': deposit}), 200
+#
+#     except DoesNotExist as e:
+#         return jsonify({
+#             'response': {
+#                 'error': e.args,
+#                 'message': '未开通虚拟消费卡'
+#             }
+#         })
 
 
 # 支付押金
@@ -79,14 +81,22 @@ def pay_deposit():
     :return:
     """
     data = request.get_json()
-    result, record = virtual_card_service.pay_deposit(
-        card_no=data["card_no"],
-        deposit_fee=data["deposit_fee"],
-    )
-    return jsonify({'response': {
-        "result": result,
-        "record": model_to_dict(record)
-    }}), 200
+    try:
+        result, record = virtual_card_service.pay_deposit(
+            card_no=data["card_no"],
+            deposit_fee=data["deposit_fee"],
+        )
+        return jsonify({'response': {
+            "result": result,
+            "record": model_to_dict(record, recurse=False)
+        }}), 200
+    except Error as e:
+        return jsonify({
+            'response': {
+                'error': e.args,
+                'message': '%s' % e.args
+            }
+        })
 
 
 # 退还押金
@@ -105,43 +115,57 @@ def return_deposit():
     :return:
     """
     data = request.get_json()
-    result = virtual_card_service.return_deposit(
-        username=data.pop("username"),
-        card_no=data.pop("card_no"),
-        account=data.pop("account"),
-        account_type=data.pop("account_type"),
-        comment=data.pop("comment"),
-        **data
-    )
-    return jsonify({'response': result}), 200
-
-
-# ***************************** 余额 ***************************** #
-# 获取余额
-@virtual_card_app.route('/balance', methods=['GET'])
-def get_card_balance():
-    """
-    get card balance
-
-    :return: balance
-    """
-    username = request.args.get("username")
     try:
-        balance = virtual_card_service.get_card_balance(
-            card_no=username
-        )
+        result, record, refund_record =\
+            virtual_card_service.return_deposit(
+                username=data.pop("username"),
+                card_no=data.pop("card_no"),
+                account=data.pop("account"),
+                account_type=data.pop("account_type"),
+                comment=data.pop("comment"),
+                **data
+            )
         return jsonify({
             'response': {
-                'balance': balance,
-            }
-        })
-    except DoesNotExist as e:
+                "result": result,
+                "record": model_to_dict(record, recurse=False),
+                "refund_record": model_to_dict(refund_record, recurse=False)
+            }}), 200
+    except Error as e:
         return jsonify({
             'response': {
                 'error': e.args,
-                'message': '未开通虚拟消费卡'
+                'message': '%s' % e.args
             }
         })
+
+
+# ***************************** 余额 ***************************** #
+# # 获取余额
+# @virtual_card_app.route('/balance', methods=['GET'])
+# def get_card_balance():
+#     """
+#     get card balance
+#
+#     :return: balance
+#     """
+#     username = request.args.get("username")
+#     try:
+#         balance = virtual_card_service.get_card_balance(
+#             card_no=username
+#         )
+#         return jsonify({
+#             'response': {
+#                 'balance': balance,
+#             }
+#         })
+#     except DoesNotExist as e:
+#         return jsonify({
+#             'response': {
+#                 'error': e.args,
+#                 'message': '未开通虚拟消费卡'
+#             }
+#         })
 
 
 # # 消费余额
@@ -186,7 +210,7 @@ def top_up():
     )
     return jsonify({'response': {
         "result": result,
-        "record": model_to_dict(record)
+        "record": model_to_dict(record, max_depth=1)
     }}), 200
 
 

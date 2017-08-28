@@ -16,6 +16,7 @@ from flask import jsonify
 from flask import request
 
 from server.service import battery_rent_service
+from server.service import battery_record_service
 
 from server.utility.json_utility import models_to_json
 from playhouse.shortcuts import model_to_dict
@@ -26,6 +27,20 @@ battery_setting = Blueprint("battery_setting", __name__, url_prefix=PREFIX)
 
 
 # ***************************** 查询 ***************************** #
+# 获取所有电池 分页
+@battery_setting.route('/battery/all', methods=['GET'])
+def get_all_battery():
+    battery = battery_rent_service.get_all(
+        page=int(request.args.get("page")),
+        paginate_by=int(request.args.get("paginate_by"))
+    )
+    battery = models_to_json(battery, recurse=False)
+    return jsonify({
+        'response': {
+            "battery": battery
+        }}), 200
+
+
 # 使用闪充的总人次
 @battery_setting.route('/total_use', methods=['GET'])
 def get_total_uses_amount():
@@ -64,6 +79,20 @@ def get_use_status_by_id(serial_number):
 def get_history_record_by_id(serial_number, days):
     records = battery_rent_service.manager_get_history_record_by_id(
         serial_number, days)
+    records = models_to_json(records, recurse=False)
+    return jsonify({
+        'response': {
+            "records": records
+        }}), 200
+
+
+# 查询所有电池记录
+@battery_setting.route(
+    '/history_record', methods=['GET'])
+def get_history_record():
+    records = battery_record_service.get_all_paginate(
+        period=int(request.args.get("days"))
+    )
     records = models_to_json(records, recurse=False)
     return jsonify({
         'response': {

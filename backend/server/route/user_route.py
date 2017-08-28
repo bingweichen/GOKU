@@ -160,6 +160,7 @@ def create_virtual_card():
             card_no=data.pop("username"),
             **data
         )
-        return jsonify({'response': model_to_dict(virtual_card)}), 200
+        return jsonify({
+            'response': model_to_dict(virtual_card, recurse=False)}), 200
     except Error as e:
         return jsonify({'response': '%s: %s' % (str(Error), e.args)}), 400

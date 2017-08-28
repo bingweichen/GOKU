@@ -105,7 +105,7 @@ def upload_serial_number(user, appointment_id, serial_number):
     appointment = get(id=appointment_id, user=user)
     if check_serial_number(appointment, serial_number):
         return True
-    raise WrongSerialsNumber("wrong serials number")
+    raise WrongSerialsNumber("编号错误")
 
 
 # 4. 付款成功
@@ -135,7 +135,7 @@ def total_payment_success(user, appointment_id):
 # 取消订单
 def cancel_appointment(appointment_id, username=None, **kwargs):
     appointment = Appointment.get(id=appointment_id)
-    if username and username != appointment.user:
+    if username and username != appointment.user.username:
         raise Error("not your appointment")
 
     terminate_appointment(appointment_id, appointment, **kwargs)
@@ -175,7 +175,7 @@ def return_appointment_fee(username, appointment, **kwargs):
         value=appointment_fee,
         comment=kwargs["comment"]
     )
-    print("需退还押金" + appointment_fee)
+    print("需退还押金" + str(appointment_fee))
 
 
 # 退还库存

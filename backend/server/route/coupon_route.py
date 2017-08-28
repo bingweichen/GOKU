@@ -39,5 +39,5 @@ def get_my_coupons(user):
     # print("current_user", current_user)
 
     coup = coupon_service.get_my_coupons(user)
-    return jsonify({'response': models_to_json(coup)}), 200
+    return jsonify({'response': models_to_json(coup, recurse=False)}), 200
 
