@@ -30,14 +30,15 @@ battery_setting = Blueprint("battery_setting", __name__, url_prefix=PREFIX)
 # 获取所有电池 分页
 @battery_setting.route('/battery/all', methods=['GET'])
 def get_all_battery():
-    battery = battery_rent_service.get_all(
+    battery, total = battery_rent_service.get_all(
         page=int(request.args.get("page")),
         paginate_by=int(request.args.get("paginate_by"))
     )
     battery = models_to_json(battery, recurse=False)
     return jsonify({
         'response': {
-            "battery": battery
+            "battery": battery,
+            "total": total
         }}), 200
 
 

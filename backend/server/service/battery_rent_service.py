@@ -29,8 +29,9 @@ from server.utility.constant.custom_constant import get_custom_const
 
 # ***************************** service ***************************** #
 def get_all(page, paginate_by):
+    total = Battery.select().count()
     battery = Battery.select().paginate(page=page, paginate_by=paginate_by)
-    return battery
+    return battery, total
 
 
 def get_battery(serial_number):
