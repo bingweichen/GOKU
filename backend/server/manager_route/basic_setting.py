@@ -437,12 +437,13 @@ def remove_school(name):
 @basic_setting.route('/serial_number/all', methods=['GET'])
 def get_all_serial_number():
 
-    serial_number = serial_number_service.get_all(
+    serial_number, total = serial_number_service.get_all(
         page=int(request.args.get("page")),
         paginate_by=int(request.args.get("paginate_by"))
     )
     return jsonify({'response': {
-        "serial_number": models_to_json(serial_number, recurse=False)
+        "serial_number": models_to_json(serial_number, recurse=False),
+        "total": total
     }}), 200
 
 

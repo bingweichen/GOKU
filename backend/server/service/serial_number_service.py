@@ -23,9 +23,10 @@ E_BIKE_MODEL_TYPE_CODE = {
 
 
 def get_all(page, paginate_by):
+    total = SerialNumber.select().count()
     serial_number = SerialNumber.select().paginate(
         page=page, paginate_by=paginate_by)
-    return serial_number
+    return serial_number, total
 
 
 def get_available_code(appointment):

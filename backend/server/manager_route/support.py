@@ -19,7 +19,7 @@ from flask import request
 
 from server.service import report_table_service
 from server.service import refund_table_service
-
+from server.service import battery_report_service
 
 from server.utility.json_utility import models_to_json
 from playhouse.shortcuts import model_to_dict
@@ -39,6 +39,16 @@ def get_all_report_table():
     #     report_tables[i]["user"] = report_tables[i]["user"]["username"]
     #     report_tables[i]["appointment"].pop("user")
     return jsonify({'response': report_tables}), 200
+
+
+# 获取所有电池报修
+@support_app.route('/battery_report/all', methods=['GET'])
+def get_all_battery_report():
+    battery_report = battery_report_service.get_all_paginate(
+        # period=int(request.args.get("days"))
+    )
+    battery_report = models_to_json(battery_report, recurse=False)
+    return jsonify({'response': battery_report}), 200
 
 
 # ***************************** 退款表 ***************************** #
