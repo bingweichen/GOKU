@@ -74,6 +74,97 @@ function RouterConfig({ history, app }) {
             });
           },
         },
+        {
+          path: 'school',
+          name: 'schoolPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/school'));
+              cb(null, require('./routes/school'));
+            });
+          },
+        },
+        {
+          path: 'coupons',
+          name: 'couponPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/coupon'));
+              cb(null, require('./routes/coupon'));
+            });
+          },
+        },
+        {
+          path: 'storage',
+          name: 'storagePage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              registerModel(app, require('./models/Storage'));
+              cb(null, require('./routes/storage'));
+            });
+          },
+        },
+        {
+          path: 'store',
+          name: 'storePage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/store'));
+            });
+          },
+        },
+        {
+          path: 'battery',
+          name: 'batteryPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/battery').default);
+            });
+          },
+        },
+        {
+          path: 'battery/record',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/battery').BatteryRecord);
+            });
+          },
+        },
+        {
+          path: 'battery/report',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/battery').BatteryReport);
+            });
+          },
+        },
+        {
+          path: 'report',
+          name: 'reportyPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/report'));
+            });
+          },
+        },
+        {
+          path: 'refund',
+          name: 'refundPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/refund'));
+            });
+          },
+        },
+        {
+          path: 'NO',
+          name: 'NOPage',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/NO'));
+            });
+          },
+        },
       ],
     },
   ];

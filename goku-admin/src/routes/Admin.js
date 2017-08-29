@@ -4,6 +4,7 @@ import { Layout, Icon, Menu } from 'antd';
 import { hashHistory } from 'dva/router';
 import styles from './Admin.less';
 
+const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 class Admin extends Component {
   state = {
@@ -26,7 +27,8 @@ class Admin extends Component {
       { icon: 'user', key: 'coupons', title: '优惠卷' },
       { icon: 'user', key: 'store', title: '商铺管理' },
       { icon: 'user', key: 'school', title: '学校管理' },
-      { icon: 'user', key: 'battery', title: '电池管理' },
+      { icon: 'user', key: 'NO', title: '编号管理' },
+      // { icon: 'user', key: 'battery', title: '电池管理' },
       { icon: 'user', key: 'report', title: '保修' },
       { icon: 'user', key: 'refund', title: '退款' },
       { icon: 'user', key: 'person', title: '个人中心' },
@@ -54,6 +56,11 @@ class Admin extends Component {
                   </Menu.Item>
                 ))
               }
+              <SubMenu key="battery" title={<span><Icon type="setting" /><span>电池管理</span></span>}>
+                <Menu.Item key="battery">电池</Menu.Item>
+                <Menu.Item key="battery/record">电池记录</Menu.Item>
+                <Menu.Item key="battery/report">电池报修</Menu.Item>
+              </SubMenu>
             </Menu>
           </Sider>
           <Layout>

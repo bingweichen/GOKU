@@ -8,8 +8,8 @@ describe('test for order', () => {
   describe('effect test', () => {
     const { effects } = order;
     it('test get datasource', () => {
-      const gen = effects.getDataSource({ page: 1, number: 10 }, { call, put });
-      expect(gen.next().value).to.be.deep.equal(call(service.order, { page: 1, number: 10 }));
+      const gen = effects.getDataSource({ page: 1, number: 10, days: 0 }, { call, put });
+      expect(gen.next().value).to.be.deep.equal(call(service.order, { page: 1, number: 10, days: 0 }));
       expect(gen.next().value).to.be.deep.equal(put({ type: 'setDataSource', appointments: [] }));
     });
   });

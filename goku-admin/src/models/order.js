@@ -13,16 +13,16 @@ export default {
     setup({ dispatch, history }) {
       return history.listen(({ pathname }) => {
         if (pathname === '/admin/order') {
-          dispatch({ type: 'getDataSource', number: 10, page: 1 });
+          dispatch({ type: 'getDataSource', number: 10, page: 1, days: 0 });
         }
       });
     },
   },
 
   effects: {
-    *getDataSource({ page, number }, { call, put }) {
+    *getDataSource({ page, number, days }, { call, put }) {
       try {
-        const { appointments } = yield call(service.order, { page, number });
+        const { appointments } = yield call(service.order, { page, number, days });
         yield put({ type: 'setDataSource', appointments });
       } catch (error) {
         yield put({ type: 'setDataSource', appointments: [] });

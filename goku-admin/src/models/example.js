@@ -6,7 +6,12 @@ export default {
   state: {},
 
   subscriptions: {
-    setup({ dispatch, history }) {  // eslint-disable-line
+    setup({ dispatch, history }) {
+      return history.listen(({ pathname }) => {
+        if (pathname === 'xxxxx') {
+          dispatch({ type: 'getDataSource', number: 10, page: 1, days: 0 });
+        }
+      });
     },
   },
 
