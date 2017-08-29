@@ -9,8 +9,10 @@ describe('test for order', () => {
     const { effects } = order;
     it('test get datasource', () => {
       const gen = effects.getDataSource({ page: 1, number: 10, days: 0 }, { call, put });
-      expect(gen.next().value).to.be.deep.equal(call(service.order, { page: 1, number: 10, days: 0 }));
-      expect(gen.next().value).to.be.deep.equal(put({ type: 'setDataSource', appointments: [] }));
+      expect(gen.next().value)
+        .to.be.deep.equal(call(service.order, { page: 1, number: 10, days: 0 }));
+      expect(gen.next().value)
+        .to.be.deep.equal(put({ type: 'setDataSource', appointments: [] }));
     });
   });
   describe('reducers test', () => {
