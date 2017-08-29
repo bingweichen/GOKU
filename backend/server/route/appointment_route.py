@@ -103,7 +103,6 @@ def add_appointment():
             user=data.pop("username"),
             **data
         )
-        # TODO 内容筛选
         return jsonify({'response': model_to_dict(appointment)}), 200
 
     except DoesNotExist as e:

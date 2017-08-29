@@ -71,6 +71,7 @@ class User(BaseModel):
     account_type = CharField(verbose_name='账号类型', null=True, default=None)  # 账号类型
 
     status = CharField(default="empty")  # 租用状态
+    admin = BooleanField(default=False)
 
     # def __unicode__(self):
     #     return self.username

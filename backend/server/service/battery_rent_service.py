@@ -76,22 +76,8 @@ def rent_battery(**kwargs):
 
     battery.on_loan = True
     battery.user = username
-
     battery_record_service.add_record(username, battery)
     return battery.save()
-
-    # battery_info = Battery.get()
-    # if battery_info:
-    #     is_loan = model_to_dict(battery_info)["on_loan"]
-    #     if is_loan:
-    #         return "Battery is on loan"
-    #     else:
-    #         result = Battery.update(on_loan=True, user_id=owner
-    #                                 ).where(Battery.serial_number == serial_number)
-    #         result.execute()
-    #         return "Modify succeed"
-    # else:
-    #     return "No battery found"
 
 
 # 归还电池
@@ -129,8 +115,8 @@ def return_battery(username, serial_number):
 def check_on_load_batter_rent_date(username):
     """
 
-    :param serial_number:
-    :type serial_number:
+    :param username:
+    :type username:
     :return: False 超出租用限制
     :rtype:
     """
@@ -256,7 +242,6 @@ def convert_timedelta(duration):
 def add_script():
     """
     add new virtual card to database
-    :param kwargs: parameters to insert to database
     :return:
     """
     for count in range(0, 800):

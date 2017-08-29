@@ -122,7 +122,7 @@ def total_payment_success(user, appointment_id):
                 days=RENT_TIME_PERIOD[rent_time_period] * 365)
         appointment.end_time = end_time
         appointment.rent_deposit = get_custom_const("RENT_DEPOSIT")
-        status = APPOINTMENT_STATUS["2"]
+        status = RENT_APPOINTMENT_STATUS["2"]
         appointment.status = status
         return appointment.save()
 
