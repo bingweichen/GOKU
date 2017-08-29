@@ -100,9 +100,21 @@ def modify_e_bike_model():
     :rtype:
     """
     data = request.get_json()
+    # 转换价格
+    _type = data["type"]
+    price = data.pop("price")
+    if _type == "租车":
+        year_price = float(data.pop("year_price"))
+        half_year_price = float(data.pop("half_year_price"))
+        price = {
+            "学期": half_year_price,
+            "年": year_price
+        }
+    else:
+        price = float(price)
     result = e_bike_model_service.modify_by_name(
         name=data.pop("name"),
-        price=float(data.pop("price")),
+        price=price,
         # colors=data.pop("colors"),
         **data
     )
@@ -436,7 +448,6 @@ def remove_school(name):
 # ***************************** 编号管理 ***************************** #
 @basic_setting.route('/serial_number/all', methods=['GET'])
 def get_all_serial_number():
-
     serial_number, total = serial_number_service.get_all(
         page=int(request.args.get("page")),
         paginate_by=int(request.args.get("paginate_by"))
