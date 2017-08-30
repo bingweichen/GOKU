@@ -20,12 +20,12 @@ export const order = {
   user: '用户',
 };
 export const carConstant = {
+  name: '名称',
   battery: '电池',
   category: '类型',
   configure: '配置',
   distance: '续航',
   // introduction: '商品简介',
-  name: '名称',
   num_sold: '销量',
   num_view: '浏览量',
   price: '价格',
