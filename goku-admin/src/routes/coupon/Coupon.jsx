@@ -1,20 +1,44 @@
-import React from 'react';
-import { Table } from 'antd';
+import React, { Component } from 'react';
+import { Table, Button } from 'antd';
 import { connect } from 'dva';
+import CouponModal from '../../components/Modal/CouponModal';
 import { couponCol } from '../../utils/Table/columns.js';
 
-const coupon = ({
-  dataSource,
-}) => {
-  return (
-    <div>
-      <Table
-        columns={couponCol}
-        dataSource={dataSource}
-      />
-    </div>
-  );
-};
+class Coupon extends Component {
+
+  state = {
+    visible: false,
+  }
+
+  toggleVisible = (visible) => {
+    this.setState({
+      visible,
+    });
+  }
+
+  render() {
+    const { dataSource } = this.props;
+    const { visible } = this.state;
+    return (
+      <div>
+        <CouponModal
+          visible={visible}
+          toggleVisible={this.toggleVisible}
+        />
+        <Button
+          onClick={
+            () => this.toggleVisible(true)
+          }
+        >
+          添加</Button>
+        <Table
+          columns={couponCol}
+          dataSource={dataSource}
+        />
+      </div >
+    );
+  }
+}
 
 const mapStateToProps = ({ coupon: couponState }) => {
   return {
@@ -22,4 +46,4 @@ const mapStateToProps = ({ coupon: couponState }) => {
   };
 };
 
-export default connect(mapStateToProps)(coupon);
+export default connect(mapStateToProps)(Coupon);
