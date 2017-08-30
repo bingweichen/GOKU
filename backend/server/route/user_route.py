@@ -142,6 +142,53 @@ def login():
             }}), 400
 
 
+@user_app.route('/manager/login', methods=['POST'])
+def login_manager():
+    """
+
+    eg = {
+    "username": "bingwei",
+    "password": "123456"
+    }
+
+    :return:
+    :rtype:
+    """
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+    try:
+        user = user_service.login(username, password)
+        if not user.admin:
+            return jsonify({
+                'response': {
+                    "message": "非管理员用户"
+                }}), 400
+
+        user = model_to_dict(user)
+        user.pop('password')
+
+        # Identity can be any data that is json serializable
+        response = {
+            'response': {
+                'token': create_access_token(identity=user),
+                'user': user}}
+        return jsonify(response), 200
+
+    except DoesNotExist as e:
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(DoesNotExist), e.args),
+                "message": "用户名不存在"
+            }}), 400
+
+    except PasswordError as e:
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(PasswordError), e.args),
+                "message": "用户名密码错误"
+            }}), 400
+
+
 # 开通虚拟消费卡
 @user_app.route('/virtual_card', methods=['PUT'])
 def create_virtual_card():

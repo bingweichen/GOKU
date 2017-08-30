@@ -69,3 +69,11 @@ PUT 新增
 - get
 - modify
 - remove
+
+
+## requirement
+flask
+peewee
+PyMySQL
+flask_cors
+flask_jwt_extended

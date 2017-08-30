@@ -24,8 +24,8 @@ coupon = Blueprint("coupon", __name__, url_prefix=PREFIX)
 
 # ***************************** 获取 ***************************** #
 @coupon.route('/<string:user>', methods=['GET'])
-@jwt_required
-# @auth_decorator.requires_auth
+# @jwt_required
+# @auth_decorator.check_admin_auth
 def get_my_coupons(user):
     """
     get all valid coupons of the user

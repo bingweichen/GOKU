@@ -17,6 +17,8 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from peewee import DoesNotExist
+
 from playhouse.shortcuts import model_to_dict
 from server.utility.json_utility import models_to_json
 
@@ -47,6 +49,46 @@ def get_appointments():
         'response': {
             "users": users
         }}), 200
+
+
+# ***************************** 虚拟消费卡 ***************************** #
+@user_setting.route('/virtual_card', methods=['GET'])
+def get_virtual_card():
+    username = request.args.get("username")
+    try:
+        virtual_card = virtual_card_service.get_virtual_card(
+            card_no=username
+        )
+        virtual_card = model_to_dict(virtual_card, recurse=False)
+        return jsonify({'response': virtual_card}), 200
+
+    except DoesNotExist as e:
+        return jsonify({
+            'response': {
+                'error': e.args,
+                'message': '未开通虚拟消费卡'
+            }
+        }), 400
+
+
+# 冻结账号
+@user_setting.route('/virtual_card/freeze', methods=['GET'])
+def freeze():
+    card_no = request.args.get("card_no")
+    result = virtual_card_service.freeze(
+        card_no=card_no
+    )
+    return jsonify({'response': result}), 200
+
+
+# 解冻账号
+@user_setting.route('/virtual_card/re_freeze', methods=['GET'])
+def re_freeze():
+    card_no = request.args.get("card_no")
+    result = virtual_card_service.re_freeze(
+        card_no=card_no
+    )
+    return jsonify({'response': result}), 200
 
 
 # ***************************** 个人订单 ***************************** #

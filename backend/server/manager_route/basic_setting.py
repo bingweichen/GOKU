@@ -358,30 +358,20 @@ def get_stores():
             "stores": models_to_json(stores),
         }}), 200
 
-# @basic_setting.route('/store', methods=['GET'])
-# @basic_setting.route('/store/<string:name>',
-#                      methods=['GET'])  # test complete
-# def get_store(name=None):
-#     if name is None:
-#         stores = store_service.get_all()
-#     else:
-#         stores = [store_service.get_by_name(name)]
-#
-#
-#     if stores:
-#
-#         return jsonify({'response': {"stores": stores}}), 200
-#     else:
-#         return jsonify({'response': "no store find"}), 404
-#     pass
 
-
-@basic_setting.route('/store/<string:name>',
+@basic_setting.route('/store',
                      methods=['POST'])  # test complete
-def modify_store(name):
+def modify_store():
+    """
+
+    :return:
+    :rtype:
+    """
     data = request.get_json()
-    modify_json = data
-    result = store_service.modify_by_name(name, modify_json)
+    result = store_service.modify_by_name(
+        name=data.pop('name'),
+        modify_json=data
+    )
     if result:
         return jsonify({'response': "modify success"}), 200
     else:
@@ -421,12 +411,14 @@ def add_school():
         return jsonify({'response': school}), 200
 
 
-@basic_setting.route('/school/<string:name>',
+@basic_setting.route('/school',
                      methods=['POST'])  # test complete
-def modify_school(name):
+def modify_school():
     data = request.get_json()
-    modify_json = data
-    result = school_service.modify_by_name(name, modify_json)
+    result = school_service.modify_by_name(
+        name=data.pop('name'),
+        modify_json=data
+    )
     if result:
         return jsonify({'response': "modify success"}), 200
     else:

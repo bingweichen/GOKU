@@ -5,7 +5,7 @@ from functools import wraps
 from flask import make_response
 from flask import request
 import jwt
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity
 
 from server.service import user_service
 
@@ -42,8 +42,10 @@ def check_admin_auth(f):
         user = user_service.get(username=username)
         if not user.admin:
             return authenticate()
-        return f(*args, **kwargs)
+        func = f(*args, **kwargs)
+        return func
     return decorated
+
 
 def check_admin(username):
     user = user_service.get(username=username)
