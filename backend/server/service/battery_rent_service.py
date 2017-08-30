@@ -28,9 +28,14 @@ from server.utility.constant.custom_constant import get_custom_const
 
 
 # ***************************** service ***************************** #
-def get_all(page, paginate_by):
-    total = Battery.select().count()
-    battery = Battery.select().paginate(page=page, paginate_by=paginate_by)
+def get_all_paginate(page, paginate_by, **kwargs):
+    battery = Battery.select()
+    serial_number = kwargs["serial_number"]
+    if serial_number:
+        battery = battery.\
+            where(Battery.serial_number.regexp(kwargs["serial_number"]))
+    total = battery.count()
+    battery = battery.paginate(page=page, paginate_by=paginate_by)
     return battery, total
 
 
@@ -179,10 +184,10 @@ def manager_get_current_uses_amount():
     return current_use or 0
 
 
-# 获取电池
-def manager_get_battery(serial_number):
-    battery = Battery.get(serial_number=serial_number)
-    return battery
+# # 获取电池
+# def manager_get_battery(serial_number):
+#     battery = Battery.get(serial_number=serial_number)
+#     return battery
     # loan = battery.on_loan
     # if loan:
     #     user = battery.user_id

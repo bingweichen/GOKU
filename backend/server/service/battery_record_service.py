@@ -20,9 +20,10 @@ def get_all(username=None):
         return battery_record
 
 
-def get_all_paginate(period):
+def get_all_paginate(page, paginate_by, period):
     if period == 0:
-        battery_record = BatteryRecord.select()
+        battery_record = BatteryRecord.select().paginate(page, paginate_by)
+        total = BatteryRecord.select().count()
     else:
         if period > 0:
             period -= 1
@@ -32,7 +33,10 @@ def get_all_paginate(period):
         battery_record = BatteryRecord.select().where(
             BatteryRecord.rent_date >= before
         )
-    return battery_record
+        total = BatteryRecord.select().where(
+            BatteryRecord.rent_date >= before
+        ).count()
+    return battery_record, total
 
 
 def add_record(username, battery):

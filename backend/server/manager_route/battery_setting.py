@@ -30,9 +30,20 @@ battery_setting = Blueprint("battery_setting", __name__, url_prefix=PREFIX)
 # 获取所有电池 分页
 @battery_setting.route('/battery/all', methods=['GET'])
 def get_all_battery():
-    battery, total = battery_rent_service.get_all(
+    # serial_number = request.args.get("serial_number")
+    # if serial_number:
+    #     battery = battery_rent_service.manager_get_battery(serial_number)
+    #     battery = model_to_dict(battery, recurse=False)
+    #     return jsonify({
+    #         'response': {
+    #             "battery": battery,
+    #             "total": 1
+    #         }}), 200
+
+    battery, total = battery_rent_service.get_all_paginate(
         page=int(request.args.get("page")),
-        paginate_by=int(request.args.get("paginate_by"))
+        paginate_by=int(request.args.get("paginate_by")),
+        serial_number=request.args.get("serial_number")
     )
     battery = models_to_json(battery, recurse=False)
     return jsonify({
@@ -62,42 +73,45 @@ def get_current_uses_amount():
         }}), 200
 
 
-# 输入闪充编号查询，查询闪充电池的使用状态和用户信息
-@battery_setting.route('/use_status/<string:serial_number>', methods=['GET'])
-def get_use_status_by_id(serial_number):
-    battery = battery_rent_service.manager_get_battery(serial_number)
+# # 输入闪充编号查询，查询闪充电池的使用状态和用户信息
+# @battery_setting.route('/use_status/<string:serial_number>', methods=['GET'])
+# def get_use_status_by_id(serial_number):
+#     battery = battery_rent_service.manager_get_battery(serial_number)
+#
+#     battery = model_to_dict(battery, recurse=False)
+#     return jsonify({
+#         'response': {
+#             "battery": battery
+#         }}), 200
 
-    battery = model_to_dict(battery, recurse=False)
-    return jsonify({
-        'response': {
-            "battery": battery
-        }}), 200
 
-
-# 可查询历史记录：一周内、一月内、三个月内。
-@battery_setting.route(
-    '/history_record/<string:serial_number>/<int:days>', methods=['GET'])
-def get_history_record_by_id(serial_number, days):
-    records = battery_rent_service.manager_get_history_record_by_id(
-        serial_number, days)
-    records = models_to_json(records, recurse=False)
-    return jsonify({
-        'response': {
-            "records": records
-        }}), 200
+# # 可查询历史记录：一周内、一月内、三个月内。
+# @battery_setting.route(
+#     '/history_record/<string:serial_number>/<int:days>', methods=['GET'])
+# def get_history_record_by_id(serial_number, days):
+#     records = battery_rent_service.manager_get_history_record_by_id(
+#         serial_number, days)
+#     records = models_to_json(records, recurse=False)
+#     return jsonify({
+#         'response': {
+#             "records": records
+#         }}), 200
 
 
 # 查询所有电池记录
 @battery_setting.route(
     '/history_record', methods=['GET'])
 def get_history_record():
-    records = battery_record_service.get_all_paginate(
+    records, total = battery_record_service.get_all_paginate(
+        page=int(request.args.get("page")),
+        paginate_by=int(request.args.get("paginate_by")),
         period=int(request.args.get("days"))
     )
     records = models_to_json(records, recurse=False)
     return jsonify({
         'response': {
-            "records": records
+            "records": records,
+            "total": total
         }}), 200
 
 

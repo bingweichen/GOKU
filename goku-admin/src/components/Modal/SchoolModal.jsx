@@ -1,20 +1,23 @@
 /**
  * Created by chen on 2017/8/30.
  */
-import React, { Component } from 'react';
-import { Modal, Input } from 'antd';
+import React, {Component} from 'react';
+import {Modal, Input, message} from 'antd';
+import { addNewSchool, editSchool } from '../../services/school.js';
+
 
 class SchoolModal extends Component {
 
   state = {
     name: '',
     address: '',
+    store: ''
   }
 
   componentWillReceiveProps(nextProps) {
-    const { name, address } = nextProps.data;
+    const {name, address, store} = nextProps.data;
     this.setState({
-      name, address,
+      name, address, store
     });
   }
 
@@ -29,21 +32,48 @@ class SchoolModal extends Component {
     // if(isEdit)
   }
 
+  submit = () => {
+    try {
+      if (this.props.isEdit) {
+        this.handleEditSchool(this.state);
+      } else {
+        this.addNewSchool(this.state);
+      }
+    } catch (error) {
+      message.error('操作失败');
+    }
+  }
+
+  async addNewSchool(data) {
+    await addNewSchool(data);
+    message.success('添加成功');
+    this.props.toggleVisible(false);
+  }
+
+  async handleEditSchool(data) {
+    await editSchool(data);
+    message.success('修改成功');
+    this.props.toggleVisible(false);
+  }
+
+
+
   render() {
-    const { visible, toggleVisible } = this.props;
+    const {visible, toggleVisible} = this.props;
     const schools = [
-      { value: 'name', label: '名称' },
-      { value: 'address', label: '地址' },
-      { value: 'store', label: '所属商铺' },
+      {value: 'name', label: '名称'},
+      {value: 'address', label: '地址'},
+      {value: 'store', label: '所属商铺'},
     ];
     return (
       <Modal
         visible={visible}
         onCancel={() => toggleVisible(false)}
+        onOk={() => { this.submit(); }}
       >
         <div>
           {
-            schools.map(({ value, label }) => (
+            schools.map(({value, label}) => (
               <div key={value}>
                 <span>{label}</span>
                 <Input

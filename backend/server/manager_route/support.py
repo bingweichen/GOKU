@@ -67,6 +67,10 @@ def get_refund_table():
 def modify_refund_table():
     """
 
+    eg = {
+    "refund_table_id":
+    }
+
     :return:
     :rtype:
     """
