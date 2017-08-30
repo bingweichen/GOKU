@@ -341,6 +341,7 @@ def add_store():
     data = request.get_json()
     store = store_service.add(**data)
     if store:
+        store = model_to_dict(store, recurse=False)
         return jsonify({'response': store}), 200
     pass
 
@@ -355,7 +356,7 @@ def get_stores():
     stores = store_service.get_all()
     return jsonify({
         'response': {
-            "stores": models_to_json(stores),
+            "stores": models_to_json(stores, recurse=False),
         }}), 200
 
 
@@ -408,6 +409,7 @@ def add_school():
     data = request.get_json()
     school = school_service.add(**data)
     if school:
+        school = model_to_dict(school, recurse=False)
         return jsonify({'response': school}), 200
 
 

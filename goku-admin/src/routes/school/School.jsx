@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Table} from 'antd';
 import {getAllSchool} from '../../services/school.js';
 import {schoolCol} from '../../utils/Table/columns.js';
+import SchoolModal from '../../components/Modal/SchoolModal';
 
 class School extends Component {
   constructor(props) {
@@ -48,10 +49,27 @@ class School extends Component {
   }
 
   render() {
-    const { dataSource, isEdit, visible, selectData } = this.state;
+    const {dataSource, isEdit, visible, selectData} = this.state;
 
     return (
       <div>
+        <SchoolModal
+          visible={visible}
+          toggleVisible={this.toggleVisible}
+          isEdit={isEdit}
+          data={selectData}
+        />
+        <Button
+          onClick={() => {
+            this.toggleVisible(true, false);
+            this.setState({
+              selectData: {},
+            });
+          }}
+        >
+          添加</Button>
+
+
         <Table
           columns={this.cols}
           dataSource={dataSource}
