@@ -34,6 +34,7 @@ def get_all_paginate(page, paginate_by, **kwargs):
     if serial_number:
         battery = battery.\
             where(Battery.serial_number.regexp(kwargs["serial_number"]))
+
     total = battery.count()
     battery = battery.paginate(page=page, paginate_by=paginate_by)
     return battery, total

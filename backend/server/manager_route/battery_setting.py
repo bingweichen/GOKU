@@ -30,16 +30,6 @@ battery_setting = Blueprint("battery_setting", __name__, url_prefix=PREFIX)
 # 获取所有电池 分页
 @battery_setting.route('/battery/all', methods=['GET'])
 def get_all_battery():
-    # serial_number = request.args.get("serial_number")
-    # if serial_number:
-    #     battery = battery_rent_service.manager_get_battery(serial_number)
-    #     battery = model_to_dict(battery, recurse=False)
-    #     return jsonify({
-    #         'response': {
-    #             "battery": battery,
-    #             "total": 1
-    #         }}), 200
-
     battery, total = battery_rent_service.get_all_paginate(
         page=int(request.args.get("page")),
         paginate_by=int(request.args.get("paginate_by")),
@@ -49,6 +39,24 @@ def get_all_battery():
     return jsonify({
         'response': {
             "battery": battery,
+            "total": total
+        }}), 200
+
+
+# 查询所有电池记录
+@battery_setting.route(
+    '/history_record', methods=['GET'])
+def get_history_record():
+    records, total = battery_record_service.get_all_paginate(
+        page=int(request.args.get("page")),
+        paginate_by=int(request.args.get("paginate_by")),
+        period=int(request.args.get("days")),
+        serial_number=request.args.get("serial_number")
+    )
+    records = models_to_json(records, recurse=False)
+    return jsonify({
+        'response': {
+            "records": records,
             "total": total
         }}), 200
 
@@ -98,21 +106,7 @@ def get_current_uses_amount():
 #         }}), 200
 
 
-# 查询所有电池记录
-@battery_setting.route(
-    '/history_record', methods=['GET'])
-def get_history_record():
-    records, total = battery_record_service.get_all_paginate(
-        page=int(request.args.get("page")),
-        paginate_by=int(request.args.get("paginate_by")),
-        period=int(request.args.get("days"))
-    )
-    records = models_to_json(records, recurse=False)
-    return jsonify({
-        'response': {
-            "records": records,
-            "total": total
-        }}), 200
+
 
 
 # ***************************** 操作 ***************************** #

@@ -51,6 +51,7 @@ class StoreModal extends Component {
       { value: 'name', label: '名称', disabled: isEdit },
       { value: 'address', label: '地址' },
     ];
+
     return (
       <Modal
         visible={visible}

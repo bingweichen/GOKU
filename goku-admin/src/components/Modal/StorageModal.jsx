@@ -46,6 +46,11 @@ class StorageModal extends Component {
       { value: 'color', label: '颜色' },
       { value: 'num', label: '数量' },
     ];
+
+    if (isEdit){
+      inputs[0]["disabled"]=true
+    }
+
     return (
       <Modal
         visible={visible}
@@ -54,10 +59,12 @@ class StorageModal extends Component {
       >
         <div>
           {
-            inputs.map(({ value, label }) => (
+            inputs.map(({ value, label, disabled }) => (
               <div key={value}>
                 <span>{label}</span>
-                <Input name={value} value={this.state[value]} onChange={this.handleInput} />
+                <Input name={value} value={this.state[value]} onChange={this.handleInput}
+                       disabled={disabled}
+                />
               </div>
             ))
           }
