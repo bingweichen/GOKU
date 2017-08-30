@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Table, Select } from 'antd';
+import { Table, Select, Button } from 'antd';
 import { connect } from 'dva';
+import OrderModal from '../components/Modal/OrderModal.jsx';
 import { order as orderConstant } from '../utils/constant';
 
 const { Option } = Select;
@@ -15,10 +16,15 @@ const colunms = Object.keys(orderConstant).map((key) => {
 class Order extends Component {
   state = {
     selectDay: '0',
+    modalData: {},
+  }
+
+  componentDidMount() {
+
   }
 
   render() {
-    const { dispatch, total } = this.props;
+    const { dispatch, total, visible, toggleModal } = this.props;
     const handleChange = (day) => {
       this.setState({ selectDay: day });
       dispatch({
@@ -28,8 +34,28 @@ class Order extends Component {
         days: day,
       });
     };
+    const cols = colunms.concat([{
+      title: '操作',
+      dataIndex: 'detail',
+      render: (text, record) => {
+        return (
+          <Button
+            type="primary"
+            onClick={() => {
+              this.props.toggleModal({ visible: true });
+              this.setState({ modalData: record });
+            }}
+          >详情</Button>
+        );
+      },
+    }]);
     return (
       <div>
+        <OrderModal
+          visible={visible}
+          toggleModal={toggleModal}
+          record={this.state.modalData}
+        />
         <div
           style={{
             display: 'flex',
@@ -48,7 +74,7 @@ class Order extends Component {
           </Select>
         </div>
         <Table
-          columns={colunms}
+          columns={cols}
           dataSource={this.props.dataSource}
           loading={this.props.loading}
           pagination={{
@@ -68,11 +94,23 @@ class Order extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ loading, order }) => {
   return {
-    loading: state.loading.global,
-    dataSource: state.order.appointments,
+    loading: loading.global,
+    dataSource: order.appointments,
+    visible: order.visible,
   };
 };
 
-export default connect(mapStateToProps)(Order);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    toggleModal({ visible }) {
+      dispatch({
+        type: 'order/toggleModalVisible',
+        visible,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Order);

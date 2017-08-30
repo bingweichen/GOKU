@@ -1,32 +1,78 @@
-import React from 'react';
-import { Table } from 'antd';
+import React, { Component } from 'react';
+import { Table, Button } from 'antd';
 import { connect } from 'dva';
+import StorageModal from '../../components/Modal/StorageModal';
 import { storageCol } from '../../utils/Table/columns.js';
 
-const Storage = ({
-  dataSource,
-  total,
-  dispatch,
-}) => {
-  return (
-    <div>
-      <Table
-        columns={storageCol}
-        dataSource={dataSource}
-        pagination={{
-          total,
-          onChange(page, pageSize) {
-            dispatch({
-              type: 'storage/getDataSource',
-              page,
-              pageSize,
+class Storage extends Component {
+  state = {
+    visible: false,
+    isEdit: false,
+    selectData: {},
+  }
+
+  toggleVisible = (visible) => {
+    this.setState({ visible });
+  }
+
+  render() {
+    const { dataSource, total, dispatch } = this.props;
+    const { visible, isEdit } = this.state;
+    const cols = storageCol.concat([
+      {
+        title: '操作',
+        dataIndex: 'detail',
+        render: (text, record) => (
+          <Button
+            onClick={() => {
+              this.setState({
+                isEdit: true,
+                selectData: record,
+                visible: true,
+              });
+            }}
+          >
+            编辑
+          </Button>
+        ),
+      },
+    ]);
+    return (
+      <div>
+        <Button
+          type="primay"
+          onClick={() => {
+            this.toggleVisible(true);
+            this.setState({
+              isEdit: false,
+              selectData: {},
             });
-          },
-        }}
-      />
-    </div>
-  );
-};
+          }}
+        >增加</Button>
+        <StorageModal
+          visible={visible}
+          toggleVisible={this.toggleVisible}
+          isEdit={isEdit}
+          data={this.state.selectData}
+        />
+        <Table
+          columns={cols}
+          dataSource={dataSource}
+          pagination={{
+            total,
+            onChange(page, pageSize) {
+              dispatch({
+                type: 'storage/getDataSource',
+                page,
+                pageSize,
+              });
+            },
+          }}
+        />
+      </div >
+    )
+  }
+}
 
 const mapStateToProps = ({ storage }) => {
   return {

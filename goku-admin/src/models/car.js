@@ -4,7 +4,12 @@ export default {
 
   namespace: 'car',
 
-  state: {},
+  state: {
+    dataSource: [],
+    visible: false,
+    inEdit: false,
+    record: {},
+  },
 
   subscriptions: {
     setup({ dispatch, history }) {
@@ -31,9 +36,20 @@ export default {
           ...val,
           price: typeof val.price === 'object' ?
             `${val.price['学期']}/学期,${val.price['年']}/年` : val.price,
+          half_year_price: val.price['学期'],
+          year_price: val.price['年'],
           key: val.name,
         })),
       };
+    },
+    setVisible(state, { visible }) {
+      return { ...state, visible };
+    },
+    setEditStatus(state, { isEdit }) {
+      return { ...state, isEdit };
+    },
+    setRecord(state, { record }) {
+      return { ...state, record };
     },
   },
 };

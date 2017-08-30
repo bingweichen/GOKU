@@ -7,6 +7,7 @@ export default {
 
   state: {
     appointments: [],
+    visible: false,
   },
 
   subscriptions: {
@@ -42,6 +43,12 @@ export default {
         expired_date_time: moment(appointment.expired_date_time).format('YYYY/MM/DD HH:mm'),
       }));
       return { ...state, appointments: formatData };
+    },
+    toggleModalVisible(state, { visible }) {
+      return {
+        ...state,
+        visible,
+      };
     },
   },
 
