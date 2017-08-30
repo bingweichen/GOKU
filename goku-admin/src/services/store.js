@@ -11,3 +11,18 @@ export function addNewStore(data) {
     data,
   });
 }
+
+export function editStore(data) {
+  return request({
+    method: 'POST',
+    url: 'manager/basic_setting/store',
+    data,
+  });
+}
+
+export function delStore(name) {
+  return request({
+    method: 'DELETE',
+    url: `manager/basic_setting/store/${name}`,
+  });
+}

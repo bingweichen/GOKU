@@ -162,6 +162,7 @@ export const SerialNumber = {
 };
 // 退款
 export const RefundTable = {
+  id: '编号',
   user: '用户',
   account: '退款账号',
   account_type: '账号类型',
