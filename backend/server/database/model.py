@@ -16,6 +16,7 @@ from peewee import *
 from server.database.db import database
 from server.utility.constant.basic_constant import DELIVERY, APPOINTMENT_STATUS
 
+from server.utility.constant.const_db import Const
 
 class JSONField(TextField):
     def db_value(self, value):
@@ -40,9 +41,10 @@ class BaseModel(Model):
         database = database
 
 
-class Const(BaseModel):
-    key = CharField(primary_key=True)
-    value = JSONField()
+# class Const(BaseModel):
+#     key = CharField(primary_key=True)
+#     value = JSONField()
+#     label = CharField()
 
 
 class Store(BaseModel):
@@ -68,7 +70,8 @@ class User(BaseModel):
 
     we_chat_id = CharField(verbose_name='微信号', null=True, default=None)  # 微信号
     account = CharField(verbose_name='账号', null=True, default=None)  # 退款账号
-    account_type = CharField(verbose_name='账号类型', null=True, default=None)  # 账号类型
+    account_type = CharField(verbose_name='账号类型', null=True,
+                             default=None)  # 账号类型
 
     status = CharField(default="empty")  # 租用状态
     admin = BooleanField(default=False)
@@ -162,7 +165,6 @@ class Appointment(BaseModel):
 
     rent_time_period = CharField(default="无", null=True)  # 租期：学期，年
     end_time = DateTimeField(default=None, null=True)  # 租用结束日期
-
 
     appointment_fee = FloatField(default=0)  # 预约金
     rent_deposit = FloatField(default=0)  # 租车押金
@@ -287,7 +289,7 @@ table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable]
 
-table_temp = [BatteryReport]
+table_temp = [Const]
 
 
 def create_tables():
@@ -331,7 +333,7 @@ def drop_table(model):
 
 
 def recreate_tables():
-    drop_tables()
+    # drop_tables()
     create_tables()
 
 

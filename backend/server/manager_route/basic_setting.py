@@ -244,7 +244,7 @@ def get():
     const = const_service.get_all()
     return jsonify({
         'response': {
-            "appointments": models_to_json(const)
+            "const": models_to_json(const)
         }}), 200
 
 
@@ -279,7 +279,7 @@ def add_coupon_template():
     """
     eg = {
     "situation": 1000,
-    "value": 100
+    "value": 100,
 
     "duration": 30,
     "desc": "满减"

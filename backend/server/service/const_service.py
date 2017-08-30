@@ -8,13 +8,14 @@
 
 
 """
-from server.database.model import Const
+from server.utility.constant.const_db import Const
 
 
-def add(key, value):
+def add(key, value, label):
     return Const.create(
         key=key,
-        value=value
+        value=value,
+        label=label
     )
 
 
@@ -39,9 +40,23 @@ def add_template():
         "APPOINTMENT_EXPIRED_DAYS": 7,
         "BATTERY_RENT_PRICE": 1,
         "DEFAULT_APPOINTMENT_FEE": 100,
+        "RENT_DEPOSIT": 1000
+
     }
+
+    translate = {
+        "DEFAULT_DEPOSIT": "默认押金",
+        "MAXIMUM_APPOINTMENT": "最大订单数",
+        "APPOINTMENT_EXPIRED_DAYS": "订单有效期",
+        "BATTERY_RENT_PRICE": "电池租用价格",
+        "DEFAULT_APPOINTMENT_FEE": "默认订单押金",
+        "RENT_DEPOSIT": "默认租车订单押金"
+
+    }
+
     for attr, value in template_json.items():
-        add(attr, value)
+        label = translate[attr]
+        add(attr, value, label)
 
 
 if __name__ == "__main__":
