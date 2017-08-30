@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Table} from 'antd';
+import {Table, Button} from 'antd';
 import {getAllSchool} from '../../services/school.js';
 import {schoolCol} from '../../utils/Table/columns.js';
 import SchoolModal from '../../components/Modal/SchoolModal';
