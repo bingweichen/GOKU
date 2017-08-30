@@ -87,12 +87,15 @@ def add_coupon_template_to_all_user(template_id):
 
 
 def add_coupon_template(**kwargs):
-    desc = ""
-    if "situation" in kwargs and "value" in kwargs:
-        desc = "满%s减%s" % (kwargs["situation"], kwargs["value"])
     if "duration" not in kwargs:
         kwargs.update({"duration": 3650})
-    c_t = CouponTemplate.create(desc=desc or "通用", **kwargs)
+
+    if "desc" not in kwargs:
+        desc = "通用"
+        if "situation" in kwargs and "value" in kwargs:
+            desc = "满%s减%s" % (kwargs["situation"], kwargs["value"])
+        kwargs.update({"desc": desc})
+    c_t = CouponTemplate.create(**kwargs)
     return c_t
 
 

@@ -281,16 +281,14 @@ def add_coupon_template():
     "situation": 1000,
     "value": 100
 
-    "duration": 30
+    "duration": 30,
+    "desc": "满减"
     }
 
     :return:
     :rtype:
     """
     data = request.get_json()
-    # situation = data.get("situation")
-    # if situation:
-    #     situation = data.pop("situation")
     coupon_template = coupon_service.add_coupon_template(
         situation=data.pop("situation"),
         value=data.pop("value"),
