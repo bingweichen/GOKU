@@ -5,6 +5,23 @@ import { getAllStore } from '../../services/store.js';
 import { storeCol } from '../../utils/Table/columns.js';
 
 class Store extends Component {
+  constructor(props) {
+    super(props);
+    this.cols = storeCol.concat([{
+      title: '操作',
+      dataIndex: 'detail',
+      render: (text, record) => (
+        <Button
+          onClick={() => {
+            this.toggleVisible(true, true);
+            this.setState({
+              selectData: record,
+            });
+          }}
+        >编辑</Button>
+      ),
+    }]);
+  }
   state = {
     dataSource: [],
     visible: false,
@@ -32,20 +49,6 @@ class Store extends Component {
 
   render() {
     const { dataSource, isEdit, visible, selectData } = this.state;
-    const cols = storeCol.concat([{
-      title: '操作',
-      dataIndex: 'detail',
-      render: (text, record) => (
-        <Button
-          onClick={() => {
-            this.toggleVisible(true, true);
-            this.setState({
-              selectData: record,
-            });
-          }}
-        >编辑</Button>
-      ),
-    }]);
     return (
       <div>
         <StoreModal
@@ -64,7 +67,7 @@ class Store extends Component {
         >
           添加</Button>
         <Table
-          columns={cols}
+          columns={this.cols}
           dataSource={dataSource}
         />
       </div>
