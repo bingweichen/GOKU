@@ -47,13 +47,13 @@ export const Store = {
 export const School = {
   name: '名称',
   address: '地址',
-  store: '所属店铺',
+  store: '所属商铺',
 };
 
 
 export const User = {
   username: '用户名',
-  password: '密码',
+  // password: '密码',
   name: '姓名',
   school: '学校',
   student_id: '学号',
@@ -63,6 +63,7 @@ export const User = {
   account: '退款账号',
   account_type: '账号类型',
   status: '租用状态',
+  admin: '管理权限'
 };
 
 

@@ -20,22 +20,25 @@ def get_all(username=None):
         return battery_record
 
 
-def get_all_paginate(page, paginate_by, period):
-    if period == 0:
-        battery_record = BatteryRecord.select().paginate(page, paginate_by)
-        total = BatteryRecord.select().count()
-    else:
-        if period > 0:
-            period -= 1
+def get_all_paginate(page, paginate_by, period,  **kwargs):
+    serial_number = kwargs["serial_number"]
+    battery_record = BatteryRecord.select()
 
+    if period > 0:
+        period -= 1
         today = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
         before = today - timedelta(days=period)
-        battery_record = BatteryRecord.select().where(
+        battery_record = battery_record.where(
             BatteryRecord.rent_date >= before
         )
-        total = BatteryRecord.select().where(
-            BatteryRecord.rent_date >= before
-        ).count()
+
+    if serial_number:
+        battery_record = battery_record.where(
+            BatteryRecord.battery.regexp(kwargs["serial_number"])
+        )
+
+    total = battery_record.count()
+    battery_record = battery_record.paginate(page=page, paginate_by=paginate_by)
     return battery_record, total
 
 

@@ -34,6 +34,7 @@ export default {
         ...state,
         dataSource: users.map(user => ({
           ...user,
+          admin: user.admin ? '是' : '否',
           key: user.username,
         })),
       };

@@ -27,11 +27,16 @@ class StoreModal extends Component {
   }
 
   render() {
-    const { visible, toggleVisible } = this.props;
+    const { visible, toggleVisible, isEdit } = this.props;
     const stores = [
       { value: 'name', label: '名称' },
       { value: 'address', label: '地址' },
     ];
+
+    if (isEdit){
+      stores[0]["disabled"]=true
+    }
+
     return (
       <Modal
         visible={visible}
@@ -39,13 +44,14 @@ class StoreModal extends Component {
       >
         <div>
           {
-            stores.map(({ value, label }) => (
+            stores.map(({ value, label, disabled }) => (
               <div key={value}>
                 <span>{label}</span>
                 <Input
                   value={this.state[value]}
                   onChange={this.handleInput}
                   name={value}
+                  disabled={disabled}
                 />
               </div>
             ))

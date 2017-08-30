@@ -56,15 +56,17 @@ class SchoolModal extends Component {
     this.props.toggleVisible(false);
   }
 
-
-
   render() {
-    const {visible, toggleVisible} = this.props;
+    const {visible, toggleVisible, isEdit} = this.props;
     const schools = [
       {value: 'name', label: '名称'},
       {value: 'address', label: '地址'},
       {value: 'store', label: '所属商铺'},
     ];
+    if (isEdit){
+      schools[0]["disabled"]=true
+    }
+
     return (
       <Modal
         visible={visible}
@@ -73,13 +75,14 @@ class SchoolModal extends Component {
       >
         <div>
           {
-            schools.map(({value, label}) => (
+            schools.map(({value, label, disabled}) => (
               <div key={value}>
                 <span>{label}</span>
                 <Input
                   value={this.state[value]}
                   onChange={this.handleInput}
                   name={value}
+                  disabled={disabled}
                 />
               </div>
             ))
