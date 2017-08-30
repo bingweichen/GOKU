@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
-import { Table, Select } from 'antd';
+import { Table, Select, Input } from 'antd';
 import moment from 'moment';
 import { getBatteryRecord } from '../../services/battery.js';
 import { batteryRecord } from '../../utils/Table/columns.js';
 
 const { Option } = Select;
+const { Search } = Input;
 class BatteryRecord extends Component {
   state = {
     dataSource: [],
+    keyWord: '',
+    days: 0,
+    total: 0,
   }
 
   componentDidMount() {
-    this.setDataSource(0);
+    this.setDataSource(1);
   }
 
-  async setDataSource(days) {
-    const { records } = await getBatteryRecord(days);
+  setDataSource = async (page) => {
+    const { days, keyWord } = this.state;
+    const { records, total } = await getBatteryRecord(days, keyWord, page, 10);
     this.setState({
+      total,
       dataSource: records.map(record => ({
         ...record,
         key: record.id,
@@ -27,24 +33,38 @@ class BatteryRecord extends Component {
   }
 
   render() {
-    const { dataSource } = this.state;
+    const { dataSource, total } = this.state;
     return (
       <div>
-        <Select
-          defaultValue="0"
-          style={{ width: 120 }}
-          onChange={(days) => {
-            this.setDataSource(days);
-          }}
-        >
-          <Option value="0">全部</Option>
-          <Option value="1">一天</Option>
-          <Option value="7">一周</Option>
-          <Option value="31">一个月</Option>
-        </Select>
+        <div style={{ marginBottom: 20 }}>
+          <Select
+            defaultValue="0"
+            style={{ width: 120 }}
+            onChange={(days) => {
+              this.setState({ days }, () => this.setDataSource(1));
+            }}
+          >
+            <Option value="0">全部</Option>
+            <Option value="1">一天</Option>
+            <Option value="7">一周</Option>
+            <Option value="31">一个月</Option>
+          </Select>
+          <Search
+            style={{ width: 200, float: 'right' }}
+            onSearch={(value) => {
+              this.setState({ keyWord: value }, () => this.setDataSource(1));
+            }}
+          />
+        </div>
         <Table
           columns={batteryRecord}
           dataSource={dataSource}
+          pagination={{
+            total,
+            onChange: (page) => {
+              this.setDataSource(page);
+            },
+          }}
         />
       </div>
     );
