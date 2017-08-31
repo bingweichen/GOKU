@@ -14,10 +14,8 @@ function RouterConfig({ history, app }) {
     {
       path: '/',
       name: 'IndexPage',
-      getComponent(nextState, cb) {
-        require.ensure([], (require) => {
-          cb(null, require('./routes/IndexPage'));
-        });
+      onEnter(nextState, replace) {
+        replace('/admin/order');
       },
     },
     {
