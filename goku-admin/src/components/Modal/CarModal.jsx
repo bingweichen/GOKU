@@ -81,9 +81,9 @@ class CarModal extends Component {
     this.props.toggleVisible(false);
   }
   render() {
-    const { visible, toggleVisible } = this.props;
+    const { visible, toggleVisible, isEdit } = this.props;
     const arr = [
-      { value: 'name', label: '名称' },
+      { value: 'name', label: '名称', disabled: isEdit },
       { value: 'configure', label: '配置' },
       { value: 'battery', label: '电池' },
       { value: 'distance', label: '续航' },
@@ -104,11 +104,12 @@ class CarModal extends Component {
       >
         <div>
           {
-            arr.map(({ label, value }) => {
+            arr.map(({ label, value, disabled }) => {
               return (
                 <div key={value}>
                   <span>{label}</span>
                   <Input
+                    disabled={disabled}
                     name={value}
                     value={this.state[value]}
                     onChange={this.handleInput}

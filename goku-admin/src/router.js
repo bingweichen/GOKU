@@ -157,6 +157,14 @@ function RouterConfig({ history, app }) {
           },
         },
         {
+          path: 'setting',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/setting'));
+            });
+          },
+        },
+        {
           path: 'NO',
           name: 'NOPage',
           getComponent(nextState, cb) {
