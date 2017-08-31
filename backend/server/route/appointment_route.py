@@ -194,7 +194,7 @@ def total_payment_success():
     """
     data = request.get_json()
     result = appointment_service.total_payment_success(
-        user=data.pop("username"),
+        username=data.pop("username"),
         appointment_id=data.pop("appointment_id"),
     )
     if result:

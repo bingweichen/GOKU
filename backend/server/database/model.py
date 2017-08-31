@@ -18,6 +18,7 @@ from server.utility.constant.basic_constant import DELIVERY, APPOINTMENT_STATUS
 
 from server.utility.constant.const_db import Const
 
+
 class JSONField(TextField):
     def db_value(self, value):
         return json.dumps(value)

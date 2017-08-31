@@ -118,6 +118,59 @@ def return_e_bike():
         }), 400
 
 
+# 取消订单
+@appointment_setting.route('/appointment/status/cancel', methods=['POST'])
+def cancel_appointment():
+    """
+    appointment_id: int
+
+    eg = {
+    # "username": "bingwei",
+    "appointment_id": 3,
+    "account": "BingweiChen",
+    "account_type": "wechat",
+    "comment": "test",
+
+    }
+    :return: 1 for success
+    :rtype:
+    """
+    data = request.get_json()
+    # appointment_id = data["appointment_id"]
+    result = appointment_service.cancel_appointment(
+        # username=data.pop("username"),
+        appointment_id=data.pop("appointment_id"),
+        account=data.pop("account"),
+        account_type=data.pop("account_type"),
+        comment=data.pop("comment"),
+        **data
+    )
+    if result:
+        return jsonify({'response': result}), 200
+
+
+# 付款成功并提车
+@appointment_setting.route('/appointment/status/total_payment_success', methods=['POST'])
+def total_payment_success():
+    """
+    appointment_id: int
+
+    eg = {
+    # "username": "bingwei",
+    "appointment_id": 3,
+    }
+
+    :return: 1 for success
+    :rtype:
+    """
+    data = request.get_json()
+    result = appointment_service.total_payment_success(
+        appointment_id=data.pop("appointment_id"),
+    )
+    if result:
+        return jsonify({'response': result}), 200
+
+
 # 更改订单状态
 @appointment_setting.route(
     '/modify_status/<string:appointment_id>', methods=['POST'])

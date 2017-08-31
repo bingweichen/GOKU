@@ -34,6 +34,7 @@ from server.utility.exception import WrongSerialsNumber, Error
 from server.utility.constant.basic_constant import *
 from server.utility.constant.custom_constant import get_custom_const
 
+
 # from server.utility.json_utility import models_to_json
 
 
@@ -109,10 +110,12 @@ def upload_serial_number(user, appointment_id, serial_number):
 
 
 # 4. 付款成功
-def total_payment_success(user, appointment_id):
+def total_payment_success(appointment_id, username=None):
     appointment = Appointment.get(
         id=appointment_id,
-        user=user)
+    )
+    if username and appointment.user != username:
+        raise Error("not your appointment")
 
     # 检查是否租车
     if appointment.type == "租车":  # 租车
@@ -175,6 +178,9 @@ def return_appointment_fee(username, appointment, **kwargs):
         value=appointment_fee,
         comment=kwargs["comment"]
     )
+
+    appointment.appointment_fee = 0
+    appointment.save()
     print("需退还押金" + str(appointment_fee))
 
 

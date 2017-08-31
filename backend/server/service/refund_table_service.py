@@ -12,13 +12,20 @@ from server.database.model import RefundTable
 
 
 def get_all(username=None):
+    refund_table = RefundTable.select()
     if username:
-        refund_table = RefundTable.select().where(
+        refund_table = refund_table.where(
             RefundTable.user == username
         )
-        return refund_table
-    refund_table = RefundTable.select()
+    refund_table = refund_table.order_by(RefundTable.date.desc())
     return refund_table
+    # if username:
+    #     refund_table = RefundTable.select().where(
+    #         RefundTable.user == username
+    #     )
+    #     return refund_table
+    # refund_table = RefundTable.select()
+    # return refund_table
 
 
 def modify_status(refund_table_id, status):
