@@ -13,7 +13,8 @@ export default {
         "transform-runtime",
         "dva-hmr",
         ["import", { "libraryName": "antd", "style": true }]
-      ]
+      ],
+      "publicPath": "./dist/",
     }
   },
   "proxy": {
