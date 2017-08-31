@@ -12,6 +12,10 @@ app.use('/api', function (req, res) {
   req.pipe(request(url)).pipe(res);
 });
 
-app.listen(80, function () {
+app.use('/hello', function (req, res) {
+  res.send(123)
+})
+
+app.listen(3003, function () {
   console.log('Example app listening on port 3000!')
 })
