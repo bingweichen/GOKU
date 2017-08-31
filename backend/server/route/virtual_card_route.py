@@ -10,9 +10,10 @@ from flask import jsonify
 from flask import request
 
 from peewee import DoesNotExist
-from server.service import virtual_card_service
-
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from playhouse.shortcuts import model_to_dict
+
+from server.service import virtual_card_service
 from server.utility.json_utility import models_to_json, custom_models_to_json
 from server.utility.exception import *
 
@@ -25,8 +26,10 @@ virtual_card_app = Blueprint("virtual_card", __name__, url_prefix=PREFIX)
 # ***************************** 虚拟卡 ***************************** #
 # 获取虚拟卡
 @virtual_card_app.route('', methods=['GET'])
+@jwt_required
 def get_virtual_card():
-    username = request.args.get("username")
+    username = get_jwt_identity()
+    # username = request.args.get("username")
     try:
         virtual_card = virtual_card_service.get_virtual_card(
             card_no=username
@@ -70,20 +73,22 @@ def get_virtual_card():
 
 # 支付押金
 @virtual_card_app.route('/deposit', methods=['POST'])
+@jwt_required
 def pay_deposit():
     """
     pay deposit
 
     eg = {
-    "card_no": "bingwei",
+    # "card_no": "bingwei",
     "deposit_fee": 199
     }
     :return:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     try:
         result, record = virtual_card_service.pay_deposit(
-            card_no=data["card_no"],
+            card_no=username,
             deposit_fee=data["deposit_fee"],
         )
         return jsonify({'response': {
@@ -101,6 +106,7 @@ def pay_deposit():
 
 # 退还押金
 @virtual_card_app.route('/deposit/return_deposit', methods=['POST'])
+@jwt_required
 def return_deposit():
     """
     eg = {
@@ -114,11 +120,12 @@ def return_deposit():
     return deposit
     :return:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     try:
         result, record, refund_record =\
             virtual_card_service.return_deposit(
-                username=data.pop("username"),
+                username=username,
                 card_no=data.pop("card_no"),
                 account=data.pop("account"),
                 account_type=data.pop("account_type"),
@@ -193,6 +200,7 @@ def return_deposit():
 
 # 充值
 @virtual_card_app.route('/balance/top_up', methods=['POST'])
+@jwt_required
 def top_up():
     """
     top up virtual card
@@ -203,9 +211,10 @@ def top_up():
     }
     :return:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     result, record = virtual_card_service.top_up(
-        card_no=data["username"],
+        card_no=username,
         top_up_fee=data["top_up_fee"],
     )
     return jsonify({'response': {
@@ -217,13 +226,15 @@ def top_up():
 # ***************************** 消费记录 ***************************** #
 # 获取消费记录
 @virtual_card_app.route('/consume_record', methods=['GET'])
+@jwt_required
 def get_consume_record():
     """
     get consume records
     :param card_no: card number
     :return: consume records
     """
-    username = request.args.get("username")
+    username = get_jwt_identity()
+    # username = request.args.get("username")
     record = virtual_card_service.get_consume_record(
         card_no=username
     )

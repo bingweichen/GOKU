@@ -13,7 +13,7 @@ from server.service.const_service import get
 
 # ** custom value ** #
 def get_custom_const(string):
-    return get(string).value
+    return int(get(string).value)
 
 
 DEFAULT_APPOINTMENT_FEE = 100

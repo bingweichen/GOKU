@@ -22,9 +22,10 @@ from flask import request
 
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from server.service import appointment_service
-from server.utility.exception import NoStorageError, WrongSerialsNumber, Error
+from server.utility.exception import WrongSerialsNumber, Error
 from server.utility.json_utility import models_to_json
 
 PREFIX = '/appointment'
@@ -34,8 +35,10 @@ appointment_app = Blueprint("appointment_app", __name__, url_prefix=PREFIX)
 
 # ***************************** get ***************************** #
 @appointment_app.route('/all', methods=['GET'])
+@jwt_required
 def get_all_appointments():
-    username = request.args.get('username')
+    username = get_jwt_identity()
+    # username = request.args.get('username')
 
     appointments = appointment_service.get_all(username)
     return jsonify({
@@ -45,8 +48,10 @@ def get_all_appointments():
 
 
 @appointment_app.route('', methods=['GET'])
+@jwt_required
 def get_appointment():
-    username = request.args.get('username')
+    username = get_jwt_identity()
+    # username = request.args.get('username')
     appointment_id = request.args.get('appointment_id')
 
     appointment = appointment_service.get_by_id(
@@ -61,6 +66,7 @@ def get_appointment():
 # ************************** appointment procedure ********************** #
 # 1.提交生成 预约单
 @appointment_app.route('', methods=['PUT'])
+@jwt_required
 def add_appointment():
     """
     买车订单
@@ -97,10 +103,12 @@ def add_appointment():
     :return: the appointment created
     :rtype: json
     """
+    username = get_jwt_identity()
+
     data = request.get_json()
     try:
         appointment = appointment_service.add_appointment(
-            user=data.pop("username"),
+            user=username,
             **data
         )
         return jsonify({'response': model_to_dict(appointment)}), 200
@@ -122,6 +130,7 @@ def add_appointment():
 
 # 2. 提交预约款付款成功
 @appointment_app.route('/status/appointment_payment_success', methods=['POST'])
+@jwt_required
 def appointment_payment_success():
     """
     appointment_id: string
@@ -134,9 +143,11 @@ def appointment_payment_success():
     :return: 1 for success
     :rtype: int
     """
+    username = get_jwt_identity()
+
     data = request.get_json()
     result = appointment_service.appointment_payment_success(
-        user=data.pop("username"),
+        user=username,
         appointment_id=data.pop("appointment_id")
     )
     if result:
@@ -145,6 +156,7 @@ def appointment_payment_success():
 
 # 3. 检查取车码
 @appointment_app.route('/check/upload_serials_number', methods=['POST'])
+@jwt_required
 def upload_code():
     """
     appointment_id: int
@@ -159,11 +171,12 @@ def upload_code():
     :return: 1 for success
     :rtype:
     """
+    username = get_jwt_identity()
     data = request.get_json()
 
     try:
         result = appointment_service.upload_serial_number(
-            user=data.pop("username"),
+            user=username,
             appointment_id=data.pop("appointment_id"),
             serial_number=data.pop("serial_number")
         )
@@ -180,6 +193,7 @@ def upload_code():
 
 # 4. 提交付款成功
 @appointment_app.route('/status/total_payment_success', methods=['POST'])
+@jwt_required
 def total_payment_success():
     """
     appointment_id: int
@@ -192,9 +206,10 @@ def total_payment_success():
     :return: 1 for success
     :rtype:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     result = appointment_service.total_payment_success(
-        username=data.pop("username"),
+        username=username,
         appointment_id=data.pop("appointment_id"),
     )
     if result:
@@ -203,6 +218,7 @@ def total_payment_success():
 
 # 5. 取消订单
 @appointment_app.route('/status/cancel', methods=['POST'])
+@jwt_required
 def cancel_appointment():
     """
     appointment_id: int
@@ -218,10 +234,11 @@ def cancel_appointment():
     :return: 1 for success
     :rtype:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     # appointment_id = data["appointment_id"]
     result = appointment_service.cancel_appointment(
-        username=data.pop("username"),
+        username=username,
         appointment_id=data.pop("appointment_id"),
         account=data.pop("account"),
         account_type=data.pop("account_type"),

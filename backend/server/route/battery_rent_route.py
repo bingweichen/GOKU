@@ -11,6 +11,7 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
 
@@ -27,6 +28,7 @@ battery_rent = Blueprint("battery_rent", __name__, url_prefix=PREFIX)
 # ***************************** 查询 ***************************** #
 # 1. 扫一扫获取闪充信息
 @battery_rent.route('/battery/<string:serial_number>', methods=['GET'])
+# @jwt_required
 def get_battery(serial_number):
     """
     get battery rent information
@@ -48,8 +50,10 @@ def get_battery(serial_number):
 
 # 2. 获取用户现有 闪充电池
 @battery_rent.route('/battery', methods=['GET'])
+@jwt_required
 def get_user_battery():
-    username = request.args.get("username")
+    username = get_jwt_identity()
+    # username = request.args.get("username")
     try:
         battery, battery_record = battery_rent_service.get_user_battery(
             username=username
@@ -77,21 +81,23 @@ def get_user_battery():
 
 # 3. 租用电池
 @battery_rent.route('/rent', methods=['POST'])
+@jwt_required
 def rent_battery():
     """
     modify the user of e-bike
 
     eg = {
-    "username": "bingwei",
+    # "username": "bingwei",
     "serial_number": "A00001"
     }
 
     :return:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     try:
         modified = battery_rent_service.rent_battery(
-            username=data["username"],
+            username=username,
             serial_number=data["serial_number"]
         )
         return jsonify({'response': modified}), 200
@@ -112,20 +118,22 @@ def rent_battery():
 
 # 4. 归还电池 （还没想清楚如何归还，用户点击归还就还了吗？）
 @battery_rent.route('/return', methods=['POST'])
+@jwt_required
 def return_battery():
     """
     eg = {
-    "username": "bingwei",
+    # "username": "bingwei",
     "serial_number": "A00001"
     }
 
     :return:
     :rtype:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     try:
         batter_record = battery_rent_service.return_battery(
-            username=data["username"],
+            username=username,
             serial_number=data["serial_number"]
         )
         return jsonify({
@@ -137,6 +145,7 @@ def return_battery():
 
 # 报修电池
 @battery_rent.route('/battery_report', methods=['PUT'])
+# @jwt_required
 def add_repair_report():
     """
     report a battery repair requirement

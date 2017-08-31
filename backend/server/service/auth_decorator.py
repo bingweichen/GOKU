@@ -4,6 +4,7 @@
 from functools import wraps
 from flask import make_response
 from flask import request
+from flask import jsonify
 import jwt
 from flask_jwt_extended import get_jwt_identity
 
@@ -12,8 +13,11 @@ from server.service import user_service
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
-    return make_response('Could not verify your access level for that URL.\n'
-                         'You have to login with proper credentials', 401)
+    return make_response(
+        jsonify({
+            'response':
+                'Could not verify your access level for that URL.\n'
+                'You have to login with proper credentials'}), 401)
 
 
 def requires_auth(f):

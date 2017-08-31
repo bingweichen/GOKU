@@ -312,7 +312,7 @@ def add(**kwargs):
     # 生成到期时间
     date = datetime.utcnow()
     expired_date_time = date + timedelta(
-        days=get_custom_const("APPOINTMENT_EXPIRED_DAYS"))
+        days=int(get_custom_const("APPOINTMENT_EXPIRED_DAYS")))
 
     appointment = Appointment.create(
         date=date, expired_date_time=expired_date_time, **kwargs)

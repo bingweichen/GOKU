@@ -18,6 +18,7 @@ from flask_jwt_extended import create_access_token
 
 from playhouse.shortcuts import model_to_dict
 from peewee import DoesNotExist
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from server.service import user_service
 from server.utility.exception import PasswordError
@@ -191,20 +192,22 @@ def login_manager():
 
 # 开通虚拟消费卡
 @user_app.route('/virtual_card', methods=['PUT'])
+@jwt_required
 def create_virtual_card():
     """
 
     eg = {
-    "username": "Shuo_Ren"
+    # "username": "Shuo_Ren"
     }
 
     :return:
     :rtype:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     try:
         virtual_card = user_service.create_virtual_card(
-            card_no=data.pop("username"),
+            card_no=username,
             **data
         )
         return jsonify({

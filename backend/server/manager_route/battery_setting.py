@@ -15,11 +15,13 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from flask_jwt_extended import jwt_required
+from playhouse.shortcuts import model_to_dict
+
+from server.service import auth_decorator
 from server.service import battery_rent_service
 from server.service import battery_record_service
-
 from server.utility.json_utility import models_to_json
-from playhouse.shortcuts import model_to_dict
 
 PREFIX = '/manager/battery_setting'
 
@@ -29,6 +31,8 @@ battery_setting = Blueprint("battery_setting", __name__, url_prefix=PREFIX)
 # ***************************** 查询 ***************************** #
 # 获取所有电池 分页
 @battery_setting.route('/battery/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_all_battery():
     battery, total = battery_rent_service.get_all_paginate(
         page=int(request.args.get("page")),
@@ -44,8 +48,9 @@ def get_all_battery():
 
 
 # 查询所有电池记录
-@battery_setting.route(
-    '/history_record', methods=['GET'])
+@battery_setting.route('/history_record', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_history_record():
     records, total = battery_record_service.get_all_paginate(
         page=int(request.args.get("page")),
@@ -63,6 +68,8 @@ def get_history_record():
 
 # 使用闪充的总人次
 @battery_setting.route('/total_use', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_total_uses_amount():
     count = battery_rent_service.manager_get_total_uses_amount()
     return jsonify({
@@ -73,6 +80,8 @@ def get_total_uses_amount():
 
 # 正在使用人数
 @battery_setting.route('/current_use', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_current_uses_amount():
     count = battery_rent_service.manager_get_current_uses_amount()
     return jsonify({
@@ -106,12 +115,11 @@ def get_current_uses_amount():
 #         }}), 200
 
 
-
-
-
 # ***************************** 操作 ***************************** #
 # 添加电池
 @battery_setting.route('/battery', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_battery():
     """
     add a battery
