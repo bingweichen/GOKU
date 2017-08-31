@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Layout, Icon, Menu } from 'antd';
 import { hashHistory } from 'dva/router';
+import { Layout, Icon, Menu, Button } from 'antd';
 import styles from './Admin.less';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
+// 退出
+function logout() {
+  localStorage.removeItem('token');
+  hashHistory.push('/sign');
+}
+
 class Admin extends Component {
   state = {
     collapsed: false,
@@ -70,6 +76,12 @@ class Admin extends Component {
                 type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
                 onClick={this.toggle}
               />
+              <Button
+                onClick={logout}
+                style={{ float: 'right', marginTop: 18 }}
+              >
+                退出<Icon type="logout" />
+              </Button>
             </Header>
             <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 1000 }}>
               {this.props.children}

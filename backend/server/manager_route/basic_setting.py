@@ -23,7 +23,9 @@ from flask import jsonify
 from flask import request
 
 from playhouse.shortcuts import model_to_dict
+from flask_jwt_extended import jwt_required
 
+from server.service import auth_decorator
 from server.service import e_bike_model_service
 from server.service import storage_service
 from server.service import const_service
@@ -47,6 +49,8 @@ basic_setting = Blueprint("basic_setting", __name__, url_prefix=PREFIX)
 # e_bike_model Add/Get/Modify/Remove
 # 1. 获取所有电动车
 @basic_setting.route('/e_bike_model/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_all_e_bike_models():
     page = request.args.get("page")
     paginate_by = request.args.get("paginate_by")
@@ -64,6 +68,8 @@ def get_all_e_bike_models():
 
 # 2. 获取单个电动车
 @basic_setting.route('/e_bike_model/<string:name>', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_e_bike_model(name):
     e_bike_model = e_bike_model_service.get_by_name(name)
     return jsonify({
@@ -75,6 +81,8 @@ def get_e_bike_model(name):
 
 # 2. 更改电动车 (价格...)
 @basic_setting.route('/e_bike_model', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def modify_e_bike_model():
     """
     eg = {
@@ -123,7 +131,9 @@ def modify_e_bike_model():
 
 
 # 添加车型
-@basic_setting.route('/e_bike_model', methods=['PUT'])  # test complete
+@basic_setting.route('/e_bike_model', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_e_bike_model():
     """
     eg = {
@@ -153,8 +163,9 @@ def add_e_bike_model():
 
 
 # 删除车型
-@basic_setting.route('/e_bike_model/<string:name>',
-                     methods=['DELETE'])  # test complete
+@basic_setting.route('/e_bike_model/<string:name>', methods=['DELETE'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def remove_e_bike_model(name):
     result = e_bike_model_service.remove_by_name(name)
     if result:
@@ -166,6 +177,8 @@ def remove_e_bike_model(name):
 # ***************************** 库存管理 ***************************** #
 # 1.获取库存
 @basic_setting.route('/storage/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_all_storage():
     page = request.args.get("page")
     paginate_by = request.args.get("paginate_by")
@@ -183,6 +196,8 @@ def get_all_storage():
 
 # 2. 获取单个库存
 @basic_setting.route('/storage', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_storage():
     model = request.args.get("model")
     color = request.args.get("color")
@@ -192,6 +207,8 @@ def get_storage():
 
 # 3. 更改库存 (数量...)
 @basic_setting.route('/storage', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def modify_storage():
     """
     eg = {
@@ -213,6 +230,8 @@ def modify_storage():
 
 # 4.添加库存
 @basic_setting.route('/storage', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_storage():
     """
     add storage
@@ -240,6 +259,8 @@ def add_storage():
 # ***************************** 参数设置 ***************************** #
 # 获取所有参数
 @basic_setting.route('/const', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get():
     const = const_service.get_all()
     return jsonify({
@@ -250,6 +271,8 @@ def get():
 
 # 修改参数
 @basic_setting.route('/const', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def modify():
     """
     eg = {
@@ -275,6 +298,8 @@ def modify():
 # ***************************** 优惠券 ***************************** #
 # 1. 添加优惠劵模板
 @basic_setting.route('/coupon_template', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_coupon_template():
     """
     eg = {
@@ -300,6 +325,8 @@ def add_coupon_template():
 
 # 2. 获取所有优惠劵模板
 @basic_setting.route('/coupon_template/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_coupon_template():
     coupon_template = coupon_service.get_all_coupon_template()
     coupon_template = models_to_json(coupon_template)
@@ -308,6 +335,8 @@ def get_coupon_template():
 
 # 3. 为所有用户添加优惠劵
 @basic_setting.route('/coupon_to_all_user', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_coupon_template_to_all_user():
     """
     eg = {
@@ -334,7 +363,9 @@ def add_coupon_template_to_all_user():
 
 
 # ***************************** 商铺管理 ***************************** #
-@basic_setting.route('/store', methods=['PUT'])  # test complete
+@basic_setting.route('/store', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_store():
     data = request.get_json()
     store = store_service.add(**data)
@@ -345,6 +376,8 @@ def add_store():
 
 
 @basic_setting.route('/store/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_stores():
     """
 
@@ -358,8 +391,9 @@ def get_stores():
         }}), 200
 
 
-@basic_setting.route('/store',
-                     methods=['POST'])  # test complete
+@basic_setting.route('/store', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def modify_store():
     """
 
@@ -378,8 +412,9 @@ def modify_store():
     pass
 
 
-@basic_setting.route('/store/<string:name>',
-                     methods=['DELETE'])  # test complete
+@basic_setting.route('/store/<string:name>', methods=['DELETE'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def remove_store(name):
     result = store_service.remove_by_name(name)
     if result:
@@ -390,6 +425,8 @@ def remove_store(name):
 
 # ***************************** 学校管理 ***************************** #
 @basic_setting.route('/school/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_schools():
     """
 
@@ -403,6 +440,8 @@ def get_schools():
         }}), 200
 
 @basic_setting.route('/school', methods=['PUT'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def add_school():
     data = request.get_json()
     school = school_service.add(**data)
@@ -411,8 +450,9 @@ def add_school():
         return jsonify({'response': school}), 200
 
 
-@basic_setting.route('/school',
-                     methods=['POST'])  # test complete
+@basic_setting.route('/school', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def modify_school():
     data = request.get_json()
     result = school_service.modify_by_name(
@@ -426,8 +466,9 @@ def modify_school():
     pass
 
 
-@basic_setting.route('/school/<string:name>',
-                     methods=['DELETE'])  # test complete
+@basic_setting.route('/school/<string:name>', methods=['DELETE'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def remove_school(name):
     result = school_service.remove_by_name(name)
     if result:
@@ -439,6 +480,8 @@ def remove_school(name):
 
 # ***************************** 编号管理 ***************************** #
 @basic_setting.route('/serial_number/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_all_serial_number():
     serial_number, total = serial_number_service.get_all(
         page=int(request.args.get("page")),

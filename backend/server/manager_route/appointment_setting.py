@@ -10,8 +10,10 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
-from server.service import appointment_service
+from flask_jwt_extended import jwt_required
 
+from server.service import auth_decorator
+from server.service import appointment_service
 from server.utility.json_utility import models_to_json, custom_model_to_json
 from server.utility.constant.basic_constant import *
 from server.utility.exception import Error
@@ -24,6 +26,8 @@ appointment_setting = Blueprint(
 # ***************************** 查询 ***************************** #
 # 查询所有订单 (分页）
 @appointment_setting.route('/appointments/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_appointments():
     page = request.args.get("page")
     paginate_by = request.args.get("paginate_by")
@@ -84,6 +88,8 @@ def get_appointments():
 # ***************************** 操作 ***************************** #
 # 用户还车，由管理员执行，（到期日前还车成功）
 @appointment_setting.route('/appointment/return_e_bike', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def return_e_bike():
     """
 
@@ -120,6 +126,8 @@ def return_e_bike():
 
 # 取消订单
 @appointment_setting.route('/appointment/status/cancel', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def cancel_appointment():
     """
     appointment_id: int
@@ -150,7 +158,10 @@ def cancel_appointment():
 
 
 # 付款成功并提车
-@appointment_setting.route('/appointment/status/total_payment_success', methods=['POST'])
+@appointment_setting.route('/appointment/status/total_payment_success',
+                           methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def total_payment_success():
     """
     appointment_id: int
@@ -171,45 +182,47 @@ def total_payment_success():
         return jsonify({'response': result}), 200
 
 
-# 更改订单状态
-@appointment_setting.route(
-    '/modify_status/<string:appointment_id>', methods=['POST'])
-def modify_appointment_status(appointment_id):
-    """
-    eg = 1/已完成
+# 暂时注释掉
 
-    :param appointment_id:
-    :type appointment_id:
-    :param status:
-    :type status:
-    :return:
-    :rtype:
-    """
-    data = request.get_json()
-    result = appointment_service.modify_status(
-        appointment_id,
-        status=data.pop("status")
-    )
-    if result:
-        return jsonify({'response': "modify success"}), 200
-    else:
-        return jsonify({'response': "no appointment find"}), 404
-
-
-# 删除订单
-@appointment_setting.route('/<string:appointment_id>', methods=['DELETE'])
-def remove_appointment(appointment_id):
-    result = appointment_service.remove_by_id(appointment_id)
-    if result:
-        return jsonify({'response': "delete success"}), 200
-    else:
-        return jsonify({'response': "no appointment find"}), 404
-
-
-# 获取订单状态 对应表
-@appointment_setting.route('/appointments/status', methods=['GET'])
-def get_appointment_status_list():
-    return jsonify({'response': {
-        "buy": APPOINTMENT_STATUS,
-        "rent": RENT_APPOINTMENT_STATUS
-    }}), 200
+# # 更改订单状态
+# @appointment_setting.route(
+#     '/modify_status/<string:appointment_id>', methods=['POST'])
+# def modify_appointment_status(appointment_id):
+#     """
+#     eg = 1/已完成
+#
+#     :param appointment_id:
+#     :type appointment_id:
+#     :param status:
+#     :type status:
+#     :return:
+#     :rtype:
+#     """
+#     data = request.get_json()
+#     result = appointment_service.modify_status(
+#         appointment_id,
+#         status=data.pop("status")
+#     )
+#     if result:
+#         return jsonify({'response': "modify success"}), 200
+#     else:
+#         return jsonify({'response': "no appointment find"}), 404
+#
+#
+# # 删除订单
+# @appointment_setting.route('/<string:appointment_id>', methods=['DELETE'])
+# def remove_appointment(appointment_id):
+#     result = appointment_service.remove_by_id(appointment_id)
+#     if result:
+#         return jsonify({'response': "delete success"}), 200
+#     else:
+#         return jsonify({'response': "no appointment find"}), 404
+#
+#
+# # 获取订单状态 对应表
+# @appointment_setting.route('/appointments/status', methods=['GET'])
+# def get_appointment_status_list():
+#     return jsonify({'response': {
+#         "buy": APPOINTMENT_STATUS,
+#         "rent": RENT_APPOINTMENT_STATUS
+#     }}), 200

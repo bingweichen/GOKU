@@ -20,8 +20,10 @@ from flask import request
 from peewee import DoesNotExist
 
 from playhouse.shortcuts import model_to_dict
-from server.utility.json_utility import models_to_json
+from flask_jwt_extended import jwt_required
 
+from server.service import auth_decorator
+from server.utility.json_utility import models_to_json
 from server.service import user_service
 from server.service import appointment_service
 from server.service import refund_table_service
@@ -40,6 +42,8 @@ user_setting = Blueprint("user_setting", __name__, url_prefix=PREFIX)
 # ***************************** 查看用户 ***************************** #
 # 获取所有用户
 @user_setting.route('/users/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_appointments():
     users = user_service.get_all()
     users = models_to_json(users, recurse=False)
@@ -53,6 +57,8 @@ def get_appointments():
 
 # ***************************** 虚拟消费卡 ***************************** #
 @user_setting.route('/virtual_card', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_virtual_card():
     username = request.args.get("username")
     try:
@@ -73,6 +79,8 @@ def get_virtual_card():
 
 # 冻结账号
 @user_setting.route('/virtual_card/freeze', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def freeze():
     card_no = request.args.get("card_no")
     result = virtual_card_service.freeze(
@@ -94,6 +102,8 @@ def re_freeze():
 # ***************************** 个人订单 ***************************** #
 # 获取用户的订单情况
 @user_setting.route('/user/appointment', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_user_appointment():
     username = request.args.get("username")
     appointments = appointment_service.get_all(username=username)
@@ -106,6 +116,8 @@ def get_user_appointment():
 
 # ***************************** 个人消费记录 ***************************** #
 @user_setting.route('/consume_record', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_consume_record():
     """
     get consume records
@@ -124,6 +136,8 @@ def get_consume_record():
 
 # ***************************** 个人退款 ***************************** #
 @user_setting.route('/refund_table', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_refund_table():
     username = request.args.get("username")
     refund_tables = refund_table_service.get_all(username)
@@ -135,6 +149,8 @@ def get_refund_table():
 
 # ***************************** 个人电动车报修 ***************************** #
 @user_setting.route('/report_table', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_report_table():
     username = request.args.get("username")
     report_tables = report_table_service.get_all(
@@ -157,6 +173,8 @@ def get_battery_record():
 
 # ***************************** 个人现在使用的闪充 ***************************** #
 @user_setting.route('/on_load_battery', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def get_on_load_battery():
     username = request.args.get("username")
     try:

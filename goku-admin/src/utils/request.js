@@ -12,6 +12,16 @@ const instance = axios.create({
   baseURL: '/api/',
 });
 
+instance.interceptors.request.use((config) => {
+  if (config.headers.Authorization === undefined) {
+    config.headers.Authorization = localStorage.getItem('token');
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+},
+);
+
 instance.interceptors.response.use((response) => {
   return response.data.response;
 }, (error) => {

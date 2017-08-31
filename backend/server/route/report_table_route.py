@@ -14,6 +14,8 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 # from playhouse.shortcuts import model_to_dict
 from server.utility.json_utility import models_to_json
 from server.service import report_table_service
@@ -25,10 +27,11 @@ report_table_app = Blueprint("report_table_app", __name__, url_prefix=PREFIX)
 
 # 电动车报修
 @report_table_app.route('', methods=['PUT'])
+@jwt_required
 def add():
     """
     eg = {
-    "username": "bingwei",
+    # "username": "bingwei",
     "appointment": 17,
     "address": "",
     "comment": "",
@@ -38,10 +41,11 @@ def add():
     :return:
     :rtype:
     """
+    username = get_jwt_identity()
     data = request.get_json()
     report_table = report_table_service.add(
         appointment=data.pop("appointment"),
-        user=data.pop("username"),
+        user=username,
         address=data.pop("address"),
         comment=data.pop("comment"),
         phone=data.pop("phone"),
@@ -61,8 +65,10 @@ def add():
 
 # 获取报修记录
 @report_table_app.route('/all', methods=['GET'])
+@jwt_required
 def get_all():
-    username = request.args.get("username")
+    username = get_jwt_identity()
+    # username = request.args.get("username")
     report_tables = report_table_service.get_all(
         user=username
     )

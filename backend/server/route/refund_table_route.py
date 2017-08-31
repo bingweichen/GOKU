@@ -12,6 +12,8 @@ from flask import Blueprint
 from flask import jsonify
 from flask import request
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 # from playhouse.shortcuts import model_to_dict
 from server.utility.json_utility import models_to_json
 
@@ -24,8 +26,10 @@ refund_table = Blueprint("refund_table", __name__, url_prefix=PREFIX)
 
 # 获取所有退款记录
 @refund_table.route('', methods=['GET'])
+@jwt_required
 def get_refund_table():
-    username = request.args.get("username")
+    username = get_jwt_identity()
+    # username = request.args.get("username")
     refund_tables = refund_table_service.get_all(username)
     return jsonify({
         'response': {

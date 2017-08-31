@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, Message } from 'antd';
 import { connect } from 'dva';
+import { hashHistory } from 'dva/router';
+import { signin } from '../../services/session.js';
 import styles from './Login.less';
 
 const FormItem = Form.Item;
@@ -9,7 +11,12 @@ class Login extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        signin(values)
+          .then(({ token }) => {
+            localStorage.setItem('token', `Bearer ${token}`);
+            hashHistory.push('/admin/order');
+          })
+          .catch(({ message }) => Message.error(message.message));
       }
     });
   }
@@ -27,7 +34,7 @@ class Login extends Component {
         />
         <Form onSubmit={this.handleSubmit} className={styles.loginForm}>
           <FormItem>
-            {getFieldDecorator('userName', {
+            {getFieldDecorator('username', {
               rules: [{ required: true, message: '请输入用户名' }],
             })(
               <Input prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="用户名" />,
