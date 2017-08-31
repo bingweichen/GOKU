@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Tag, Input } from 'antd';
+import QRCode from 'qrcode.react';
 import { getAllBattery, getTotalUse, getCurrentUse } from '../../services/battery.js';
 import { batteryCol } from '../../utils/Table/columns.js';
 
@@ -41,6 +42,13 @@ class Battery extends Component {
     this.setState({ currentUse: current_use });
   }
 
+  cols = batteryCol.concat({
+    title: '二维码',
+    dataIndex: 'qrcode',
+    render: (text, record) => (
+      <QRCode value={record.serial_number} />
+    ),
+  })
 
   render() {
     const { dataSource, total, totalUse, currentUse, keyWord } = this.state;
@@ -59,7 +67,7 @@ class Battery extends Component {
           />
         </div>
         <Table
-          columns={batteryCol}
+          columns={this.cols}
           dataSource={dataSource}
           pagination={{
             total,
