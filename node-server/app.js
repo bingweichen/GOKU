@@ -35,6 +35,6 @@ app.use('/wx', function (req, res) {
   }
 })
 
-app.listen(3003, function () {
+app.listen(80, function () {
   console.log('Example app listening on port 3000!')
 })
