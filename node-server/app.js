@@ -15,7 +15,7 @@ app.use('/api', function (req, res) {
 
 app.use('/wx', function (req, res) {
   const token = 'schooltrip';
-  console.log(req)
+  // console.log(req)
   const params = req.query;
   console.log(params);
   const signature = params.signature;
@@ -36,6 +36,6 @@ app.use('/wx', function (req, res) {
   }
 })
 
-app.listen(8080, function () {
+app.listen(80, function () {
   console.log('Example app listening on port 3000!')
 })
