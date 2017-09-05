@@ -13,7 +13,8 @@ app.use('/api', function (req, res) {
   req.pipe(request(url)).pipe(res);
 });
 
-app.use('/wx', express.static('../fontend/dist/index.html'));
+app.use('/wx', express.static('../fontend/index.html'));
+app.use('/wx/dist', express.static('../fontend/dist'));
 // app.use('/wx', function (req, res) {
 //   const token = 'schooltrip';
 //   // console.log(req)
