@@ -1,3 +1,5 @@
+import { Toast } from 'antd-mobile';
+import { hashHistory } from 'dva/router';
 import * as personService from '../services/person';
 
 export default {
@@ -29,6 +31,13 @@ export default {
         orders,
       };
     },
+    // 设置用户信息
+    setUserInfo(state, { name }) {
+      return {
+        ...state,
+        name,
+      };
+    },
   },
   effects: {
     // 得到优惠卷
@@ -45,6 +54,22 @@ export default {
         yield put({ type: 'setUserOrder', appointments: data.response.appointments });
       } catch (error) {
         console.log(error);
+      }
+    },
+    // 登录
+    *login({ username, password }, { call, put }) {
+      Toast.loading('正在登录...');
+      try {
+        const { token, user } = yield call(personService.login, { username, password });
+        yield localStorage.setItem('token', token);
+        yield put({
+          type: 'setUserInfo',
+          ...user,
+        });
+        Toast.hide();
+        hashHistory.replace('/');
+      } catch (error) {
+        Toast.info(error.message.message);
       }
     },
   },
