@@ -24,6 +24,8 @@ from server.route import user_route, \
 from server.manager_route import basic_setting, appointment_setting, \
     battery_setting, support, users_setting
 
+from server.wx_service import wx_route
+
 app = Flask(__name__, static_url_path='')
 
 CORS(app, supports_credentials=True)
@@ -44,6 +46,8 @@ app.register_blueprint(appointment_setting.appointment_setting)
 app.register_blueprint(battery_setting.battery_setting)
 app.register_blueprint(support.support_app)
 app.register_blueprint(users_setting.user_setting)
+
+app.register_blueprint(wx_route.wx_app)
 
 
 app.secret_key = 'super-super-secret'

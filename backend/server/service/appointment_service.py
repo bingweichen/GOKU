@@ -114,7 +114,7 @@ def total_payment_success(appointment_id, username=None):
     appointment = Appointment.get(
         id=appointment_id,
     )
-    if username and appointment.user != username:
+    if username and appointment.user.username != username:
         raise Error("not your appointment")
 
     # 检查是否租车
