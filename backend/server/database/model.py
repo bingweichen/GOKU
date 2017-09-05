@@ -285,12 +285,17 @@ class ReportTable(BaseModel):
     date = DateTimeField()
 
 
+class WxInfo(BaseModel):
+    key = CharField()
+    value = CharField()
+
+
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
-              RefundTable, ReportTable]
+              RefundTable, ReportTable, WxInfo]
 
-table_temp = [Const]
+table_temp = [WxInfo]
 
 
 def create_tables():
@@ -334,7 +339,7 @@ def drop_table(model):
 
 
 def recreate_tables():
-    # drop_tables()
+    drop_tables()
     create_tables()
 
 
