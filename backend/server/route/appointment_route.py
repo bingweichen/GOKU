@@ -56,7 +56,7 @@ def get_appointment():
 
     appointment = appointment_service.get_by_id(
         appointment_id=appointment_id, username=username)
-    appointment = model_to_dict(appointment, recurse=False)
+    appointment = model_to_dict(appointment, max_depth=1)
     print("appointment", appointment)
     return jsonify({
         'response': {
