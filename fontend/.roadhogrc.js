@@ -17,7 +17,9 @@ export default {
     },
     "production": {
       "extraBabelPlugins": [
-        "transform-runtime"
+        "dva-hmr",
+        "transform-runtime",
+        ["import", { "libraryName": "antd-mobile", "libraryDirectory": "lib", "style": "css" }]
       ]
     }
   },

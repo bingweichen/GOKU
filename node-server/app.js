@@ -15,13 +15,14 @@ app.use('/api', function (req, res) {
 
 app.use('/wx', function (req, res) {
   const token = 'schooltrip';
-  const params = req.params;
+  console.log(req)
+  const params = req.query;
+  console.log(params);
   const signature = params.signature;
   const timestamp = params.timestamp;
   const nonce = params.nonce;
   let tmpArr = [token, timestamp, nonce];
   tmpArr.sort();
-  //对排序后的结果进行加密
   let sha1 = crypto.createHash('sha1');
   let msg = tmpArr[0] + tmpArr[1] + tmpArr[2];
   sha1.update(msg);
