@@ -2,8 +2,7 @@ import axios from 'axios';
 import service from '../utils/axios';
 
 export function getVirtualCard() {
-  const id = localStorage.token;
-  return service.get(`virtual_card?username=${id}`);
+  return service.get('virtual_card');
 }
 
 export function openVirtualCardService() {
@@ -50,12 +49,10 @@ export function record() {
 
 // 租用电池
 export function rentBattery(number) {
-  const id = localStorage.token;
   return service({
     method: 'POST',
     url: 'battery_rent/rent',
     data: {
-      username: id,
       serial_number: number,
     },
   });
@@ -74,6 +71,5 @@ export function batteryReport(number) {
 
 // 正在使用的电池
 export function inuseBattery() {
-  const id = localStorage.token;
-  return service.get(`battery_rent/battery?username=${id}`);
+  return service.get('battery_rent/battery');
 }

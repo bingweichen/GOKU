@@ -63,8 +63,8 @@ export default {
       const { person } = yield select();
       const { submitData } = action;
       try {
-        const { data } = yield call(orderService.buyCarOrder, submitData, person.id);
-        console.log(data);
+        yield call(orderService.buyCarOrder, submitData, person.id);
+        // todo wechat pay
       } catch (error) {
         console.log(error);
       }

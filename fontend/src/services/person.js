@@ -1,8 +1,8 @@
 import request from '../utils/request';
 import axios from '../utils/axios';
 
-export function getCoupon(id) {
-  return request(`/api/coupon/${id}`);
+export function getCoupon() {
+  return axios('coupon');
 }
 
 export function getAllSchool() {
@@ -13,8 +13,8 @@ export function register(info) {
   return axios.post('user/register', info);
 }
 
-export function getOrder(id) {
-  return axios.get(`appointment/all?username=${id}`);
+export function getOrder() {
+  return axios.get('appointment/all');
 }
 
 export function login({ username, password }) {

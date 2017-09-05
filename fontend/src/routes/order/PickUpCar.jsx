@@ -21,11 +21,9 @@ class PickUpCar extends Component {
     if (this.state.number.length < 6 || this.state.isLoading) {
       return;
     }
-    const { username } = this.props;
     Toast.loading('等待付款', 0);
     this.setState({ isLoading: true });
     pickUpWithCarNumber({
-      username,
       appointment_id: parseInt(this.state.id, 10),
       serial_number: this.state.number,
     })
@@ -34,7 +32,6 @@ class PickUpCar extends Component {
         // todo : 微信支付
         Toast.hide();
         paySuccess({
-          username,
           appointment_id: parseInt(this.state.id, 10),
         })
           .then((data) => {

@@ -9,6 +9,7 @@ import Order, {
   PickUpCar,
   PickUpSuccess,
   WatchOrder,
+  Reparis,
 } from './routes/order';
 import {
   Balance,
@@ -39,6 +40,7 @@ function RouterConfig({ history }) {
       <Route path="/signin" component={Signin} />
       <Route path="/pickupsuccess" component={PickUpSuccess} />
       <Route path="/watchorder" component={WatchOrder} />
+      <Route path="/repairs" component={Reparis} />
     </Router>
   );
 }

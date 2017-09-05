@@ -41,7 +41,11 @@ class Battery extends Component {
     const restTime = 14 - moment().diff(moment(this.props.useDate), 'days');
     return (
       <div>
-        <NoticeBar mode="link" onClick={() => { }}>
+        <NoticeBar
+          mode="link"
+          style={{ display: isNaN(restTime) ? 'none' : 'block' }}
+          onClick={() => { }}
+        >
           你正在使用闪充，还有{restTime}天剩余时间，点击归还！
         </NoticeBar>
         <div className={styles.functions}>

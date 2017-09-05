@@ -3,7 +3,6 @@ import './index.less';
 
 // 1. Initialize
 const app = dva();
-
 // 2. Plugins
 // app.use({});
 

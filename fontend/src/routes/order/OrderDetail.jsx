@@ -34,6 +34,7 @@ class OrderDetail extends Component {
   // 提交订单
   submitOrder = () => {
     const { orderDetail, carInfo, submitBuyCarOrder, location } = this.props;
+    const { useCoupons } = this.state;
     const { type } = location.query; // 判断为买车还是租车
     const submitData = {
       e_bike_model: orderDetail.carType,
@@ -41,7 +42,7 @@ class OrderDetail extends Component {
       category: carInfo.category,
       type: '买车',
       note: this.state.note,
-      coupon: null,
+      coupon: useCoupons ? JSON.parse(useCoupons).id : null,
     };
     if (type === 'rent') {
       submitData.type = '租车';

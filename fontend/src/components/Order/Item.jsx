@@ -1,5 +1,6 @@
 import React from 'react';
 import { hashHistory } from 'dva/router';
+import axios from '../../utils/axios.js';
 import styles from './item.less';
 import { orderStatus } from '../../utils/constant.js';
 
@@ -32,7 +33,15 @@ export default function Item({ order }) {
           }}
           className={styles.contact}
         >
-          <span style={{ display: order.status === orderStatus.waitPayAppointment ? 'inline' : 'none' }}>去支付</span>
+          <span
+            onClick={() => {
+              // todo wechat pay
+              axios.post('appointment/status/appointment_payment_success', {
+                appointment_id: order.id,
+              });
+            }}
+            style={{ display: order.status === orderStatus.waitPayAppointment ? 'inline' : 'none' }
+            }>去支付</span>
           <span style={{ display: order.status === orderStatus.waitBack ? 'inline' : 'none' }}>去还车</span>
           <span
             onClick={() => { hashHistory.push(`/pickupcar?id=${order.id}`); }}
@@ -40,6 +49,7 @@ export default function Item({ order }) {
           >去提车</span>
           <span
             style={{ display: order.status === orderStatus.finish ? 'inline' : 'none' }}
+            onClick={() => { hashHistory.push(`/repairs?id=${order.id}`); }}
           >报修</span>
         </div>
         {/* <div
