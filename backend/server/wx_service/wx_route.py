@@ -15,6 +15,7 @@ def get_sign():
     url = request.args.get("url")
     jsapi_ticket = WxInfo.get(key='jsapi_ticket').value
     sign = Sign(jsapi_ticket, url)
+    sign.sign()
 
     return jsonify({
         'response': {
