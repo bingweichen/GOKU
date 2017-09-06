@@ -122,6 +122,7 @@ def login():
     password = request.json.get('password', None)
     try:
         user = user_service.login(username, password)
+        wx_user = wx_service.get_user_detail(open_id=user.we_chat_id)
         user = model_to_dict(user)
         user.pop('password')
 
@@ -129,7 +130,9 @@ def login():
         response = {
             'response': {
                 'token': create_access_token(identity=user),
-                'user': user}}
+                'user': user,
+                'wx_user': wx_user
+            }}
         return jsonify(response), 200
 
     except DoesNotExist as e:

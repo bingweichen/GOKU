@@ -4,6 +4,9 @@
 from datetime import datetime, timedelta
 import time
 
+import sys
+sys.path.append("../../")
+
 from peewee import DoesNotExist
 from server.database.model import create_tables
 

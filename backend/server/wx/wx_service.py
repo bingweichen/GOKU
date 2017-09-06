@@ -2,9 +2,9 @@ from urllib.request import urlopen
 import json
 
 from server.database.model import WxUser
+from server.utility.exception import *
 
-appId = "wx0350234b8e970c00"
-appSecret = "97dfd4483fd75d568da28d3ea9508632"
+from server.wx.configure import appId, appSecret
 
 
 def get_access_token(code):
@@ -13,6 +13,9 @@ def get_access_token(code):
                % (appId, appSecret, code))
     urlResp = urlopen(postUrl)
     urlResp = json.loads(urlResp.read())
+    print("urlResp", urlResp)
+    if 'errcode' in urlResp:
+        raise Error("code been used")
     return urlResp
 
 
