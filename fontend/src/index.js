@@ -1,12 +1,12 @@
 import dva from 'dva';
 import './index.less';
+import { setWxConfig } from './wechat';
 
 // 1. Initialize
 const app = dva();
-
 // 2. Plugins
 // app.use({});
-
+setWxConfig();
 // 3. Model
 // app.model(require('./models/example'));
 app.model(require('./models/IndexPage'));

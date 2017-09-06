@@ -1,15 +1,15 @@
-import axios from 'axios';
+import axios from '../utils/axios';
 import request from '../utils/request';
 
 export function getPickUpSite(id) {
-  const url = id ? `/api/store/all?username=${id}` : '/api/store/all';
+  const url = id ? `store/all?username=${id}` : 'store/all';
   return request(url);
 }
 
 export function buyCarOrder(submitData, id) {
   return axios({
     method: 'PUT',
-    url: '/api/appointment',
+    url: 'appointment',
     data: {
       username: id,
       ...submitData,
@@ -18,15 +18,13 @@ export function buyCarOrder(submitData, id) {
 }
 
 export function pickUpWithCarNumber({
-  username,
   appointment_id,
   serial_number,
 }) {
   return axios({
     method: 'POST',
-    url: '/api/appointment/check/upload_serials_number',
+    url: 'appointment/check/upload_serials_number',
     data: {
-      username,
       appointment_id,
       serial_number,
     },
@@ -34,19 +32,25 @@ export function pickUpWithCarNumber({
 }
 
 export function paySuccess({
-  username,
   appointment_id,
 }) {
   return axios({
     method: 'POST',
-    url: '/api/appointment/status/total_payment_success',
+    url: 'appointment/status/total_payment_success',
     data: {
-      username,
       appointment_id,
     },
   });
 }
 
-export function getOrder(username, appointmentId) {
-  return axios.get(`/api/appointment?username=${username}&&appointment_id=${appointmentId}`);
+export function getOrder(appointmentId) {
+  return axios.get(`appointment?appointment_id=${appointmentId}`);
+}
+
+export function repariCar(reason) {
+  return axios({
+    method: 'PUT',
+    url: 'report_table',
+    data: reason,
+  });
 }

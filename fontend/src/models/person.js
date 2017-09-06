@@ -41,17 +41,15 @@ export default {
   },
   effects: {
     // 得到优惠卷
-    *getCoupons(action, { call, put, select }) {
-      const { person } = yield select();
-      const { data } = yield call(personService.getCoupon, person.id);
-      yield put({ type: 'setCoupons', coupons: data.response });
+    *getCoupons(action, { call, put }) {
+      const coupons = yield call(personService.getCoupon);
+      yield put({ type: 'setCoupons', coupons });
     },
     // 得到用户订单
-    *getOrder(action, { call, put, select }) {
-      const { person } = yield select();
+    *getOrder(action, { call, put }) {
       try {
-        const { data } = yield call(personService.getOrder, person.id);
-        yield put({ type: 'setUserOrder', appointments: data.response.appointments });
+        const { appointments } = yield call(personService.getOrder);
+        yield put({ type: 'setUserOrder', appointments });
       } catch (error) {
         console.log(error);
       }
@@ -61,7 +59,7 @@ export default {
       Toast.loading('正在登录...');
       try {
         const { token, user } = yield call(personService.login, { username, password });
-        yield localStorage.setItem('token', token);
+        yield localStorage.setItem('token', `Bearer ${token}`);
         yield put({
           type: 'setUserInfo',
           ...user,

@@ -6,6 +6,7 @@ import styles from './index.less';
 import PickUpCar from './PickUpCar';
 import PickUpSuccess from './PickUpSuccess';
 import WatchOrder from './WatchOrder';
+import Reparis from './Reparis';
 import { orderStatus } from '../../utils/constant.js';
 
 const TabPane = Tabs.TabPane;
@@ -58,4 +59,5 @@ export {
   PickUpCar,
   PickUpSuccess,
   WatchOrder,
+  Reparis,
 };

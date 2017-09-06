@@ -19,7 +19,7 @@ export default function Profile({ car }) {
       <Link to={{ pathname: `cardetail/${name}` }}>
         <div className={styles.container}>
           <LazyLoad height={300}>
-            <img src={image_urls[0]} alt="" className={styles.image} />
+            <img src={image_urls && image_urls[0]} alt="" className={styles.image} />
           </LazyLoad>
         </div>
         <div className={styles.footer}>

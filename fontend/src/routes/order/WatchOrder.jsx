@@ -16,9 +16,9 @@ class WatchOrder extends Component {
   }
 
   componentDidMount() {
-    getOrder(localStorage.token, this.state.orderId)
-      .then(({ data }) => {
-        this.setState({ order: data.response.appointment });
+    getOrder(this.state.orderId)
+      .then(({ appointment }) => {
+        this.setState({ order: appointment });
       });
   }
 
