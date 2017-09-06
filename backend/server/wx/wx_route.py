@@ -2,9 +2,10 @@ from flask import Blueprint
 from flask import request
 from flask import jsonify
 
-
-from server.wx_service.sign import Sign
+from server.wx import wx_service
+from server.wx.sign import Sign
 from server.database.model import WxInfo
+from server.service import user_service
 PREFIX = '/wx'
 
 wx_app = Blueprint("wx_app", __name__, url_prefix=PREFIX)
@@ -21,3 +22,18 @@ def get_sign():
         'response': {
             "sign": sign.ret
         }}), 200
+
+
+@wx_app.route('/code_to_openid', methods=['POST'])
+# using code to change Wxuser and return openid
+def code_to_openid():
+    code = request.args.get("code")
+    open_id = wx_service.add_or_modify_wx_user(code=code)
+
+    return jsonify({
+        'response': {
+            "open_id": open_id
+        }}), 200
+
+
+

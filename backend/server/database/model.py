@@ -290,12 +290,18 @@ class WxInfo(BaseModel):
     value = CharField()
 
 
+class WxUser(BaseModel):
+    open_id = CharField()
+    access_token = CharField(default=None, null=True)
+    refresh_token = CharField(default=None, null=True)
+
+
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable, WxInfo]
 
-table_temp = [WxInfo]
+table_temp = [WxUser]
 
 
 def create_tables():

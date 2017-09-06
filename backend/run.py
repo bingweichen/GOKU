@@ -24,7 +24,7 @@ from server.route import user_route, \
 from server.manager_route import basic_setting, appointment_setting, \
     battery_setting, support, users_setting
 
-from server.wx_service import wx_route
+from server.wx import wx_route
 
 app = Flask(__name__, static_url_path='')
 

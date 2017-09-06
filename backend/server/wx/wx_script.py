@@ -45,13 +45,13 @@ class Basic:
         print(self.__leftTime_ticket)
 
     def get_access_token(self):
-        if self.__leftTime < 10:
+        if self.__leftTime < 100:
             self.__real_get_access_token()
         return self.__accessToken
 
     def run(self):
         while (True):
-            if self.__leftTime > 10:
+            if self.__leftTime > 100:
                 time.sleep(2)
                 self.__leftTime -= 2
             else:

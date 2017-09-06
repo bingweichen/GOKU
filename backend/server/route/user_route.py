@@ -23,6 +23,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.service import user_service
 from server.utility.exception import PasswordError
 from server.utility.exception import Error
+from server.wx import wx_service
+
 PREFIX = '/user'
 
 user_app = Blueprint("user_app", __name__, url_prefix=PREFIX)
@@ -41,6 +43,8 @@ def register():
             "student_id": "12358",
 
             "identify_number": "30032323232322"
+
+            "openid": "o48xV1b3vqrGQgGX--UrLACbmbHY"
 
         }
 
@@ -73,7 +77,7 @@ def register():
             phone=data.pop("phone"),
             identify_number=data.pop("identify_number"),
             # 注释项 是可选项
-            # we_chat_id=data.pop("we_chat_id"),
+            we_chat_id=data.pop("openid"),
             # account=data.pop("account"),
             # account_type=data.pop("account_type"),
             **data)
@@ -140,6 +144,36 @@ def login():
             'response': {
                 "error": '%s: %s' % (str(PasswordError), e.args),
                 "message": "用户名密码错误"
+            }}), 400
+
+
+@user_app.route('/openid_login', methods=['get'])
+def openid_to_token():
+    openid = request.args.get("openid")
+    if not openid:
+        return jsonify({
+            'response': {
+                "message": "openid不存在"
+            }}), 400
+    try:
+        user = user_service.get(we_chat_id=openid)
+        wx_user = wx_service.get_user_detail(open_id=user.we_chat_id)
+        user = model_to_dict(user)
+        user.pop('password')
+        # Identity can be any data that is json serializable
+        response = {
+            'response': {
+                'token': create_access_token(identity=user),
+                'user': user,
+                'wx_user': wx_user
+            }}
+        return jsonify(response), 200
+
+    except DoesNotExist as e:
+        return jsonify({
+            'response': {
+                "error": '%s: %s' % (str(DoesNotExist), e.args),
+                "message": "用户不存在"
             }}), 400
 
 
