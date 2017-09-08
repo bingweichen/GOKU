@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
 import { hashHistory } from 'dva/router';
-import { List } from 'antd-mobile';
+import { List, Button } from 'antd-mobile';
 import styles from './index.less';
 import Coupons from './Coupons';
 import Signup from './Signup';
 import Signin from './Signin';
 
 const Item = List.Item;
+
+const logout = () => {
+  localStorage.clear();
+  hashHistory.push('/signin');
+};
+
 class Center extends Component {
   render() {
     return (
       <div>
         <div className={styles.cover}>
           <div className={styles.userPhoto}>
-            <img src="https://gw.alicdn.com/sns_logo/i4/6000000003878/TB2QR08uZtnpuFjSZFKXXalFFXa_!!0-mytaobao.jpg" alt="" />
+            <img src={sessionStorage.getItem('head')} alt="" style={{ width: '100%' }} />
           </div>
         </div>
         <p className={styles.username}>包泽峰</p>
@@ -28,6 +34,11 @@ class Center extends Component {
             onClick={() => { hashHistory.push('/coupons'); }}
           >我的优惠卷</Item>
         </List>
+        <Button
+          onClick={logout}
+          type="warning"
+          className={styles.logout}
+        > 退出登录 </Button>
       </div>
     );
   }
