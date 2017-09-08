@@ -37,6 +37,17 @@ class Battery extends Component {
     }
   }
 
+  scan() {
+    wx.scanQRCode({
+      needResult: 1,
+      scanType: ['qrCode', 'barCode'],
+      success(res) {
+        const result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+        hashHistory.push(`/usebattery?number=${result}`);
+      },
+    });
+  }
+
   render() {
     const restTime = 14 - moment().diff(moment(this.props.useDate), 'days');
     return (
@@ -49,7 +60,7 @@ class Battery extends Component {
           你正在使用闪充，还有{restTime}天剩余时间，点击归还！
         </NoticeBar>
         <div className={styles.functions}>
-          <div className={styles.function} style={{ background: '#8BA6EE' }}>
+          <div className={styles.function} style={{ background: '#8BA6EE' }} onClick={this.scan}>
             <p><Icon type={require('../../assets/image/QR-code.svg')} style={{ width: '.44rem', height: '.44rem' }} /></p>
             <p>扫一扫</p>
           </div>
