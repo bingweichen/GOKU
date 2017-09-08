@@ -37,7 +37,7 @@ class Signup extends Component {
         this.setState({ errorText: '两次密码输入不一致' });
       } else {
         this.setState({ errorText: '', loading: true });
-        register(value)
+        register({ ...value, openid: localStorage.getItem('openid'), school: value.school[0] })
           .then(() => {
             this.setState({ errorText: '', loading: false });
             hashHistory.replace('/signin');

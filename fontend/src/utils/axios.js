@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { Toast } from 'antd-mobile';
+import { hashHistory } from 'dva/router';
 
 Promise.prototype.finally = function (callback) {
   const P = this.constructor;
@@ -26,6 +28,11 @@ instance.interceptors.response.use((response) => {
   return response.data.response;
 }, (error) => {
   const { status, data } = error.response;
+  if (status === 422) { // 用户未登录时
+    Toast.fail('请先登录', 2, () => {
+      hashHistory.push('signin');
+    });
+  }
   return Promise.reject({ status, message: data.response });
 });
 

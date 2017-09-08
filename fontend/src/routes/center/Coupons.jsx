@@ -6,8 +6,15 @@ import Coupon from '../../components/Coupon';
 function Coupons({ coupons }) {
   if (coupons.length === 0) {
     return (
-      <div>
-        <span>暂无优惠卷</span>
+      <div
+        style={{
+          textAlign: 'center',
+          color: '#615965',
+          height: '6rem',
+          lineHeight: '6rem',
+        }}
+      >
+        <span>暂无优惠卷!</span>
       </div>
     );
   }
