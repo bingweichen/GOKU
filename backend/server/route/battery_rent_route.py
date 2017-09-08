@@ -73,10 +73,15 @@ def get_user_battery():
     except DoesNotExist as e:
         return jsonify({
             'response': {
-                'error': e.args,
-                'message': '无租用电池'
+                "battery": [],
             }
-        }), 400
+        }), 200
+        # return jsonify({
+        #     'response': {
+        #         'error': e.args,
+        #         'message': '无租用电池'
+        #     }
+        # }), 400
 
 
 # 3. 租用电池

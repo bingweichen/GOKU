@@ -1,8 +1,11 @@
 from urllib.request import urlopen
 import time
 import json
+import sys
+sys.path.append("../../")
 
 from server.database.model import WxInfo
+from server.wx.configure import appId, appSecret
 
 
 class Basic:
@@ -13,8 +16,8 @@ class Basic:
         self.__leftTime_ticket = 0
 
     def __real_get_access_token(self):
-        appId = "wx0350234b8e970c00"
-        appSecret = "97dfd4483fd75d568da28d3ea9508632"
+        # appId = "wx0350234b8e970c00"
+        # appSecret = "97dfd4483fd75d568da28d3ea9508632"
 
         # 获取 access_token
         postUrl = ("https://api.weixin.qq.com/cgi-bin/token?grant_type="
@@ -58,6 +61,9 @@ class Basic:
                 self.__real_get_access_token()
 
 
-if __name__ == '__main__':
+def wx_access_token_script():
     basic = Basic()
     basic.run()
+
+if __name__ == '__main__':
+    wx_access_token_script()
