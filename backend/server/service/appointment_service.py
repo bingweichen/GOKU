@@ -374,27 +374,6 @@ def get_all_paginate(page, paginate_by, period, **kwargs):
     return appointments, total
 
 
-    # if period == 0:
-    #     appointments = Appointment.select().paginate(page, paginate_by).where(
-    #         Appointment.type.regexp(kwargs["keyword"])
-    #     )
-    #     total = appointments.count()
-    # else:
-    #     if period > 0:
-    #         period -= 1
-    #     today = datetime.today().replace(hour=0, minute=0, second=0,
-    #                                      microsecond=0)
-    #     before = today - timedelta(days=period)
-    #     total = Appointment.select().where(
-    #         Appointment.date >= before
-    #     ).count()
-    #     appointments = Appointment.select().where(
-    #         Appointment.date >= before
-    #     ).paginate(page, paginate_by)
-    #     # total = appointments.count()
-    # return appointments, total
-
-
 def get_by_id(appointment_id, username=None):
     if username:
         return get(

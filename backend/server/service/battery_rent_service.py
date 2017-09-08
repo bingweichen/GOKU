@@ -23,10 +23,6 @@ from server.utility.exception import *
 from server.utility.constant.custom_constant import get_custom_const
 
 
-# from server.utility.json_utility import models_to_json
-# from playhouse.shortcuts import model_to_dict
-
-
 # ***************************** service ***************************** #
 def get_all_paginate(page, paginate_by, **kwargs):
     battery = Battery.select()
