@@ -63,6 +63,14 @@ def pay_deposit(**kwargs):
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
     if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
+        # 充值押金失败
+        ConsumeRecord.create(
+            card=card_no,
+            consume_event="deposit failed",
+            consume_date_time=datetime.utcnow(),
+            consume_fee=deposit_fee,
+            balance=virtual_card.balance)
+
         raise Error("无需充值押金")
     else:
         virtual_card.deposit = deposit_fee
@@ -74,22 +82,6 @@ def pay_deposit(**kwargs):
             consume_fee=deposit_fee,
             balance=virtual_card.balance)
         return result, record
-    #
-    # card_no = kwargs["card_no"]
-    # deposit_fee = float(kwargs["deposit_fee"])
-    # deposit = get_deposit_status(card_no)
-    #
-    # balance = get_card_balance(card_no)
-    # if deposit < get_custom_const("DEFAULT_DEPOSIT"):
-    #     result = VirtualCard.update(deposit=deposit_fee
-    #                                 ).where(VirtualCard.card_no == card_no)
-    #     result.execute()
-    #     ConsumeRecord.create(card=card_no, consume_event="deposit",
-    #                          consume_date_time=datetime.utcnow(),
-    #                          consume_fee=deposit_fee, balance=balance)
-    #     return "Deposit succeed"
-    # else:
-    #     return "You need not pay deposit"
 
 
 def top_up(**kwargs):
@@ -118,20 +110,6 @@ def top_up(**kwargs):
             consume_fee=top_up_fee,
             balance=balance)
         return result, record
-
-
-    # deposit = get_deposit(card_no)
-    # if not deposit:
-    #     return "No deposit"
-    # result = VirtualCard.update(balance=VirtualCard.balance+top_up_fee
-    #                             ).where(VirtualCard.card_no == card_no)
-    # balance = get_card_balance(card_no)
-    # result.execute()
-    # ConsumeRecord.create(card=card_no, consume_event="top up",
-    #                      consume_date_time=datetime.utcnow(),
-    #                      consume_fee=top_up_fee,
-    #                      balance=balance+top_up_fee)
-    # return "Top up succeed"
 
 
 def get_card_balance(card_no):
@@ -180,31 +158,6 @@ def return_deposit(**kwargs):
         )
         print("退虚拟卡押金" + str(deposit))
         return result, record, refund_record
-    # deposit = get_deposit_status(card_no)
-    # balance = get_card_balance(card_no)
-    # on_loan = Battery.select().where(Battery.user == card_no)
-    # if on_loan:
-    #     raise Error("Battery in use")
-    # if deposit:
-    #     result = VirtualCard.update(deposit=0
-    #                                 ).where(VirtualCard.card_no == card_no)
-    #     result.execute()
-    #     ConsumeRecord.create(card=card_no, consume_event="return deposit",
-    #                          consume_date_time=datetime.utcnow(),
-    #                          consume_fee=-deposit, balance=balance)
-    #     # 记录退款
-    #     refund_table_service.add(
-    #         user=kwargs["username"],
-    #         account=kwargs["account"],
-    #         account_type=kwargs["account_type"],
-    #         type="退虚拟卡押金",
-    #         value=deposit,
-    #         comment=kwargs.get("comment")
-    #     )
-    #     print("退虚拟卡押金" + str(deposit))
-    #     return "Return deposit succeed"
-    # else:
-    #     return "No deposit refundable"
 
 
 def get_consume_record(card_no):

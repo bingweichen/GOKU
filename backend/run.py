@@ -14,6 +14,11 @@ from flask_jwt_extended import JWTManager
 from flask_jwt_extended import get_jwt_claims
 from flask_jwt_extended import jwt_required
 
+from datetime import datetime
+from flask import request
+from flask import g
+
+from server.database.model import Logs
 from server.database.db import database
 
 from server.route import user_route, \
@@ -48,7 +53,6 @@ app.register_blueprint(support.support_app)
 app.register_blueprint(users_setting.user_setting)
 
 app.register_blueprint(wx_route.wx_app)
-
 
 app.secret_key = 'super-super-secret'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
@@ -86,17 +90,78 @@ def refresh_token():
     claims = get_jwt_claims()
     return jsonify({'user': claims['user']}), 200
 
+
 # Bearer JWToken
+
+def after_this_request(f):
+    if not hasattr(g, 'after_request_callbacks'):
+        g.after_request_callbacks = []
+    g.after_request_callbacks.append(f)
+    return f
+
+
+def get_request_log():
+    # parse args and forms
+    values = ''
+    if len(request.values) > 0:
+        for key in request.values:
+            values += key + ': ' + request.values[key] + ', '
+    route = '/' + request.base_url.replace(request.host_url, '')
+    request_log = {
+        'route': route,
+        'method': request.method,
+    }
+    if len(request.get_data()) != 0:
+        request_log['body'] = request.get_data()
+    if len(values) > 0:
+        request_log['values'] = values
+    return request_log
+
+
+def get_response_log(response):
+    return {
+        'status': response.status,
+        'response': response.response
+    }
 
 
 @app.before_request
 def before_request():
     database.connect()
+    start = datetime.utcnow()
+
+    @after_this_request
+    def after(response):
+        end = datetime.utcnow()
+        dur = end - start
+        request_log = get_request_log()
+        response_log = get_response_log(response)
+
+        category = request_log['route'].split('/')[1]
+        status = response_log['status']
+        extra_info = {
+            'request': request_log,
+            'response': response_log,
+            'duration': str(dur)
+        }
+        print("extra_info", extra_info)
+        Logs.create(
+            start=start,
+            end=end,
+            request=request_log,
+            response=response_log,
+            category=category,
+            status=status,
+            extra_info=extra_info
+        )
+        return response
 
 
 @app.after_request
-def after_request(response):
+def call_after_request_callbacks(response):
     database.close()
+    for callback in getattr(g, 'after_request_callbacks', ()):
+        callback(response)
     return response
 
 

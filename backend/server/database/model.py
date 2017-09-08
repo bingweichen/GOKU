@@ -296,12 +296,23 @@ class WxUser(BaseModel):
     refresh_token = CharField(default=None, null=True)
 
 
+# 后续开具体栏位
+class Logs(BaseModel):
+    start = DateTimeField()
+    end = DateTimeField()
+    request = JSONField()
+    response = JSONField()
+    category = CharField()  # 属于哪个类型：如支付
+    status = CharField()
+    extra_info = JSONField()
+
+
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable, WxInfo]
 
-table_temp = [WxUser]
+table_temp = [Logs]
 
 
 def create_tables():
