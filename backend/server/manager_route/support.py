@@ -24,6 +24,7 @@ from server.service import auth_decorator
 from server.service import report_table_service
 from server.service import refund_table_service
 from server.service import battery_report_service
+from server.service import log_service
 from server.utility.json_utility import models_to_json
 
 PREFIX = '/manager/support'
@@ -92,4 +93,18 @@ def modify_refund_table():
     return jsonify({
         'response': {
             "result": result
+        }}), 200
+
+
+# 获取所有 logs
+@support_app.route('/logs', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
+def get_all_logs():
+    logs = log_service.get_all()
+    logs = models_to_json(logs, recurse=False)
+    # print("logs", logs)
+    return jsonify({
+        'response': {
+            "logs": logs
         }}), 200

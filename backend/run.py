@@ -6,6 +6,7 @@ Author: Bingwei Chen
 Date: 2017.07.20
 """
 from datetime import timedelta
+import json
 
 from flask import Flask
 from flask import jsonify
@@ -112,7 +113,12 @@ def get_request_log():
         'method': request.method,
     }
     if len(request.get_data()) != 0:
-        request_log['body'] = request.get_data()
+        body = json.loads(request.get_data())
+        if "password" in body:
+            body.pop("password")
+        print("body", body)
+        request_log['body'] = body
+
     if len(values) > 0:
         request_log['values'] = values
     return request_log
@@ -121,7 +127,7 @@ def get_request_log():
 def get_response_log(response):
     return {
         'status': response.status,
-        'response': response.response
+        # 'response': response.response
     }
 
 
@@ -135,16 +141,19 @@ def before_request():
         end = datetime.utcnow()
         dur = end - start
         request_log = get_request_log()
+        category = request_log['route'].split('/')[1]
+        if category != "virtual_card":
+            return response
+
         response_log = get_response_log(response)
 
-        category = request_log['route'].split('/')[1]
         status = response_log['status']
         extra_info = {
-            'request': request_log,
-            'response': response_log,
+            # 'request': request_log,
+            # 'response': response_log,
             'duration': str(dur)
         }
-        print("extra_info", extra_info)
+
         Logs.create(
             start=start,
             end=end,

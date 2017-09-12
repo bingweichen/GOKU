@@ -38,3 +38,66 @@ def get_user_detail(open_id):
     urlResp = urlopen(postUrl)
     urlResp = json.loads(urlResp.read())
     return urlResp
+
+import hashlib
+from urllib.parse import quote
+
+# def wx_pay_sign():
+#
+#     temp = {
+#         "appid": "wxd930ea5d5a258f4f",
+#         "mch_id": "10000100",
+#         "device_info": "1000",
+#         "body": "test",
+#         "nonce_str": "ibuaiVcKdpRxkhJA"
+#     }
+#     stringA = ""
+#     for key, value in temp.items():
+#         stringA += '%s=%s&' % (key, value)
+#     stringA = stringA[:-1]
+#     print(stringA)
+#     stringSignTemp = stringA + "&key=192006250b4c09247ec02edce69f6a2d"
+#     print("stringSignTemp", stringSignTemp)
+#
+#     m = hashlib.md5()
+#     m.update(stringSignTemp.encode('utf-8'))
+#     sign = m.hexdigest().upper()
+#     # sign = sign.toUpperCase()
+#     # sign = hashlib.sha256(stringSignTemp.encode('utf-8')).hexdigest().upper()
+#     # sign=MD5(stringSignTemp).toUpperCase()
+#
+#     print(sign)
+
+def getSign(obj):
+    """生成签名"""
+    # 签名步骤一：按字典序排序参数,formatBizQueryParaMap已做
+    String = formatBizQueryParaMap(obj, False)
+    # 签名步骤二：在string后加入KEY
+    String = "{0}&key={1}".format(String, "192006250b4c09247ec02edce69f6a2d")
+    # 签名步骤三：MD5加密
+    String = hashlib.md5(String.encode('utf-8')).hexdigest()
+    # 签名步骤四：所有字符转为大写
+    result_ = String.upper()
+    return result_
+
+
+def formatBizQueryParaMap(paraMap, urlencode):
+    """格式化参数，签名过程需要使用"""
+    slist = sorted(paraMap)
+    buff = []
+    for k in slist:
+        v = quote(paraMap[k]) if urlencode else paraMap[k]
+        buff.append("{0}={1}".format(k, v))
+
+    return "&".join(buff)
+
+if __name__ == '__main__':
+    temp = {
+        "appid": "wxd930ea5d5a258f4f",
+        "mch_id": "10000100",
+        "device_info": "1000",
+        "body": "test",
+        "nonce_str": "ibuaiVcKdpRxkhJA"
+    }
+    result = getSign(temp)
+    print("result", result)

@@ -3,6 +3,7 @@ const request = require('request');
 const crypto = require('crypto');
 const app = express()
 
+// app.use('/', express.static('../mp'));
 
 app.use('/admin', express.static('../goku-admin/index.html'));
 app.use('/dist', express.static('../goku-admin/dist'));
@@ -38,6 +39,6 @@ app.use('/wx/dist', express.static('../fontend/dist'));
 //   }
 // })
 
-app.listen(8080, function () {
+app.listen(80, function () {
   console.log('Example app listening on port 3000!')
 })
