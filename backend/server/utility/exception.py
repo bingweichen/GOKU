@@ -1,5 +1,4 @@
 class Error(Exception):
-
     pass
 
 

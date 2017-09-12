@@ -127,7 +127,7 @@ def get_request_log():
 def get_response_log(response):
     return {
         'status': response.status,
-        'response': response.response
+        # 'response': response.response
     }
 
 
@@ -141,13 +141,16 @@ def before_request():
         end = datetime.utcnow()
         dur = end - start
         request_log = get_request_log()
+        category = request_log['route'].split('/')[1]
+        if category != "virtual_card":
+            return response
+
         response_log = get_response_log(response)
 
-        category = request_log['route'].split('/')[1]
         status = response_log['status']
         extra_info = {
-            'request': request_log,
-            'response': response_log,
+            # 'request': request_log,
+            # 'response': response_log,
             'duration': str(dur)
         }
 

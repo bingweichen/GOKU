@@ -3,6 +3,7 @@ const request = require('request');
 const crypto = require('crypto');
 const app = express()
 
+app.use('/', express.static('../mp'));
 
 app.use('/admin', express.static('../goku-admin/index.html'));
 app.use('/dist', express.static('../goku-admin/dist'));
