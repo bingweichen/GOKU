@@ -307,6 +307,13 @@ class Logs(BaseModel):
     extra_info = JSONField()
 
 
+class WxPayment(BaseModel):
+    out_trade_no = CharField(unique=True, max_length=32)
+    total_fee = IntegerField()
+    status = CharField(default='NOTPAY')
+
+
+
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,

@@ -86,7 +86,8 @@ def pay_deposit(**kwargs):
 
 def top_up(**kwargs):
     """
-    top up virtual card
+
+    2. top up virtual card
     :param data:
         card_no: card number
         top_up_fee: top up amount

@@ -122,7 +122,10 @@ def login():
     password = request.json.get('password', None)
     try:
         user = user_service.login(username, password)
-        wx_user = wx_service.get_user_detail(open_id=user.we_chat_id)
+        try:
+            wx_user = wx_service.get_user_detail(open_id=user.we_chat_id)
+        except DoesNotExist as e:
+            wx_user = None
         user = model_to_dict(user)
         user.pop('password')
 

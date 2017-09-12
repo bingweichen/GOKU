@@ -222,6 +222,17 @@ class Common_util_pub(object):
         xml.append("</xml>")
         return "".join(xml)
 
+    @classmethod
+    def xml_to_array(cls, xml):
+        """将xml转为array"""
+        array_data = {}
+        root = ET.fromstring(xml)
+        for child in root:
+            value = child.text
+            array_data[child.tag] = value
+        return array_data
+
+
     def xmlToArray(self, xml):
         """将xml转为array"""
         array_data = {}
@@ -359,7 +370,8 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         """生成接口参数xml"""
         # 检测必填参数
         if any(self.parameters[key] is None for key in (
-        "out_trade_no", "body", "total_fee", "notify_url", "trade_type")):
+                "out_trade_no", "body", "total_fee", "notify_url",
+                "trade_type")):
             raise ValueError("missing parameter")
         if self.parameters["trade_type"] == "JSAPI" and self.parameters[
             "openid"] is None:
@@ -420,8 +432,8 @@ class Refund_pub(Wxpay_client_pub):
     def createXml(self):
         """生成接口参数xml"""
         if any(self.parameters[key] is None for key in (
-        "out_trade_no", "out_refund_no", "total_fee", "refund_fee",
-        "op_user_id")):
+                "out_trade_no", "out_refund_no", "total_fee", "refund_fee",
+                "op_user_id")):
             raise ValueError("missing parameter")
 
         self.parameters["appid"] = WxPayConf_pub.APPID  # 公众账号ID
@@ -450,7 +462,8 @@ class RefundQuery_pub(Wxpay_client_pub):
     def createXml(self):
         """生成接口参数xml"""
         if any(self.parameters[key] is None for key in (
-        "out_refund_no", "out_trade_no", "transaction_id", "refund_id")):
+                "out_refund_no", "out_trade_no", "transaction_id",
+                "refund_id")):
             raise ValueError("missing parameter")
         self.parameters["appid"] = WxPayConf_pub.APPID  # 公众账号ID
         self.parameters["mch_id"] = WxPayConf_pub.MCHID  # 商户号
@@ -637,9 +650,7 @@ def t1():
     result = c.getSign(temp)
     print("result", result)
 
-"""
-"out_trade_no", "body", "total_fee", "notify_url", "trade_type"
-"""
+
 def t2():
     c = UnifiedOrder_pub()
     c.setParameter("out_trade_no", "1234567890")
@@ -647,12 +658,29 @@ def t2():
     c.setParameter("total_fee", "1")
     c.setParameter("notify_url", "schooltrips.com.cn:5000/wxpay/notify_url")
     c.setParameter("trade_type", "JSAPI")
-    c.setParameter("openid", "o48xV1b3vqrGQgGX--UrLACbmbHY")
+    c.setParameter("openid", "ojuCw1fVbA80Glbv-gWR0UKRFLD0")
 
     prepay_id = c.getPrepayId()
-    # print("prepay_id", prepay_id)
+    print("prepay_id", prepay_id)
     pass
 
 
+def t3():
+    xml = "<xml><return_code><![CDATA[SUCCESS]]></return_code>\n<return_msg><![CDATA[OK]]></return_msg>\n<appid><![CDATA[wx79012d734b31d795]]></appid>\n<mch_id><![CDATA[1485893242]]></mch_id>\n<nonce_str><![CDATA[CX1BEOuZJJ8v5xDS]]></nonce_str>\n<sign><![CDATA[3B278361C28E556E2F2287EED9420FDB]]></sign>\n<result_code><![CDATA[SUCCESS]]></result_code>\n<prepay_id><![CDATA[wx20170912153529308eb36ac90335591882]]></prepay_id>\n<trade_type><![CDATA[JSAPI]]></trade_type>\n</xml>"
+    c = Common_util_pub()
+    array = c.xmlToArray(xml)
+    print(array)
+    
+    array = {"return_code": "SUCCESS", "return_msg": "OK", "appid": "wx79012d734b31d795", "mch_id": "1485893242", "nonce_str": "CX1BEOuZJJ8v5xDS", "sign": "3B278361C28E556E2F2287EED9420FDB", "result_code": "SUCCESS", "prepay_id": "wx20170912153529308eb36ac90335591882", "trade_type": "JSAPI"}
+
+
+def t4():
+    c = OrderQuery_pub()
+    c.setParameter("out_trade_no", "1234567890")
+    result = c.postXml()
+    result = Common_util_pub.xml_to_array(result)
+    print("result", result)
+
+
 if __name__ == "__main__":
-    t2()
+    t4()
