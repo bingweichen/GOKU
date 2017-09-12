@@ -1,6 +1,6 @@
 import * as service from '../services/wechat';
 
-const appId = 'wx0350234b8e970c00';
+const appId = 'wx79012d734b31d795';
 export const setWxConfig = () => {
   service.getWxConfig(encodeURIComponent(location.href.split('#')[0]))
     .then(({ sign }) => {
