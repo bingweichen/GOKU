@@ -41,6 +41,7 @@ import random
 from urllib.request import urlopen
 import urllib
 from urllib.parse import quote
+from datetime import datetime
 
 import hashlib
 import threading
@@ -198,10 +199,34 @@ class Common_util_pub(object):
 
         return "&".join(buff)
 
+    @classmethod
+    def format_biz_query_para_map(cls, paraMap, urlencode):
+        """格式化参数，签名过程需要使用"""
+        slist = sorted(paraMap)
+        buff = []
+        for k in slist:
+            v = quote(paraMap[k]) if urlencode else paraMap[k]
+            buff.append("{0}={1}".format(k, v))
+
+        return "&".join(buff)
+
     def getSign(self, obj):
         """生成签名"""
         # 签名步骤一：按字典序排序参数,formatBizQueryParaMap已做
         String = self.formatBizQueryParaMap(obj, False)
+        # 签名步骤二：在string后加入KEY
+        String = "{0}&key={1}".format(String, WxPayConf_pub.KEY)
+        # 签名步骤三：MD5加密
+        String = hashlib.md5(String.encode('utf-8')).hexdigest()
+        # 签名步骤四：所有字符转为大写
+        result_ = String.upper()
+        return result_
+
+    @classmethod
+    def get_sign(cls, obj):
+        """生成签名"""
+        # 签名步骤一：按字典序排序参数,formatBizQueryParaMap已做
+        String = Common_util_pub.format_biz_query_para_map(obj, False)
         # 签名步骤二：在string后加入KEY
         String = "{0}&key={1}".format(String, WxPayConf_pub.KEY)
         # 签名步骤三：MD5加密
@@ -223,6 +248,19 @@ class Common_util_pub(object):
         return "".join(xml)
 
     @classmethod
+    def array_to_xml(cls, arr):
+        """array转xml"""
+        xml = ["<xml>"]
+        for k, v in arr.items():
+            xml.append("<{0}>{1}</{0}>".format(k, v))
+            # if v.isdigit():
+            #     xml.append("<{0}>{1}</{0}>".format(k, v))
+            # else:
+            #     xml.append("<{0}><![CDATA[{1}]]></{0}>".format(k, v))
+        xml.append("</xml>")
+        return "".join(xml)
+
+    @classmethod
     def xml_to_array(cls, xml):
         """将xml转为array"""
         array_data = {}
@@ -231,7 +269,6 @@ class Common_util_pub(object):
             value = child.text
             array_data[child.tag] = value
         return array_data
-
 
     def xmlToArray(self, xml):
         """将xml转为array"""
@@ -339,7 +376,7 @@ class Wxpay_client_pub(Common_util_pub):
     def postXml(self):
         """post请求xml"""
         xml = self.createXml()
-        print("xml", xml)
+        # print("xml", xml)
         self.response = self.postXmlCurl(xml, self.url, self.curl_timeout)
         return self.response
 
@@ -381,9 +418,9 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         self.parameters["mch_id"] = WxPayConf_pub.MCHID  # 商户号
         self.parameters["spbill_create_ip"] = "115.159.215.199"  # 终端ip
         self.parameters["nonce_str"] = self.createNoncestr()  # 随机字符串
-        print("parameters", self.parameters)
+        # print("parameters", self.parameters)
         self.parameters["sign"] = self.getSign(self.parameters)  # 签名
-        print("sign", self.parameters["sign"])
+        # print("sign", self.parameters["sign"])
         return self.arrayToXml(self.parameters)
 
     def getPrepayId(self):
@@ -392,6 +429,18 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         self.result = self.xmlToArray(self.response)
         prepay_id = self.result["prepay_id"]
         return prepay_id
+
+    def getPrepayIdJson(self):
+        temp_parameter = {
+            "appId": self.parameters["appid"],
+            "timeStamp": int(datetime.utcnow().timestamp()),
+            "nonceStr": self.parameters["nonce_str"],
+            "package": "prepay_id=%s" % self.result["prepay_id"],
+            "signType": "MD5",
+        }
+        paySign = self.getSign(temp_parameter)
+        temp_parameter["paySign"] = paySign
+        return temp_parameter
 
 
 class OrderQuery_pub(Wxpay_client_pub):
@@ -670,8 +719,14 @@ def t3():
     c = Common_util_pub()
     array = c.xmlToArray(xml)
     print(array)
-    
-    array = {"return_code": "SUCCESS", "return_msg": "OK", "appid": "wx79012d734b31d795", "mch_id": "1485893242", "nonce_str": "CX1BEOuZJJ8v5xDS", "sign": "3B278361C28E556E2F2287EED9420FDB", "result_code": "SUCCESS", "prepay_id": "wx20170912153529308eb36ac90335591882", "trade_type": "JSAPI"}
+
+    array = {"return_code": "SUCCESS", "return_msg": "OK",
+             "appid": "wx79012d734b31d795", "mch_id": "1485893242",
+             "nonce_str": "CX1BEOuZJJ8v5xDS",
+             "sign": "3B278361C28E556E2F2287EED9420FDB",
+             "result_code": "SUCCESS",
+             "prepay_id": "wx20170912153529308eb36ac90335591882",
+             "trade_type": "JSAPI"}
 
 
 def t4():

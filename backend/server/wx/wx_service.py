@@ -5,6 +5,8 @@ from server.database.model import WxUser
 from server.utility.exception import *
 
 from server.wx.configure import appId, appSecret
+from server.wx.wzhifuSDK import UnifiedOrder_pub, \
+    Common_util_pub, OrderQuery_pub
 
 
 def get_access_token(code):
@@ -40,11 +42,8 @@ def get_user_detail(open_id):
     return urlResp
 
 
-from server.wx.wzhifuSDK import UnifiedOrder_pub
-
-
-# 生成微信预支付订单 返回预支付订单id
-def get_prepay_id(out_trade_no, body, total_fee, notify_url, openid):
+# 生成微信预支付订单 返回预支付订单id, 生成带签名的json
+def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid):
     c = UnifiedOrder_pub()
     c.setParameter("out_trade_no", out_trade_no)
     c.setParameter("body", body)
@@ -53,7 +52,25 @@ def get_prepay_id(out_trade_no, body, total_fee, notify_url, openid):
     c.setParameter("trade_type", "JSAPI")
     c.setParameter("openid", openid)
     prepay_id = c.getPrepayId()
-    return prepay_id
+    prepayid_json = c.getPrepayIdJson()
+    xml = Common_util_pub.array_to_xml(prepayid_json)
+    print("xml", xml)
+    return prepayid_json
+
+
+# 查询订单
+def order_query(out_trade_no="fb50a3de-97ba-11e7-836f-f45c89"):
+    c = OrderQuery_pub()
+    c.setParameter("out_trade_no", out_trade_no)
+    result = c.postXml()
+    result = Common_util_pub.xml_to_array(result)
+    print("result", result)
+
+
+# 通过预支付订单, 生成带签名的
+# def prepay_id_to_package_json(prepay_id):
+
+
 
 
 # import hashlib
@@ -109,12 +126,13 @@ def get_prepay_id(out_trade_no, body, total_fee, notify_url, openid):
 #     return "&".join(buff)
 
 if __name__ == '__main__':
-    temp = {
-        "appid": "wxd930ea5d5a258f4f",
-        "mch_id": "10000100",
-        "device_info": "1000",
-        "body": "test",
-        "nonce_str": "ibuaiVcKdpRxkhJA"
-    }
+    order_query()
+    # temp = {
+    #     "appid": "wxd930ea5d5a258f4f",
+    #     "mch_id": "10000100",
+    #     "device_info": "1000",
+    #     "body": "test",
+    #     "nonce_str": "ibuaiVcKdpRxkhJA"
+    # }
     # result = getSign(temp)
     # print("result", result)

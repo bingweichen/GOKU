@@ -319,7 +319,7 @@ table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable, WxInfo]
 
-table_temp = [Logs]
+table_temp = [WxPayment]
 
 
 def create_tables():

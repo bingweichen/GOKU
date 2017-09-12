@@ -16,6 +16,7 @@ from playhouse.shortcuts import model_to_dict
 from server.service import virtual_card_service
 from server.utility.json_utility import models_to_json, custom_models_to_json
 from server.utility.exception import *
+from server.service import wx_payment_service
 
 
 PREFIX = '/virtual_card'
@@ -201,26 +202,45 @@ def return_deposit():
 # 充值
 @virtual_card_app.route('/balance/top_up', methods=['POST'])
 @jwt_required
-def top_up():
+def pre_top_up():
     """
-    top up virtual card
-
-    eg = {
-    "username": "bingwei",
-    "top_up_fee": 120
-    }
+    generate top up prepay
     :return:
+    :rtype:
     """
     username = get_jwt_identity()
     data = request.get_json()
-    result, record = virtual_card_service.top_up(
-        card_no=username,
-        top_up_fee=data["top_up_fee"],
+    result = wx_payment_service.get_prepay_id_json(
+        openid=data.pop("openid"),
+        body=data.pop("body"),
+        total_fee=data.pop("total_fee")
     )
-    return jsonify({'response': {
-        "result": result,
-        "record": model_to_dict(record, max_depth=1)
-    }}), 200
+    return jsonify({
+        'response': result
+    })
+
+
+
+# def top_up():
+#     """
+#     top up virtual card
+#
+#     eg = {
+#     "username": "bingwei",
+#     "top_up_fee": 120
+#     }
+#     :return:
+#     """
+#     username = get_jwt_identity()
+#     data = request.get_json()
+#     result, record = virtual_card_service.top_up(
+#         card_no=username,
+#         top_up_fee=data["top_up_fee"],
+#     )
+#     return jsonify({'response': {
+#         "result": result,
+#         "record": model_to_dict(record, max_depth=1)
+#     }}), 200
 
 
 # ***************************** 消费记录 ***************************** #
