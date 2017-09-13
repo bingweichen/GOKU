@@ -1,7 +1,10 @@
 import pathToRegexp from 'path-to-regexp';
 import parse from 'url-parse';
+import { hashHistory } from 'dva/router';
+import { Toast } from 'antd-mobile';
 import * as shopService from '../services/shop';
 import * as orderService from '../services/order';
+import { wxpay } from '../wechat';
 
 export default {
   namespace: 'order',
@@ -63,10 +66,14 @@ export default {
       const { person } = yield select();
       const { submitData } = action;
       try {
-        yield call(orderService.buyCarOrder, submitData, person.id);
+        const { id } = yield call(orderService.buyCarOrder, submitData, person.id);
         // todo wechat pay
+        const info = yield call(orderService.paySuccess, id);
+        wxpay(info, () => hashHistory.replace('/?tab=order'));
+        Toast.hide();
       } catch (error) {
-        console.log(error);
+        Toast.hide();
+        Toast.fail(error.message.message);
       }
     },
   },
