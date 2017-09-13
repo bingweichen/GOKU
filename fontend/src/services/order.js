@@ -31,14 +31,12 @@ export function pickUpWithCarNumber({
   });
 }
 
-export function paySuccess({
-  appointment_id,
-}) {
+export function paySuccess(id) {
   return axios({
     method: 'POST',
     url: 'appointment/status/total_payment_success',
     data: {
-      appointment_id,
+      appointment_id: id,
       openid: localStorage.getItem('openid'),
     },
   });

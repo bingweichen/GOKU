@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Picker, List } from 'antd-mobile';
+import { Picker, List, Toast } from 'antd-mobile';
 import { hashHistory } from 'dva/router';
 import PropTypes from 'prop-types';
 import { connect } from 'dva';
@@ -33,6 +33,7 @@ class OrderDetail extends Component {
 
   // 提交订单
   submitOrder = () => {
+    Toast.loading('正在生成订单');
     const { orderDetail, carInfo, submitBuyCarOrder, location } = this.props;
     const { useCoupons } = this.state;
     const { type } = location.query; // 判断为买车还是租车
