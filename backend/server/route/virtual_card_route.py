@@ -254,7 +254,7 @@ def pre_top_up():
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
-            body=data.pop("body"),
+            body="用户余额充值",
             total_fee=data.pop("top_up_fee")*100,
             attach="top_up"
         )
