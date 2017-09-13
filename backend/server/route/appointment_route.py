@@ -16,6 +16,7 @@
 3. 输入提车码后 (等待付款)
 4. 付款后(交易成功）
 """
+import json
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -27,6 +28,11 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.service import appointment_service
 from server.utility.exception import WrongSerialsNumber, Error
 from server.utility.json_utility import models_to_json
+from server.database.model import User
+from server.service import wx_payment_service
+
+from server.utility.constant.basic_constant import \
+    WxPaymentBody, WxPaymentAttach
 
 PREFIX = '/appointment'
 
@@ -128,7 +134,7 @@ def add_appointment():
             }}), 400
 
 
-# 2. 提交预约款付款成功
+# 2. 生成预约款 预付订单
 @appointment_app.route('/status/appointment_payment_success', methods=['POST'])
 @jwt_required
 def appointment_payment_success():
@@ -136,7 +142,6 @@ def appointment_payment_success():
     appointment_id: string
 
     eg = {
-    "username" : "bingwei",
     "appointment_id": 3
     }
 
@@ -144,14 +149,43 @@ def appointment_payment_success():
     :rtype: int
     """
     username = get_jwt_identity()
-
     data = request.get_json()
-    result = appointment_service.appointment_payment_success(
-        user=username,
-        appointment_id=data.pop("appointment_id")
-    )
-    if result:
-        return jsonify({'response': result}), 200
+    openid = data.get("openid")
+    appointment_id = data.pop("appointment_id")
+
+    # 如果没有openid传入，则从用户信息中获取
+    if not openid:
+        user = User.get(username=username)
+        openid = user.we_chat_id
+    try:
+        # check
+        appointment_service.pre_appointment_payment_sucess(
+            user=username,
+            appointment_id=appointment_id
+        )
+
+        # 生成预付订单
+        result = wx_payment_service.get_prepay_id_json(
+            openid=data.pop("openid"),
+            body=WxPaymentBody.APPOINTMENT_PRE_FEE,
+            total_fee=data.pop("top_up_fee")*100,
+            attach=json.dumps({
+                "code": WxPaymentAttach.APPOINTMENT_PRE_FEE,
+                "appointment_id": appointment_id
+            })
+
+        )
+
+        return jsonify({
+            'response': result
+        }), 200
+
+    except Error as e:
+        return jsonify(
+            {'response': {
+                'error': e.args,
+                'message': '%s' % e.args
+            }}), 400
 
 
 # 3. 检查取车码

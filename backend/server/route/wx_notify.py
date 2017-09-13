@@ -10,7 +10,7 @@
 
 2. 商户系统对于支付结果通知的内容一定要做签名验证,并校验返回的订单金额是否与商户侧的订单金额一致
 """
-
+import json
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -18,11 +18,14 @@ from flask import request
 from server.database.model import WxPayment
 from server.wx.wzhifuSDK import Wxpay_server_pub
 from server.service.virtual_card_service import top_up, pay_deposit
+from server.service.appointment_service import appointment_payment_success
+
 from server.database.model import User
+
+from server.utility.constant.basic_constant import WxPaymentAttach
 PREFIX = '/wx_notify'
 
 wx_notify_app = Blueprint("wx_notify", __name__, url_prefix=PREFIX)
-
 
 return_para = {
     "return_code": "SUCCESS",
@@ -57,33 +60,37 @@ def wx_notify():
         c.setReturnParameter("return_msg", "金额不一致")
         return c.returnXml()
 
-
     # 根据 attach 商家数据包 String(128) 进行支付完成操作
-    attach = c.data["attach"]
+    attach = json.loads(c.data["attach"])
     openid = c.data["openid"]
 
-    # case = {
-    #     "top_up":
-    # }
     # 为用户进行充值
     user = User.get(we_chat_id=openid)
 
-    if attach == "top_up":
+    if attach["code"] == WxPaymentAttach.BALANCE:
         print("top_up")
         top_up(
             card_no=user.username,
-            top_up_fee=int(total_fee)/100
+            top_up_fee=int(total_fee) / 100
         )
-    if attach == 'pay_deposit':
+    if attach["code"] == WxPaymentAttach.DEPOSIT:
+        print("pay_deposit")
         pay_deposit(
             card_no=user.username,
-            deposit_fee=int(total_fee)/100
+            deposit_fee=int(total_fee) / 100
         )
+    if attach["code"] == WxPaymentAttach.APPOINTMENT_PRE_FEE:
+        print(WxPaymentAttach.APPOINTMENT_PRE_FEE)
+
+        appointment_payment_success(
+            user=user,
+            appointment_id=attach["appointment_id"]
+        )
+
+
 
     # 更新wx_payment
     wx_payment.status = "支付完成"
     wx_payment.save()
 
     return c.returnXml()
-
-

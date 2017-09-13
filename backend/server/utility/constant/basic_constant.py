@@ -51,3 +51,17 @@ RENT_TIME_PERIOD = {
     "年": 1
 }
 
+
+class WxPaymentBody(object):
+    DEPOSIT = "用户押金充值",
+    BALANCE = "用户余额充值",
+    APPOINTMENT_PRE_FEE = "用户订单预约金支付",
+    APPOINTMENT_FEE = "用户订单支付"
+
+
+class WxPaymentAttach(object):
+    DEPOSIT = "pay_deposit",
+    BALANCE = "top_up",
+    APPOINTMENT_PRE_FEE = "appointment_pre_fee",
+    APPOINTMENT_FEE = "appointment_fee"
+

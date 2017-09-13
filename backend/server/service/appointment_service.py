@@ -87,6 +87,11 @@ def add_appointment(**kwargs):
     return appointment
 
 
+# 生成预付款 预订单前检查
+def pre_appointment_payment_sucess(user, appointment_id):
+    pass
+
+
 # 2. 预付款成功
 def appointment_payment_success(user, appointment_id):
     appointment = Appointment.get(

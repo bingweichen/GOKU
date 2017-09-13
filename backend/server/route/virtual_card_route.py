@@ -4,7 +4,7 @@
 @time: 8/10/17
 @desc: virtual card route
 """
-
+import json
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -19,6 +19,8 @@ from server.utility.exception import *
 from server.service import wx_payment_service
 from server.database.model import User
 
+from server.utility.constant.basic_constant import \
+    WxPaymentBody, WxPaymentAttach
 PREFIX = '/virtual_card'
 
 virtual_card_app = Blueprint("virtual_card", __name__, url_prefix=PREFIX)
@@ -103,26 +105,22 @@ def pay_deposit():
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=openid,
-            body=data.pop("body"),
+            body=WxPaymentBody.DEPOSIT,
             total_fee=data.pop("deposit_fee")*100,
-            attach="pay_deposit"
+            attach=WxPaymentAttach.DEPOSIT
         )
 
         return jsonify({
             'response': result
-        })
+        }), 200
 
-        # return jsonify({'response': {
-        #     "result": result,
-        #     "record": model_to_dict(record, recurse=False)
-        # }}), 200
     except Error as e:
         return jsonify({
             'response': {
                 'error': e.args,
                 'message': '%s' % e.args
             }
-        })
+        }), 400
 
 
 # 退还押金
@@ -165,7 +163,7 @@ def return_deposit():
                 'error': e.args,
                 'message': '%s' % e.args
             }
-        })
+        }), 400
 
 
 # ***************************** 余额 ***************************** #
@@ -254,14 +252,16 @@ def pre_top_up():
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
-            body="用户余额充值",
+            body=WxPaymentBody.BALANCE,
             total_fee=data.pop("top_up_fee")*100,
-            attach="top_up"
+            attach=json.dumps({
+                "code": WxPaymentAttach.BALANCE
+            })
         )
 
         return jsonify({
             'response': result
-        })
+        }), 200
 
     except Error as e:
         return jsonify({
@@ -269,7 +269,7 @@ def pre_top_up():
                 'error': e.args,
                 'message': '%s' % e.args
             }
-        })
+        }), 400
 
 
 # def top_up():
