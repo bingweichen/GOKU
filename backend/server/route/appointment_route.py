@@ -117,7 +117,9 @@ def add_appointment():
             user=username,
             **data
         )
-        return jsonify({'response': model_to_dict(appointment)}), 200
+        return jsonify({
+            'response': model_to_dict(appointment, recurse=False)
+        }), 200
 
     except DoesNotExist as e:
         return jsonify({
