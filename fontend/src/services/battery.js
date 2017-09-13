@@ -1,4 +1,3 @@
-import axios from 'axios';
 import service from '../utils/axios';
 
 export function getVirtualCard() {
@@ -6,25 +5,18 @@ export function getVirtualCard() {
 }
 
 export function openVirtualCardService() {
-  const id = localStorage.token;
-  return axios({
+  return service({
     method: 'PUT',
-    url: '/api/user/virtual_card',
-    data: {
-      card_no: id,
-    },
+    url: 'user/virtual_card',
   });
 }
 
 // 充值押金
-export function payDeposit(money) {
-  return axios({
+export function payDeposit() {
+  return service({
     method: 'POST',
-    url: '/api/virtual_card/deposit',
-    data: {
-      card_no: localStorage.token,
-      deposit_fee: money,
-    },
+    url: 'virtual_card/deposit',
+    data: {},
   });
 }
 
