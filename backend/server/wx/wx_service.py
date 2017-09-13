@@ -63,7 +63,7 @@ def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid, attach
 
 
 # 查询订单
-def order_query(out_trade_no="fb50a3de-97ba-11e7-836f-f45c89"):
+def order_query(out_trade_no="b084a844-9857-11e7-931a-525400"):
     c = OrderQuery_pub()
     c.setParameter("out_trade_no", out_trade_no)
     result = c.getResult()

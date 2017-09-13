@@ -123,7 +123,6 @@ def get_request_log():
         body = json.loads(request.get_data())
         if "password" in body:
             body.pop("password")
-        print("body", body)
         request_log['body'] = body
 
     if len(values) > 0:

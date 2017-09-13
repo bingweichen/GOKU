@@ -21,6 +21,8 @@ from server.database.model import User
 
 from server.utility.constant.basic_constant import \
     WxPaymentBody, WxPaymentAttach
+
+
 PREFIX = '/virtual_card'
 
 virtual_card_app = Blueprint("virtual_card", __name__, url_prefix=PREFIX)

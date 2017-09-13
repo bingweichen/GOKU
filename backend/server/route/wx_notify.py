@@ -36,9 +36,11 @@ return_para = {
 @wx_notify_app.route('', methods=['POST'])
 def wx_notify():
     data = request.get_data()
-
+    print("xml", data)
     c = Wxpay_server_pub()
     c.saveData(data)
+
+    print("json", c.data)
 
     c.setReturnParameter("return_code", "SUCCESS")
     # 检查签名
@@ -51,8 +53,8 @@ def wx_notify():
     # 检查对应业务数据的状态，判断该通知是否已经处理过
     out_trade_no = c.data["out_trade_no"]
     wx_payment = WxPayment.get(out_trade_no=out_trade_no)
-    if wx_payment.status != 'NOTPAY':
-        return c.returnXml()
+    # if wx_payment.status != 'NOTPAY':
+    #     return c.returnXml()
 
     # 检查金额
     total_fee = c.data["total_fee"]
@@ -66,6 +68,8 @@ def wx_notify():
 
     # 为用户进行充值
     user = User.get(we_chat_id=openid)
+
+    print("code", attach["code"])
 
     if attach["code"] == WxPaymentAttach.BALANCE:
         print("top_up")
