@@ -30,13 +30,12 @@ export function payDeposit(money) {
 
 // 充值
 export function ercharge(money) {
-  const id = localStorage.token;
   return service({
     method: 'POST',
     url: 'virtual_card/balance/top_up',
     data: {
-      username: id,
       top_up_fee: money,
+      openid: localStorage.getItem('openid'),
     },
   });
 }

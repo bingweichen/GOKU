@@ -27,9 +27,19 @@ class Balance extends Component {
       return;
     }
     // wechat pay recharge
-    ercharge(10)
-      .then(({ record }) => {
-        this.props.updateCount(record.card.deposit, record.balance);
+    ercharge(0.01)
+      .then((info) => {
+        wx.chooseWXPay({
+          timestamp: info.timeStamp,
+          nonceStr: info.nonceStr,
+          package: info.package,
+          signType: info.signType,
+          paySign: info.paySign,
+          success(res) {
+            alert(`success:${res}`);
+          },
+        });
+        // this.props.updateCount(record.card.deposit, record.balance);
       })
       .catch(() => {
       });
