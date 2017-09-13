@@ -68,4 +68,3 @@ class WxPaymentAttach(object):
 
 
 
-print(WxPaymentAttach.BALANCE)

@@ -142,7 +142,8 @@ def appointment_payment_success():
     appointment_id: string
 
     eg = {
-    "appointment_id": 3
+    "appointment_id": 3,
+    "open_id": ""
     }
 
     :return: 1 for success
@@ -159,21 +160,21 @@ def appointment_payment_success():
         openid = user.we_chat_id
     try:
         # check
-        appointment_service.pre_appointment_payment_sucess(
-            user=username,
-            appointment_id=appointment_id
-        )
+        appointment_fee_needed = \
+            appointment_service.pre_appointment_payment_sucess(
+                user=username,
+                appointment_id=appointment_id
+            )
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
             body=WxPaymentBody.APPOINTMENT_PRE_FEE,
-            total_fee=data.pop("top_up_fee")*100,
+            total_fee=float(appointment_fee_needed) * 100,
             attach=json.dumps({
                 "code": WxPaymentAttach.APPOINTMENT_PRE_FEE,
                 "appointment_id": appointment_id
             })
-
         )
 
         return jsonify({
@@ -233,8 +234,8 @@ def total_payment_success():
     appointment_id: int
 
     eg = {
-    "username": "bingwei",
     "appointment_id": 3,
+    "open_id": ""
     }
 
     :return: 1 for success
@@ -242,12 +243,42 @@ def total_payment_success():
     """
     username = get_jwt_identity()
     data = request.get_json()
-    result = appointment_service.total_payment_success(
-        username=username,
-        appointment_id=data.pop("appointment_id"),
-    )
-    if result:
-        return jsonify({'response': result}), 200
+
+    openid = data.get("openid")
+    appointment_id = data.pop("appointment_id")
+
+    # 如果没有openid传入，则从用户信息中获取
+    if not openid:
+        user = User.get(username=username)
+        openid = user.we_chat_id
+
+    try:
+        # check
+        final_payment = appointment_service.pre_total_payment_success(
+            username=username,
+            appointment_id=appointment_id
+        )
+
+        # 生成预付订单
+        result = wx_payment_service.get_prepay_id_json(
+            openid=data.pop("openid"),
+            body=WxPaymentBody.APPOINTMENT_FEE,
+            total_fee=float(final_payment) * 100,
+            attach=json.dumps({
+                "code": WxPaymentAttach.APPOINTMENT_FEE,
+                "appointment_id": appointment_id
+            })
+        )
+        return jsonify({
+            'response': result
+        }), 200
+
+    except Error as e:
+        return jsonify(
+            {'response': {
+                'error': e.args,
+                'message': '%s' % e.args
+            }}), 400
 
 
 # 5. 取消订单

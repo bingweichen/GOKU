@@ -85,7 +85,7 @@ def pay_deposit():
 
     eg = {
     # "card_no": "bingwei",
-    "deposit_fee": 199
+    # "deposit_fee": 199
     }
     :return:
     """
@@ -93,6 +93,8 @@ def pay_deposit():
     data = request.get_json()
 
     openid = data.get("openid")
+    deposit_fee = 0.01
+
     # 如果没有openid传入，则从用户信息中获取
     if not openid:
         user = User.get(username=username)
@@ -101,15 +103,17 @@ def pay_deposit():
     try:
         virtual_card_service.pre_pay_deposit(
             card_no=username,
-            deposit_fee=data["deposit_fee"],
+            deposit_fee=deposit_fee,
         )
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=openid,
             body=WxPaymentBody.DEPOSIT,
-            total_fee=data.pop("deposit_fee")*100,
-            attach=WxPaymentAttach.DEPOSIT
+            total_fee=deposit_fee*100,
+            attach=json.dumps({
+                "code": WxPaymentAttach.DEPOSIT
+            })
         )
 
         return jsonify({

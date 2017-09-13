@@ -89,7 +89,11 @@ def add_appointment(**kwargs):
 
 # 生成预付款 预订单前检查
 def pre_appointment_payment_sucess(user, appointment_id):
-    pass
+    appointment = Appointment.get(
+        id=appointment_id,
+        user=user
+    )
+    return appointment.appointment_fee_needed
 
 
 # 2. 预付款成功
@@ -112,6 +116,21 @@ def upload_serial_number(user, appointment_id, serial_number):
     if check_serial_number(appointment, serial_number):
         return True
     raise WrongSerialsNumber("编号错误")
+
+
+# 检查订单有效性， 计算需要付款价格
+def pre_total_payment_success(appointment_id, username=None):
+    appointment = Appointment.get(
+        id=appointment_id,
+    )
+    if username and appointment.user.username != username:
+        raise Error("not your appointment")
+    if appointment.type == "租车":  # 租车
+        final_payment = appointment.price - appointment.appointment_fee + \
+                        appointment.rent_deposit_needed
+    else:
+        final_payment = appointment.price - appointment.appointment_fee
+    return final_payment
 
 
 # 4. 付款成功
