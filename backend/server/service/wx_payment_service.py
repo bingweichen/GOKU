@@ -21,7 +21,7 @@ def get_prepay_id_json(openid, total_fee, body, attach):
     # 储存商户订单
     WxPayment.create(
         out_trade_no=out_trade_no,
-        total_fee=total_fee
+        total_fee=total_fee,
     )
 
     # 2. 发送微信预订单生成

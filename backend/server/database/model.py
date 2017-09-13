@@ -88,6 +88,8 @@ class VirtualCard(BaseModel):
     balance = FloatField(default=0.0)
     situation = CharField(default="正常")  # 冻结
 
+    out_trade_no = CharField(default=None, null=True)  # 商户付款订单号
+
 
 class ConsumeRecord(BaseModel):
     card = ForeignKeyField(VirtualCard, related_name="consume_record")
@@ -95,6 +97,7 @@ class ConsumeRecord(BaseModel):
     consume_date_time = DateTimeField()
     consume_fee = FloatField()
     balance = FloatField(default=0.0)
+    out_trade_no = CharField(default=None, null=True)  # 商户付款订单号
 
 
 # from playhouse.postgres_ext import ArrayField
@@ -262,17 +265,15 @@ class SerialNumber(BaseModel):
 # 退款表格
 class RefundTable(BaseModel):
     user = ForeignKeyField(User)
-    account = CharField()  # 退款账号
-    account_type = CharField()  # 账号类型
+    out_trade_no = CharField()  # 商户付款订单号
+
     type = CharField()  # 退款类型：退预约金，退虚拟卡押金
     value = FloatField()  # 退款金额
     date = DateTimeField()  # 日期
-    comment = CharField(null=True)  # 备注
+    comment = CharField(default=None, null=True)  # 备注
     status = CharField(default="未处理")  # 状态：已退款
-
-    # @classmethod
-    # def create(cls, **kwargs):
-    #     return RefundTable.create(**kwargs)
+    # account = CharField()  # 退款账号
+    # account_type = CharField()  # 账号类型
 
 
 # 报修表格 电动车点击报修
@@ -313,13 +314,12 @@ class WxPayment(BaseModel):
     status = CharField(default='NOTPAY')  #
 
 
-
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable, WxInfo]
 
-table_temp = [WxPayment]
+table_temp = [RefundTable]
 
 
 def create_tables():

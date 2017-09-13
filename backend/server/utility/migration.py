@@ -7,9 +7,11 @@ migrator = MySQLMigrator(my_db)
 
 def migrate_script():
     with my_db.transaction():
-        admin_field = BooleanField(default=False)
+        out_trade_no = CharField(default=None, null=True)
+
         migrate(
-            migrator.add_column('user', 'admin', admin_field),
+            # migrator.drop_column('consumerecord', 'out_trade_no')
+            migrator.add_column('virtualcard', 'out_trade_no', out_trade_no),
         )
 
 if __name__ == '__main__':

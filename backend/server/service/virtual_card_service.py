@@ -6,7 +6,6 @@
 """
 from datetime import datetime
 
-
 from server.database.model import VirtualCard
 from server.database.model import ConsumeRecord
 from server.database.model import Battery
@@ -15,6 +14,7 @@ from server.service import battery_rent_service
 
 from server.utility.constant.custom_constant import get_custom_const
 from server.utility.exception import *
+
 
 # from playhouse.shortcuts import model_to_dict
 # from server.utility.json_utility import models_to_json
@@ -51,11 +51,11 @@ def get_deposit(card_no):
 
 def pre_pay_deposit(**kwargs):
     card_no = kwargs["card_no"]
-    deposit_fee = float(kwargs["deposit_fee"])
 
+    deposit_fee = get_custom_const("DEFAULT_DEPOSIT")
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
-    if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
+    if deposit >= deposit_fee:
         # 充值押金失败
         ConsumeRecord.create(
             card=card_no,
@@ -65,6 +65,7 @@ def pre_pay_deposit(**kwargs):
             balance=virtual_card.balance)
 
         raise Error("无需充值押金")
+    return deposit_fee
 
 
 def pay_deposit(**kwargs):
@@ -78,28 +79,26 @@ def pay_deposit(**kwargs):
     card_no = kwargs["card_no"]
     deposit_fee = float(kwargs["deposit_fee"])
 
-    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    deposit = virtual_card.deposit
-    if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
-        # 充值押金失败
-        ConsumeRecord.create(
-            card=card_no,
-            consume_event="deposit failed",
-            consume_date_time=datetime.utcnow(),
-            consume_fee=deposit_fee,
-            balance=virtual_card.balance)
+    out_trade_no = kwargs["out_trade_no"]
 
-        raise Error("无需充值押金")
-    else:
-        virtual_card.deposit = deposit_fee
-        result = virtual_card.save()
-        record = ConsumeRecord.create(
-            card=card_no,
-            consume_event="deposit",
-            consume_date_time=datetime.utcnow(),
-            consume_fee=deposit_fee,
-            balance=virtual_card.balance)
-        return result, record
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+
+    virtual_card.deposit = deposit_fee
+    result = virtual_card.save()
+    record = ConsumeRecord.create(
+        card=card_no,
+        consume_event="deposit",
+        consume_date_time=datetime.utcnow(),
+        consume_fee=deposit_fee,
+        balance=virtual_card.balance,
+        out_trade_no=out_trade_no
+    )
+    # 给用户虚拟卡也存一个订单号
+    virtual_card = VirtualCard.get(card_no=card_no)
+    virtual_card.out_trade_no = out_trade_no
+    virtual_card.save()
+
+    return result, record
 
 
 def pre_top_up(**kwargs):
@@ -182,9 +181,8 @@ def return_deposit(**kwargs):
             balance=virtual_card.balance)
         # 记录退款
         refund_record = refund_table_service.add(
-            user=kwargs["username"],
-            account=kwargs["account"],
-            account_type=kwargs["account_type"],
+            user=kwargs["card_no"],
+            out_trade_no=kwargs["out_trade_no"],
             type="退虚拟卡押金",
             value=deposit,
             comment=kwargs.get("comment")

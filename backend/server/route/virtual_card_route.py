@@ -18,10 +18,10 @@ from server.utility.json_utility import models_to_json, custom_models_to_json
 from server.utility.exception import *
 from server.service import wx_payment_service
 from server.database.model import User
+from server.database.model import VirtualCard
 
 from server.utility.constant.basic_constant import \
     WxPaymentBody, WxPaymentAttach
-
 
 PREFIX = '/virtual_card'
 
@@ -93,7 +93,6 @@ def pay_deposit():
     data = request.get_json()
 
     openid = data.get("openid")
-    deposit_fee = 0.01
 
     # 如果没有openid传入，则从用户信息中获取
     if not openid:
@@ -101,16 +100,16 @@ def pay_deposit():
         openid = user.we_chat_id
 
     try:
-        virtual_card_service.pre_pay_deposit(
+        deposit_fee = virtual_card_service.pre_pay_deposit(
             card_no=username,
-            deposit_fee=deposit_fee,
         )
+        # deposit_fee = 0.01
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=openid,
             body=WxPaymentBody.DEPOSIT,
-            total_fee=deposit_fee*100,
+            total_fee=deposit_fee * 100,
             attach=json.dumps({
                 "code": WxPaymentAttach.DEPOSIT
             })
@@ -135,10 +134,6 @@ def pay_deposit():
 def return_deposit():
     """
     eg = {
-    "username": "bingwei",
-    "card_no": "bingwei",
-    "account": "BingweiChen",
-    "account_type": "wechat",
     "comment": "test",
     }
 
@@ -147,15 +142,16 @@ def return_deposit():
     """
     username = get_jwt_identity()
     data = request.get_json()
+
+    # 获取支付押金订单号
+    out_trade_no = VirtualCard.get(card_no=username).out_trade_no
+
     try:
         result, record, refund_record = \
             virtual_card_service.return_deposit(
-                username=username,
-                card_no=data.pop("card_no"),
-                account=data.pop("account"),
-                account_type=data.pop("account_type"),
-                comment=data.pop("comment"),
-                **data
+                card_no=username,
+                out_trade_no=out_trade_no,
+                comment=data.get("comment"),
             )
         return jsonify({
             'response': {
@@ -259,7 +255,7 @@ def pre_top_up():
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
             body=WxPaymentBody.BALANCE,
-            total_fee=data.pop("top_up_fee")*100,
+            total_fee=data.pop("top_up_fee") * 100,
             attach=json.dumps({
                 "code": WxPaymentAttach.BALANCE
             })

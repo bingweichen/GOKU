@@ -81,7 +81,8 @@ def wx_notify():
         print("pay_deposit")
         pay_deposit(
             card_no=user.username,
-            deposit_fee=int(total_fee) / 100
+            deposit_fee=int(total_fee) / 100,
+            out_trade_no=c.data["out_trade_no"]
         )
     if attach["code"] == WxPaymentAttach.APPOINTMENT_PRE_FEE:
         print(WxPaymentAttach.APPOINTMENT_PRE_FEE)
@@ -89,9 +90,6 @@ def wx_notify():
             user=user,
             appointment_id=attach["appointment_id"]
         )
-
-
-
 
     # 更新wx_payment
     wx_payment.status = "支付完成"
