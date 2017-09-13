@@ -87,14 +87,27 @@ def pay_deposit():
     username = get_jwt_identity()
     data = request.get_json()
     try:
-        result, record = virtual_card_service.pay_deposit(
+        virtual_card_service.pre_pay_deposit(
             card_no=username,
             deposit_fee=data["deposit_fee"],
         )
-        return jsonify({'response': {
-            "result": result,
-            "record": model_to_dict(record, recurse=False)
-        }}), 200
+
+        # 生成预付订单
+        result = wx_payment_service.get_prepay_id_json(
+            openid=data.pop("openid"),
+            body=data.pop("body"),
+            total_fee=int(data.pop("deposit_fee"))*100,
+            attach="pay_deposit"
+        )
+
+        return jsonify({
+            'response': result
+        })
+
+        # return jsonify({'response': {
+        #     "result": result,
+        #     "record": model_to_dict(record, recurse=False)
+        # }}), 200
     except Error as e:
         return jsonify({
             'response': {
@@ -208,7 +221,7 @@ def pre_top_up():
     top up virtual card
     eg = {
 
-    "total_fee": 120,
+    "top_up_fee": 120,
     "openid": "",
 
     }
@@ -229,7 +242,7 @@ def pre_top_up():
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
             body=data.pop("body"),
-            total_fee=data.pop("total_fee"),
+            total_fee=int(data.pop("top_up_fee"))*100,
             attach="top_up"
         )
 

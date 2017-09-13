@@ -116,7 +116,6 @@ class UrllibClient(object):
 
         xml = xml.encode()
         data = urlopen(url, xml, timeout=second).read()
-        print("data", data)
         return data
 
     def postXmlSSL(self, xml, url, second=30):
@@ -239,11 +238,11 @@ class Common_util_pub(object):
         """array转xml"""
         xml = ["<xml>"]
         for k, v in arr.items():
-            if v.isdigit():
-                xml.append("<{0}>{1}</{0}>".format(k, v))
-            else:
-                xml.append("<{0}>{1}</{0}>".format(k, v))
-                # xml.append("<{0}><![CDATA[{1}]]></{0}>".format(k, v))
+            xml.append("<{0}>{1}</{0}>".format(k, v))
+            # if v.isdigit():
+            #     xml.append("<{0}>{1}</{0}>".format(k, v))
+            # else:
+            #     xml.append("<{0}><![CDATA[{1}]]></{0}>".format(k, v))
         xml.append("</xml>")
         return "".join(xml)
 

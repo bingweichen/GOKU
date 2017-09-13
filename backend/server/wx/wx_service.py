@@ -65,6 +65,8 @@ def order_query(out_trade_no="fb50a3de-97ba-11e7-836f-f45c89"):
     c = OrderQuery_pub()
     c.setParameter("out_trade_no", out_trade_no)
     result = c.getResult()
+    xml = c.arrayToXml(result)
+    print("xml", xml)
     print("result", result)
 
 

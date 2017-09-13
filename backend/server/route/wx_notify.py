@@ -17,7 +17,7 @@ from flask import request
 
 from server.database.model import WxPayment
 from server.wx.wzhifuSDK import Wxpay_server_pub
-from server.service.virtual_card_service import top_up
+from server.service.virtual_card_service import top_up, pay_deposit
 from server.database.model import User
 PREFIX = '/wx_notify'
 
@@ -38,28 +38,25 @@ def wx_notify():
     c.saveData(data)
 
     c.setReturnParameter("return_code", "SUCCESS")
-    # 检查签名
-    if c.checkSign():
-        c.setReturnParameter("return_msg", "OK")
-    else:
-        c.setReturnParameter("return_msg", "签名失败")
-        return c.returnXml()
+    # # 检查签名
+    # if c.checkSign():
+    #     c.setReturnParameter("return_msg", "OK")
+    # else:
+    #     c.setReturnParameter("return_msg", "签名失败")
+    #     return c.returnXml()
 
     # 检查对应业务数据的状态，判断该通知是否已经处理过
     out_trade_no = c.data["out_trade_no"]
     wx_payment = WxPayment.get(out_trade_no=out_trade_no)
     if wx_payment.status != 'NOTPAY':
-        return c.returnXml
+        return c.returnXml()
 
     # 检查金额
     total_fee = c.data["total_fee"]
-    if wx_payment.total_fee != total_fee:
+    if int(wx_payment.total_fee) != int(total_fee):
         c.setReturnParameter("return_msg", "金额不一致")
-        return c.returnXml
+        return c.returnXml()
 
-    # 更新wx_payment
-    wx_payment.status = "支付完成"
-    wx_payment.save()
 
     # 根据 attach 商家数据包 String(128) 进行支付完成操作
     attach = c.data["attach"]
@@ -68,13 +65,24 @@ def wx_notify():
     # case = {
     #     "top_up":
     # }
+    # 为用户进行充值
+    user = User.get(we_chat_id=openid)
+
     if attach == "top_up":
-        # 为用户进行充值
-        user = User.get(we_chat_id=openid)
+        print("top_up")
         top_up(
             card_no=user.username,
-            top_up_fee=total_fee
+            top_up_fee=int(total_fee)/100
         )
+    if attach == 'pay_deposit':
+        pay_deposit(
+            card_no=user.username,
+            deposit_fee=int(total_fee)/100
+        )
+
+    # 更新wx_payment
+    wx_payment.status = "支付完成"
+    wx_payment.save()
 
     return c.returnXml()
 

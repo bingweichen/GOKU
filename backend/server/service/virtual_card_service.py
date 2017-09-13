@@ -49,6 +49,24 @@ def get_deposit(card_no):
     return virtual_card.deposit
 
 
+def pre_pay_deposit(**kwargs):
+    card_no = kwargs["card_no"]
+    deposit_fee = float(kwargs["deposit_fee"])
+
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    deposit = virtual_card.deposit
+    if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
+        # 充值押金失败
+        ConsumeRecord.create(
+            card=card_no,
+            consume_event="deposit failed",
+            consume_date_time=datetime.utcnow(),
+            consume_fee=deposit_fee,
+            balance=virtual_card.balance)
+
+        raise Error("无需充值押金")
+
+
 def pay_deposit(**kwargs):
     """
     pay deposit
