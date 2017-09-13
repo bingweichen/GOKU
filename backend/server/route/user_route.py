@@ -237,18 +237,16 @@ def create_virtual_card():
     """
 
     eg = {
-    # "username": "Shuo_Ren"
+
     }
 
     :return:
     :rtype:
     """
     username = get_jwt_identity()
-    data = request.get_json()
     try:
         virtual_card = user_service.create_virtual_card(
             card_no=username,
-            **data
         )
         return jsonify({
             'response': model_to_dict(virtual_card, recurse=False)}), 200
