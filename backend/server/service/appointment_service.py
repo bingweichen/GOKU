@@ -426,6 +426,7 @@ def modify_status(appointment_id, status):
 
 
 def remove_by_id(appointment_id):
+    cancel_appointment(appointment_id)
     query = Appointment.delete().where(Appointment.id == appointment_id)
     return query.execute()
 
@@ -472,6 +473,7 @@ def add_template():
 
 
 if __name__ == '__main__':
+    remove_by_id(17)
     # print(models_to_json(
     #     Appointment.select().where(Appointment.category == None)))
     # print(Appointment.get(Appointment.id == 1))

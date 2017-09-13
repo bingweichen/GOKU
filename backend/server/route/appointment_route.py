@@ -167,7 +167,7 @@ def appointment_payment_success():
                 user=username,
                 appointment_id=appointment_id
             )
-
+        appointment_fee_needed = 0.01
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
@@ -260,6 +260,8 @@ def total_payment_success():
             username=username,
             appointment_id=appointment_id
         )
+
+        final_payment = 0.01
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
