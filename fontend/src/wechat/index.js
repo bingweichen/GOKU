@@ -1,4 +1,5 @@
 import * as service from '../services/wechat';
+import wxpay from './wxpay';
 
 const appId = 'wx79012d734b31d795';
 export const setWxConfig = () => {
@@ -19,3 +20,8 @@ export const setWxConfig = () => {
       });
     });
 };
+
+export {
+  wxpay,
+};
+

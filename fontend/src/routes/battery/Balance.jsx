@@ -4,6 +4,7 @@ import { hashHistory } from 'dva/router';
 import { Modal } from 'antd-mobile';
 import { payDeposit, ercharge } from '../../services/battery.js';
 import Button from '../../components/Button';
+import { wxpay } from '../../wechat';
 import styles from './index.less';
 
 const { alert } = Modal;
@@ -17,9 +18,9 @@ class Balance extends Component {
           text: '确定',
           onPress: () => {
             payDeposit(199)
-              .then(({ data }) => {
-                const { balance, card } = data.response;
-                this.props.updateCount(card.deposit, balance);
+              .then((info) => {
+                wxpay(info, () => { alert('付款成功'); });
+                // this.props.updateCount(card.deposit, balance);
               });
           },
         },
