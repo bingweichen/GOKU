@@ -176,7 +176,7 @@ class Common_util_pub(object):
     """所有接口的基类"""
 
     def trimString(self, value):
-        if value is not None and len(value) == 0:
+        if value is not None and len(str(value)) == 0:
             value = None
         return value
 
@@ -423,11 +423,17 @@ class UnifiedOrder_pub(Wxpay_client_pub):
     def getPrepayId(self):
         """获取prepay_id"""
         self.postXml()
+        print("response", self.response)
         self.result = self.xmlToArray(self.response)
         prepay_id = self.result["prepay_id"]
         return prepay_id
 
     def getPrepayIdJson(self):
+        """获取prepay_id"""
+        # self.postXml()
+        # self.result = self.xmlToArray(self.response)
+        # prepay_id = self.result["prepay_id"]
+
         temp_parameter = {
             "appId": self.parameters["appid"],
             "timeStamp": int(datetime.utcnow().timestamp()),

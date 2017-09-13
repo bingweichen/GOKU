@@ -44,6 +44,8 @@ def get_user_detail(open_id):
 
 # 生成微信预支付订单 返回预支付订单id, 生成带签名的json
 def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid, attach):
+
+    print("total_fee", total_fee)
     c = UnifiedOrder_pub()
     c.setParameter("out_trade_no", out_trade_no)
     c.setParameter("body", body)
@@ -53,7 +55,7 @@ def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid, attach
     c.setParameter("openid", openid)
     c.setParameter("attach", attach)
 
-    # prepay_id = c.getPrepayId()
+    prepay_id = c.getPrepayId()
     prepayid_json = c.getPrepayIdJson()
     # xml = c.array_to_xml(prepayid_json)
     # print("xml", xml)

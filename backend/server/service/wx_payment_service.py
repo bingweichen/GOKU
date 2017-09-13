@@ -14,6 +14,8 @@ from server.wx import wx_service
 
 # 储存商户订单，返回prepay_id
 def get_prepay_id_json(openid, total_fee, body, attach):
+    total_fee = int(total_fee)
+
     # 1 生成商户订单号
     out_trade_no = str(uuid.uuid1())[:30]
     # 储存商户订单

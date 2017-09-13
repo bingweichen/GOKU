@@ -38,12 +38,12 @@ def wx_notify():
     c.saveData(data)
 
     c.setReturnParameter("return_code", "SUCCESS")
-    # # 检查签名
-    # if c.checkSign():
-    #     c.setReturnParameter("return_msg", "OK")
-    # else:
-    #     c.setReturnParameter("return_msg", "签名失败")
-    #     return c.returnXml()
+    # 检查签名
+    if c.checkSign():
+        c.setReturnParameter("return_msg", "OK")
+    else:
+        c.setReturnParameter("return_msg", "签名失败")
+        return c.returnXml()
 
     # 检查对应业务数据的状态，判断该通知是否已经处理过
     out_trade_no = c.data["out_trade_no"]

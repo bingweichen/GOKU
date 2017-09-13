@@ -17,6 +17,7 @@ from server.service import virtual_card_service
 from server.utility.json_utility import models_to_json, custom_models_to_json
 from server.utility.exception import *
 from server.service import wx_payment_service
+from server.database.model import User
 
 PREFIX = '/virtual_card'
 
@@ -86,6 +87,13 @@ def pay_deposit():
     """
     username = get_jwt_identity()
     data = request.get_json()
+
+    openid = data.get("openid")
+    # 如果没有openid传入，则从用户信息中获取
+    if not openid:
+        user = User.get(username=username)
+        openid = user.we_chat_id
+
     try:
         virtual_card_service.pre_pay_deposit(
             card_no=username,
@@ -94,9 +102,9 @@ def pay_deposit():
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
-            openid=data.pop("openid"),
+            openid=openid,
             body=data.pop("body"),
-            total_fee=int(data.pop("deposit_fee"))*100,
+            total_fee=data.pop("deposit_fee")*100,
             attach="pay_deposit"
         )
 
@@ -232,6 +240,11 @@ def pre_top_up():
     username = get_jwt_identity()
     data = request.get_json()
 
+    openid = data.get("openid")
+    # 如果没有openid传入，则从用户信息中获取
+    if not openid:
+        user = User.get(username=username)
+        openid = user.we_chat_id
     try:
         # check
         virtual_card_service.pre_top_up(
@@ -242,7 +255,7 @@ def pre_top_up():
         result = wx_payment_service.get_prepay_id_json(
             openid=data.pop("openid"),
             body=data.pop("body"),
-            total_fee=int(data.pop("top_up_fee"))*100,
+            total_fee=data.pop("top_up_fee")*100,
             attach="top_up"
         )
 
