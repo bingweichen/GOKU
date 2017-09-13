@@ -310,7 +310,7 @@ class Logs(BaseModel):
 class WxPayment(BaseModel):
     out_trade_no = CharField(unique=True, max_length=32)
     total_fee = IntegerField()
-    status = CharField(default='NOTPAY')
+    status = CharField(default='NOTPAY')  #
 
 
 

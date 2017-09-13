@@ -43,7 +43,7 @@ def get_user_detail(open_id):
 
 
 # 生成微信预支付订单 返回预支付订单id, 生成带签名的json
-def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid):
+def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid, attach):
     c = UnifiedOrder_pub()
     c.setParameter("out_trade_no", out_trade_no)
     c.setParameter("body", body)
@@ -51,10 +51,12 @@ def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid):
     c.setParameter("notify_url", notify_url)
     c.setParameter("trade_type", "JSAPI")
     c.setParameter("openid", openid)
-    prepay_id = c.getPrepayId()
+    c.setParameter("attach", attach)
+
+    # prepay_id = c.getPrepayId()
     prepayid_json = c.getPrepayIdJson()
-    xml = Common_util_pub.array_to_xml(prepayid_json)
-    print("xml", xml)
+    # xml = c.array_to_xml(prepayid_json)
+    # print("xml", xml)
     return prepayid_json
 
 
@@ -62,8 +64,7 @@ def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid):
 def order_query(out_trade_no="fb50a3de-97ba-11e7-836f-f45c89"):
     c = OrderQuery_pub()
     c.setParameter("out_trade_no", out_trade_no)
-    result = c.postXml()
-    result = Common_util_pub.xml_to_array(result)
+    result = c.getResult()
     print("result", result)
 
 

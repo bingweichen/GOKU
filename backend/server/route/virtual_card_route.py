@@ -18,7 +18,6 @@ from server.utility.json_utility import models_to_json, custom_models_to_json
 from server.utility.exception import *
 from server.service import wx_payment_service
 
-
 PREFIX = '/virtual_card'
 
 virtual_card_app = Blueprint("virtual_card", __name__, url_prefix=PREFIX)
@@ -124,7 +123,7 @@ def return_deposit():
     username = get_jwt_identity()
     data = request.get_json()
     try:
-        result, record, refund_record =\
+        result, record, refund_record = \
             virtual_card_service.return_deposit(
                 username=username,
                 card_no=data.pop("card_no"),
@@ -205,20 +204,46 @@ def return_deposit():
 def pre_top_up():
     """
     generate top up prepay
+
+    top up virtual card
+    eg = {
+
+    "total_fee": 120,
+    "openid": "",
+
+    }
+
     :return:
     :rtype:
     """
     username = get_jwt_identity()
     data = request.get_json()
-    result = wx_payment_service.get_prepay_id_json(
-        openid=data.pop("openid"),
-        body=data.pop("body"),
-        total_fee=data.pop("total_fee")
-    )
-    return jsonify({
-        'response': result
-    })
 
+    try:
+        # check
+        virtual_card_service.pre_top_up(
+            card_no=username,
+        )
+
+        # 生成预付订单
+        result = wx_payment_service.get_prepay_id_json(
+            openid=data.pop("openid"),
+            body=data.pop("body"),
+            total_fee=data.pop("total_fee"),
+            attach="top_up"
+        )
+
+        return jsonify({
+            'response': result
+        })
+
+    except Error as e:
+        return jsonify({
+            'response': {
+                'error': e.args,
+                'message': '%s' % e.args
+            }
+        })
 
 
 # def top_up():

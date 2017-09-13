@@ -84,6 +84,20 @@ def pay_deposit(**kwargs):
         return result, record
 
 
+def pre_top_up(**kwargs):
+    """
+    1. check
+    :param kwargs:
+    :type kwargs:
+    :return:
+    :rtype:
+    """
+    card_no = kwargs["card_no"]
+    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
+        raise Error("No deposit")
+
+
 def top_up(**kwargs):
     """
 

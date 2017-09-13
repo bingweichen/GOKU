@@ -113,6 +113,12 @@ def get_request_log():
         'route': route,
         'method': request.method,
     }
+
+    # 解决xml 问题
+    category = request_log['route'].split('/')[1]
+    if category != "virtual_card":
+        return request_log
+
     if len(request.get_data()) != 0:
         body = json.loads(request.get_data())
         if "password" in body:

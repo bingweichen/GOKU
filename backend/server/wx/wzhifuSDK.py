@@ -418,9 +418,7 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         self.parameters["mch_id"] = WxPayConf_pub.MCHID  # 商户号
         self.parameters["spbill_create_ip"] = "115.159.215.199"  # 终端ip
         self.parameters["nonce_str"] = self.createNoncestr()  # 随机字符串
-        # print("parameters", self.parameters)
         self.parameters["sign"] = self.getSign(self.parameters)  # 签名
-        # print("sign", self.parameters["sign"])
         return self.arrayToXml(self.parameters)
 
     def getPrepayId(self):
