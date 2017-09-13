@@ -39,6 +39,7 @@ export function paySuccess({
     url: 'appointment/status/total_payment_success',
     data: {
       appointment_id,
+      openid: localStorage.getItem('openid'),
     },
   });
 }
