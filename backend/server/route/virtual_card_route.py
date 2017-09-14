@@ -103,7 +103,7 @@ def pay_deposit():
         deposit_fee = virtual_card_service.pre_pay_deposit(
             card_no=username,
         )
-        # deposit_fee = 0.01
+        deposit_fee = 0.01
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(

@@ -318,6 +318,9 @@ class WxPayment(BaseModel):
     openid = CharField()
     attach = JSONField()
 
+    code = CharField()
+
+
 
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
