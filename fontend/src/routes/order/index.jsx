@@ -16,6 +16,10 @@ class Order extends Component {
     active: 0,
   }
 
+  componentDidMount() {
+    this.props.getData();
+  }
+
   render() {
     const { orders } = this.props;
     return (

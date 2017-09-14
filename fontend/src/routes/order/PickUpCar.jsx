@@ -38,9 +38,10 @@ class PickUpCar extends Component {
             wxpay(data, () => { hashHistory.replace('/pickupsuccess'); });
           });
       })
-      .catch(() => {
+      .catch(({ message }) => {
         this.setState({ isLoading: false });
         Toast.hide();
+        Toast.fail(message.message);
       });
   }
 
