@@ -51,7 +51,14 @@ export default function Item({ order }) {
             }>去支付</span>
           {/* 取消的订单  */}
           <span style={{ display: order.status === orderStatus.cancel ? 'inline' : 'none' }}>订单已取消</span>
-          <span style={{ display: order.status === orderStatus.waitBack ? 'inline' : 'none' }}>去还车</span>
+          <span
+            onClick={() => {
+              alert('你需要去店里进行还车', [
+                { text: '确定' },
+              ]);
+            }}
+            style={{ display: order.status === orderStatus.waitBack ? 'inline' : 'none' }}
+          >去还车</span>
           <span
             onClick={() => { hashHistory.push(`/pickupcar?id=${order.id}`); }}
             style={{ display: order.status === orderStatus.waitPickUp ? 'inline' : 'none' }}
@@ -101,6 +108,7 @@ export default function Item({ order }) {
         {/* <div className={styles.contact}>
           <span>联系客服</span>
         </div> */}
+
       </div>
     </div >
   );
