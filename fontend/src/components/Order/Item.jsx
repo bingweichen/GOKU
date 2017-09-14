@@ -25,6 +25,7 @@ export default function Item({ order }) {
           <p className={styles.name}>{order.e_bike_model.name}</p>
           <p className={styles.detail}>{order.color}色，{order.delivery}</p>
           <p className={styles.detail}>订单时间:{new Date(order.date).toLocaleString()}</p>
+          <p className={styles.detail}>订单编号:{order.id}</p>
         </div>
       </div>
       <p className={styles.status}>{order.status}</p>
