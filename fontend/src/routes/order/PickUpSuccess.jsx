@@ -11,7 +11,7 @@ export default function PickUpSuccess() {
       </div>
       <div>
         <Button
-          onClick={() => { hashHistory.replace('/'); }}
+          onClick={() => { hashHistory.replace('/?tab=order'); }}
           style={{ width: '80%', margin: '0 auto' }}
         >
           查看订单

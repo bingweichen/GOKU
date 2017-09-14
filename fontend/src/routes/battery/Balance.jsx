@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { hashHistory } from 'dva/router';
-import { Modal } from 'antd-mobile';
+import { Modal, Toast } from 'antd-mobile';
 import { payDeposit, ercharge } from '../../services/battery.js';
+import axios from '../../utils/axios.js';
 import Button from '../../components/Button';
 import { wxpay } from '../../wechat';
 import styles from './index.less';
@@ -62,7 +63,22 @@ class Balance extends Component {
         <div>
           <p style={{ textAlign: 'center', fontSize: '.28rem' }}>
             <span style={{ color: '#616060' }}>押金{deposit}元</span>
-            <a style={{ color: 'rgb(255, 91, 85)', marginLeft: '.28rem' }}>退还押金</a>
+            <a
+              onClick={() => {
+                alert('确定退还押金吗？', '需要确认之后才可以到账', [
+                  { text: '取消', onPress: () => console.log('cancel') },
+                  {
+                    text: '确定',
+                    onPress: () => {
+                      axios.post('virtual_card/deposit/return_deposit')
+                        .then(() => { Toast.success('押金退还成功'); })
+                        .catch(() => { Toast.fail('押金退还失败'); });
+                    },
+                  },
+                ]);
+              }}
+              style={{ color: 'rgb(255, 91, 85)', marginLeft: '.28rem' }}
+            >退还押金</a>
           </p>
         </div>
       </div >

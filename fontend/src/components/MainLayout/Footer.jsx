@@ -88,11 +88,10 @@ class Footer extends React.Component {
           key="订单"
           selected={this.props.tab === 'order'}
           onPress={() => {
-            this.props.getOrder();
             hashHistory.replace('/?tab=order');
           }}
         >
-          <Order />
+          <Order getData={this.props.getOrder} />
         </TabBar.Item>
         <TabBar.Item
           icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg' }}
