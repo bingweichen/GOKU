@@ -34,6 +34,8 @@ from server.utility.exception import WrongSerialsNumber, Error
 from server.utility.constant.basic_constant import *
 from server.utility.constant.custom_constant import get_custom_const
 
+from server.database.model import WxPayment
+from peewee import DoesNotExist
 
 # from server.utility.json_utility import models_to_json
 
@@ -162,6 +164,7 @@ def total_payment_success(appointment_id, username=None):
 # 取消订单
 def cancel_appointment(appointment_id, username=None, **kwargs):
     appointment = Appointment.get(id=appointment_id)
+
     if username and username != appointment.user.username:
         raise Error("not your appointment")
 
@@ -194,13 +197,25 @@ def return_appointment_fee(username, appointment, **kwargs):
     if appointment_fee == 0:
         return
 
+    # 取得 out_trade_no
+    try:
+        wx_payment = WxPayment.get(
+            appointment_id=appointment.id,
+            status=WxPaymentStatus.SUCCESS
+        )
+        out_trade_no = wx_payment.out_trade_no
+        kwargs["out_trade_no"] = out_trade_no
+
+    except DoesNotExist as e:
+        print(e)
+        kwargs["out_trade_no"] = "无商户订单号"
+
     refund_table_service.add(
         user=username,
-        account=kwargs["account"],
-        account_type=kwargs["account_type"],
+        out_trade_no=kwargs.get("out_trade_no"),
         type="退预约金",
         value=appointment_fee,
-        comment=kwargs["comment"]
+        # comment=kwargs["comment"]
     )
 
     appointment.appointment_fee = 0
@@ -426,8 +441,13 @@ def modify_status(appointment_id, status):
 
 
 def remove_by_id(appointment_id):
-    query = Appointment.delete().where(Appointment.id == appointment_id)
-    return query.execute()
+    cancel_appointment(appointment_id)
+
+    appointment = Appointment.get(id=appointment_id)
+    result = appointment.delete_instance(recursive=True)
+    return result
+    # query = Appointment.delete().where(Appointment.id == appointment_id)
+    # return query.execute()
 
 
 def count():
@@ -472,6 +492,7 @@ def add_template():
 
 
 if __name__ == '__main__':
+    remove_by_id(21)
     # print(models_to_json(
     #     Appointment.select().where(Appointment.category == None)))
     # print(Appointment.get(Appointment.id == 1))

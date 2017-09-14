@@ -14,7 +14,8 @@ from datetime import datetime
 from peewee import *
 
 from server.database.db import database
-from server.utility.constant.basic_constant import DELIVERY, APPOINTMENT_STATUS
+from server.utility.constant.basic_constant import \
+    DELIVERY, APPOINTMENT_STATUS
 
 from server.utility.constant.const_db import Const
 
@@ -311,7 +312,11 @@ class Logs(BaseModel):
 class WxPayment(BaseModel):
     out_trade_no = CharField(unique=True, max_length=32)
     total_fee = IntegerField()
-    status = CharField(default='NOTPAY')  #
+    status = CharField(default='NOTPAY')  # 订单状态
+    appointment = ForeignKeyField(Appointment, related_name="wx_payment",
+                                  null=True)
+    openid = CharField()
+    attach = JSONField()
 
 
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
@@ -319,7 +324,7 @@ table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,
               RefundTable, ReportTable, WxInfo]
 
-table_temp = [RefundTable]
+table_temp = [WxPayment]
 
 
 def create_tables():
