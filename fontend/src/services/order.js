@@ -31,6 +31,17 @@ export function pickUpWithCarNumber({
   });
 }
 
+export function payAppointment(id) {
+  return axios({
+    method: 'POST',
+    url: 'appointment/status/appointment_payment_success',
+    data: {
+      openid: localStorage.getItem('openid'),
+      appointment_id: id,
+    },
+  });
+}
+
 export function paySuccess(id) {
   return axios({
     method: 'POST',

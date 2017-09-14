@@ -68,7 +68,7 @@ export default {
       try {
         const { id } = yield call(orderService.buyCarOrder, submitData, person.id);
         // todo wechat pay
-        const info = yield call(orderService.paySuccess, id);
+        const info = yield call(orderService.payAppointment, id);
         wxpay(info, () => hashHistory.replace('/?tab=order'));
         Toast.hide();
       } catch (error) {

@@ -22,7 +22,7 @@ class Center extends Component {
             <img src={sessionStorage.getItem('head')} alt="" style={{ width: '100%' }} />
           </div>
         </div>
-        <p className={styles.username}>包泽峰</p>
+        <p className={styles.username}>{localStorage.getItem('username')}</p>
         <List>
           <Item
             thumb="https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png"
