@@ -5,6 +5,7 @@ import { hashHistory } from 'dva/router';
 import { pickUpWithCarNumber, paySuccess } from '../../services/order.js';
 import Button from '../../components/Button';
 import StepInput from '../../components/StepInput';
+import { wxpay } from '../../wechat';
 
 class PickUpCar extends Component {
   state = {
@@ -31,11 +32,10 @@ class PickUpCar extends Component {
         this.setState({ isLoading: false });
         // todo : 微信支付
         Toast.hide();
-        paySuccess({
-          appointment_id: parseInt(this.state.id, 10),
-        })
+        paySuccess(parseInt(this.state.id, 10),
+        )
           .then((data) => {
-            hashHistory.replace('/pickupsuccess');
+            wxpay(data, () => { hashHistory.replace('/pickupsuccess'); });
           });
       })
       .catch(() => {
