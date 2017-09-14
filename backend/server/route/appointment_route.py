@@ -170,7 +170,7 @@ def appointment_payment_success():
         appointment_fee_needed = 0.01
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
-            openid=data.pop("openid"),
+            openid=openid,
             body=WxPaymentBody.APPOINTMENT_PRE_FEE,
             total_fee=float(appointment_fee_needed) * 100,
             attach={
@@ -303,7 +303,6 @@ def cancel_appointment():
     """
     username = get_jwt_identity()
     data = request.get_json()
-    # appointment_id = data["appointment_id"]
     result = appointment_service.cancel_appointment(
         username=username,
         appointment_id=data.pop("appointment_id"),

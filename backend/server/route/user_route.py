@@ -246,7 +246,7 @@ def create_virtual_card():
     username = get_jwt_identity()
     try:
         virtual_card = user_service.create_virtual_card(
-            card_no=username,
+            card_no=username
         )
         return jsonify({
             'response': model_to_dict(virtual_card, recurse=False)}), 200
