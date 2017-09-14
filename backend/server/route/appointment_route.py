@@ -173,10 +173,11 @@ def appointment_payment_success():
             openid=data.pop("openid"),
             body=WxPaymentBody.APPOINTMENT_PRE_FEE,
             total_fee=float(appointment_fee_needed) * 100,
-            attach=json.dumps({
+            attach={
                 "code": WxPaymentAttach.APPOINTMENT_PRE_FEE,
                 "appointment_id": appointment_id
-            })
+            },
+            appointment_id=appointment_id
         )
 
         return jsonify({
@@ -268,10 +269,11 @@ def total_payment_success():
             openid=data.pop("openid"),
             body=WxPaymentBody.APPOINTMENT_FEE,
             total_fee=float(final_payment) * 100,
-            attach=json.dumps({
+            attach={
                 "code": WxPaymentAttach.APPOINTMENT_FEE,
                 "appointment_id": appointment_id
-            })
+            },
+            appointment_id=appointment_id
         )
         return jsonify({
             'response': result
@@ -286,6 +288,7 @@ def total_payment_success():
 
 
 # 5. 取消订单
+# 在订单未完成是可以取消 1.直接取消 2. 退押金取消
 @appointment_app.route('/status/cancel', methods=['POST'])
 @jwt_required
 def cancel_appointment():
@@ -293,12 +296,7 @@ def cancel_appointment():
     appointment_id: int
 
     eg = {
-    "username": "bingwei",
     "appointment_id": 3,
-    "account": "BingweiChen",
-    "account_type": "wechat",
-    "comment": "test",
-
     }
     :return: 1 for success
     :rtype:
@@ -309,10 +307,6 @@ def cancel_appointment():
     result = appointment_service.cancel_appointment(
         username=username,
         appointment_id=data.pop("appointment_id"),
-        account=data.pop("account"),
-        account_type=data.pop("account_type"),
-        comment=data.pop("comment"),
-        **data
     )
     if result:
         return jsonify({'response': result}), 200

@@ -162,6 +162,9 @@ def return_deposit(**kwargs):
     :return:
     """
     card_no = kwargs["card_no"]
+    # 获取支付押金订单号
+    out_trade_no = VirtualCard.get(card_no=card_no).out_trade_no
+
     on_loan = Battery.select().where(Battery.user == card_no)
     if on_loan:
         raise Error("Battery in use")
@@ -182,10 +185,9 @@ def return_deposit(**kwargs):
         # 记录退款
         refund_record = refund_table_service.add(
             user=kwargs["card_no"],
-            out_trade_no=kwargs["out_trade_no"],
+            out_trade_no=out_trade_no,
             type="退虚拟卡押金",
             value=deposit,
-            comment=kwargs.get("comment")
         )
         print("退虚拟卡押金" + str(deposit))
         return result, record, refund_record

@@ -110,9 +110,9 @@ def pay_deposit():
             openid=openid,
             body=WxPaymentBody.DEPOSIT,
             total_fee=deposit_fee * 100,
-            attach=json.dumps({
+            attach={
                 "code": WxPaymentAttach.DEPOSIT
-            })
+            }
         )
 
         return jsonify({
@@ -134,7 +134,7 @@ def pay_deposit():
 def return_deposit():
     """
     eg = {
-    "comment": "test",
+    # "comment": "test",
     }
 
     return deposit
@@ -143,15 +143,15 @@ def return_deposit():
     username = get_jwt_identity()
     data = request.get_json()
 
-    # 获取支付押金订单号
-    out_trade_no = VirtualCard.get(card_no=username).out_trade_no
+    # # 获取支付押金订单号
+    # out_trade_no = VirtualCard.get(card_no=username).out_trade_no
 
     try:
         result, record, refund_record = \
             virtual_card_service.return_deposit(
                 card_no=username,
-                out_trade_no=out_trade_no,
-                comment=data.get("comment"),
+                # out_trade_no=out_trade_no,
+                # # comment=data.get("comment"),
             )
         return jsonify({
             'response': {
@@ -256,9 +256,9 @@ def pre_top_up():
             openid=data.pop("openid"),
             body=WxPaymentBody.BALANCE,
             total_fee=data.pop("top_up_fee") * 100,
-            attach=json.dumps({
+            attach={
                 "code": WxPaymentAttach.BALANCE
-            })
+            }
         )
 
         return jsonify({

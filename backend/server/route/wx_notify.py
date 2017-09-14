@@ -22,7 +22,8 @@ from server.service.appointment_service import appointment_payment_success
 
 from server.database.model import User
 
-from server.utility.constant.basic_constant import WxPaymentAttach
+from server.utility.constant.basic_constant import \
+    WxPaymentAttach, WxPaymentStatus
 PREFIX = '/wx_notify'
 
 wx_notify_app = Blueprint("wx_notify", __name__, url_prefix=PREFIX)
@@ -92,7 +93,7 @@ def wx_notify():
         )
 
     # 更新wx_payment
-    wx_payment.status = "支付完成"
+    wx_payment.status = WxPaymentStatus.SUCCESS
     wx_payment.save()
 
     return c.returnXml()

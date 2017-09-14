@@ -60,11 +60,19 @@ class WxPaymentBody(object):
 
 
 class WxPaymentAttach(object):
-
     DEPOSIT = "pay_deposit"
     BALANCE = "top_up"
     APPOINTMENT_PRE_FEE = "appointment_pre_fee"
     APPOINTMENT_FEE = "appointment_fee"
+
+
+class BasicConstant(object):
+    notify_url = 'schooltrips.com.cn:5000/wx_notify'
+
+
+class WxPaymentStatus(object):
+    DEFAULT = "NOTPAY"
+    SUCCESS = "支付完成"
 
 
 
