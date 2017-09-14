@@ -18,7 +18,8 @@ from flask import request
 from server.database.model import WxPayment
 from server.wx.wzhifuSDK import Wxpay_server_pub
 from server.service.virtual_card_service import top_up, pay_deposit
-from server.service.appointment_service import appointment_payment_success
+from server.service.appointment_service import \
+    appointment_payment_success, total_payment_success
 
 from server.database.model import User
 
@@ -89,6 +90,12 @@ def wx_notify():
         print(WxPaymentAttach.APPOINTMENT_PRE_FEE)
         appointment_payment_success(
             user=user,
+            appointment_id=attach["appointment_id"]
+        )
+    if attach["code"] == WxPaymentAttach.APPOINTMENT_FEE:
+        print(WxPaymentAttach.APPOINTMENT_FEE)
+        total_payment_success(
+            username=user,
             appointment_id=attach["appointment_id"]
         )
 
