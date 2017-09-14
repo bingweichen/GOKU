@@ -75,4 +75,9 @@ class WxPaymentStatus(object):
     SUCCESS = "支付完成"
 
 
+class ReturnFeeType(object):
+    appointment_fee = "退预约金"
+    rent_deposit = "退押金"
+
+
 

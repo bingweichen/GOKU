@@ -191,17 +191,30 @@ def expired_appointment(appointment_id):
     return appointment.save()
 
 
-# 退还押金！！！
-def return_appointment_fee(username, appointment, **kwargs):
-    appointment_fee = appointment.appointment_fee
-    if appointment_fee == 0:
+# 退还预约金, 押金
+def return_fee(username, appointment, fee_type, **kwargs):
+
+    if fee_type == "appointment_fee":
+        fee = appointment.appointment_fee
+        code = WxPaymentAttach.APPOINTMENT_PRE_FEE
+        fee_type_str = ReturnFeeType.appointment_fee
+
+    elif fee_type == "rent_deposit":
+        fee = appointment.rent_deposit
+        code = WxPaymentAttach.APPOINTMENT_FEE
+        fee_type_str = ReturnFeeType.rent_deposit
+    else:
+        raise Error("error fee_type")
+
+    if fee == 0:
         return
 
-    # 取得 out_trade_no
     try:
         wx_payment = WxPayment.get(
             appointment_id=appointment.id,
-            status=WxPaymentStatus.SUCCESS
+            status=WxPaymentStatus.SUCCESS,
+            code=code
+
         )
         out_trade_no = wx_payment.out_trade_no
         kwargs["out_trade_no"] = out_trade_no
@@ -213,14 +226,44 @@ def return_appointment_fee(username, appointment, **kwargs):
     refund_table_service.add(
         user=username,
         out_trade_no=kwargs.get("out_trade_no"),
-        type="退预约金",
-        value=appointment_fee,
-        # comment=kwargs["comment"]
+        type=fee_type_str,
+        value=fee,
     )
 
-    appointment.appointment_fee = 0
-    appointment.save()
-    print("需退还押金" + str(appointment_fee))
+    # appointment.appointment_fee = 0
+    # appointment.save()
+    # print(fee_type_str + str(fee))
+    #
+    # appointment_fee = appointment.appointment_fee
+    # if appointment_fee == 0:
+    #     return
+    #
+    # # 取得 out_trade_no
+    # try:
+    #     wx_payment = WxPayment.get(
+    #         appointment_id=appointment.id,
+    #         status=WxPaymentStatus.SUCCESS,
+    #         code=WxPaymentAttach.APPOINTMENT_FEE
+    #
+    #     )
+    #     out_trade_no = wx_payment.out_trade_no
+    #     kwargs["out_trade_no"] = out_trade_no
+    #
+    # except DoesNotExist as e:
+    #     print(e)
+    #     kwargs["out_trade_no"] = "无商户订单号"
+    #
+    # refund_table_service.add(
+    #     user=username,
+    #     out_trade_no=kwargs.get("out_trade_no"),
+    #     type="退预约金",
+    #     value=appointment_fee,
+    #     # comment=kwargs["comment"]
+    # )
+    #
+    # appointment.appointment_fee = 0
+    # appointment.save()
+    # print("需退还预约金" + str(appointment_fee))
 
 
 # 退还库存
@@ -463,11 +506,19 @@ def terminate_appointment(appointment_id, appointment, **kwargs):
         available=True,
         appointment=None
     )
-    # 退还押金
+    # 退还预约金
     username = appointment.user
-    return_appointment_fee(
-        username,
-        appointment,
+    return_fee(
+        username=username,
+        appointment=appointment,
+        fee_type="appointment_fee",
+        **kwargs
+    )
+    # 退还押金
+    return_fee(
+        username=username,
+        appointment=appointment,
+        fee_type="rent_deposit",
         **kwargs
     )
 
