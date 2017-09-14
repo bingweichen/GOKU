@@ -8,6 +8,7 @@ export default {
   state: {
     appointments: [],
     visible: false,
+    total: 0,
   },
 
   subscriptions: {
@@ -23,8 +24,8 @@ export default {
   effects: {
     *getDataSource({ page, number, days }, { call, put }) {
       try {
-        const { appointments } = yield call(service.order, { page, number, days });
-        yield put({ type: 'setDataSource', appointments });
+        const { appointments, total } = yield call(service.order, { page, number, days });
+        yield put({ type: 'setDataSource', appointments, total });
       } catch (error) {
         yield put({ type: 'setDataSource', appointments: [] });
       }
@@ -35,14 +36,14 @@ export default {
     save(state, action) {
       return { ...state, ...action.payload };
     },
-    setDataSource(state, { appointments }) {
+    setDataSource(state, { appointments, total }) {
       const formatData = appointments.map(appointment => ({
         ...appointment,
         key: appointment.id,
         date: moment(appointment.date).format('YYYY/MM/DD HH:mm'),
         expired_date_time: moment(appointment.expired_date_time).format('YYYY/MM/DD HH:mm'),
       }));
-      return { ...state, appointments: formatData };
+      return { ...state, appointments: formatData, total };
     },
     toggleModalVisible(state, { visible }) {
       return {

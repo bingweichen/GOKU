@@ -78,7 +78,7 @@ class Order extends Component {
           dataSource={this.props.dataSource}
           loading={this.props.loading}
           pagination={{
-            onChange(page, pageSize) {
+            onChange: (page, pageSize) => {
               dispatch({
                 page,
                 type: 'order/getDataSource',
@@ -99,6 +99,7 @@ const mapStateToProps = ({ loading, order }) => {
     loading: loading.global,
     dataSource: order.appointments,
     visible: order.visible,
+    total: order.total,
   };
 };
 
@@ -110,6 +111,7 @@ const mapDispatchToProps = (dispatch) => {
         visible,
       });
     },
+    dispatch,
   };
 };
 
