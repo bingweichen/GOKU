@@ -26,7 +26,8 @@ def get_prepay_id_json(openid, total_fee, body, attach, appointment_id=None):
         total_fee=total_fee,
         appointment=appointment_id,
         openid=openid,
-        attach=attach
+        attach=attach,
+        code=attach["code"]
     )
 
     # 2. 发送微信预订单生成

@@ -95,7 +95,7 @@ def wx_notify():
     if attach["code"] == WxPaymentAttach.APPOINTMENT_FEE:
         print(WxPaymentAttach.APPOINTMENT_FEE)
         total_payment_success(
-            username=user,
+            username=user.username,
             appointment_id=attach["appointment_id"]
         )
 

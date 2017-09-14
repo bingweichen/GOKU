@@ -11,10 +11,11 @@ def migrate_script():
 
         # appointment = ForeignKeyField(Appointment,related_name="wx_payment",
         #                               null=True, to_field=Appointment.id)
+        code = CharField(null=True)
 
         migrate(
             # migrator.drop_column('consumerecord', 'out_trade_no')
-            migrator.add_column('wxpayment', 'appointment', appointment),
+            migrator.add_column('wxpayment', 'code', code),
         )
 
 if __name__ == '__main__':
