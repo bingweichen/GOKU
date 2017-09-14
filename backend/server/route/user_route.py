@@ -252,3 +252,14 @@ def create_virtual_card():
             'response': model_to_dict(virtual_card, recurse=False)}), 200
     except Error as e:
         return jsonify({'response': '%s: %s' % (str(Error), e.args)}), 400
+
+
+@user_app.route('/get_user_info', methods=['GET'])
+@jwt_required
+def get_user_info():
+    username = get_jwt_identity()
+    user = user_service.get(username=username)
+    user = model_to_dict(user, recurse=False)
+    user.pop("password")
+    return jsonify({
+        'response': user}), 200
