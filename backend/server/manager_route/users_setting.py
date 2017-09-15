@@ -44,7 +44,7 @@ user_setting = Blueprint("user_setting", __name__, url_prefix=PREFIX)
 @user_setting.route('/users/all', methods=['GET'])
 @jwt_required
 @auth_decorator.check_admin_auth
-def get_appointments():
+def get_user():
     users = user_service.get_all()
     users = models_to_json(users, recurse=False)
     for i in range(len(users)):
@@ -52,6 +52,21 @@ def get_appointments():
     return jsonify({
         'response': {
             "users": users
+        }}), 200
+
+
+# 获取所有虚拟消费卡
+@user_setting.route('/virtual_cards/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
+def get_virtual_cards():
+    virtual_cards = virtual_card_service.get_all()
+    virtual_cards = models_to_json(virtual_cards, recurse=False)
+    # for i in range(len(virtual_cards)):
+    #     users[i].pop("password")
+    return jsonify({
+        'response': {
+            "virtual_cards": virtual_cards
         }}), 200
 
 
@@ -91,6 +106,8 @@ def freeze():
 
 # 解冻账号
 @user_setting.route('/virtual_card/re_freeze', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
 def re_freeze():
     card_no = request.args.get("card_no")
     result = virtual_card_service.re_freeze(
