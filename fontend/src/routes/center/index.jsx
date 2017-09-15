@@ -5,6 +5,7 @@ import styles from './index.less';
 import Coupons from './Coupons';
 import Signup from './Signup';
 import Signin from './Signin';
+import UserInfo from './UserInfo';
 
 const Item = List.Item;
 
@@ -25,6 +26,7 @@ class Center extends Component {
         <p className={styles.username}>{localStorage.getItem('username')}</p>
         <List>
           <Item
+            onClick={() => hashHistory.push('/userinfo')}
             thumb="https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png"
             arrow="horizontal"
           >个人信息</Item>
@@ -49,4 +51,5 @@ export {
   Coupons,
   Signup,
   Signin,
+  UserInfo,
 };
