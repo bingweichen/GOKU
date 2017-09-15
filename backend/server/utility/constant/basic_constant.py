@@ -56,6 +56,9 @@ class BasicConstant(object):
     notify_url = 'schooltrips.com.cn:5000/wx_notify'
     # 电池归还最短时间限制
     battery_return_min_minutes = 30
+    # 最长租用电池时间
+    maximum_rent_days = 30
+    # 租用
 
 
 class WxPaymentBody(object):

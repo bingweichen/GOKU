@@ -118,6 +118,13 @@ def return_battery(username, serial_number):
     virtual_card_service.consume_virtual_card(
         card_no=username,
         amount=price)
+
+    # 当超出一个月归还，冻结账户
+    delta = battery_record.return_date - battery_record.rent_date
+    if delta > timedelta(days=30):
+        result = virtual_card_service.freeze(battery_record.user)
+        print("result", result)
+
     return battery_record
 
 
@@ -213,6 +220,8 @@ def calculate_price(rent_date, return_date):
     """
     两周内1元
     超过两周，每天扣2元
+
+    超过 1个月 冻结账户以实现在脚本中
 
 
     :param rent_date:

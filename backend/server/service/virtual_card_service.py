@@ -30,23 +30,28 @@ def add(**kwargs):
     return virtual_card
 
 
-def get_deposit(card_no):
-    """
-    check if the card is deposited
-    :param card_no: card number
-    :return: True of False
-    """
-    # 检查电池租用情况，超过一个月冻结账户
+def get_all():
+    virtual_cards = VirtualCard.select()
+    return virtual_cards
 
-    if not battery_rent_service.check_on_load_batter_rent_date(
-            username=card_no):
-        # 冻结账号
-        result = freeze(card_no)
-        if not result:
-            print("冻结失败", card_no)
-        raise Error("账号已冻结")
-    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    return virtual_card.deposit
+
+# def get_deposit(card_no):
+#     """
+#     check if the card is deposited
+#     :param card_no: card number
+#     :return: True of False
+#     """
+#     # 检查电池租用情况，超过一个月冻结账户
+#
+#     if not battery_rent_service.check_on_load_batter_rent_date(
+#             username=card_no):
+#         # 冻结账号
+#         result = freeze(card_no)
+#         if not result:
+#             print("冻结失败", card_no)
+#         raise Error("账号已冻结")
+#     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+#     return virtual_card.deposit
 
 
 def pre_pay_deposit(**kwargs):
@@ -144,14 +149,14 @@ def top_up(**kwargs):
         return result, record
 
 
-def get_card_balance(card_no):
-    """
-    get card balance
-    :param card_no: card number
-    :return: balance
-    """
-    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    return virtual_card.balance
+# def get_card_balance(card_no):
+#     """
+#     get card balance
+#     :param card_no: card number
+#     :return: balance
+#     """
+#     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+#     return virtual_card.balance
 
 
 def return_deposit(**kwargs):
@@ -275,18 +280,18 @@ def check_status(username):
         raise Error(VirtualCardErrorMessage.no_enough_balance)
 
 
-def check_value(card_no):
-    """
-    check if the card can be used
-    :param card_no: card number of user
-    :return: True if usable or raise an error
-    """
-    virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
-        raise Error("No enough deposit")
-    if virtual_card.balance <= 0:
-        raise Error("No Balance")
-    return True
+# def check_value(card_no):
+#     """
+#     check if the card can be used
+#     :param card_no: card number of user
+#     :return: True if usable or raise an error
+#     """
+#     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
+#     if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
+#         raise Error("No enough deposit")
+#     if virtual_card.balance <= 0:
+#         raise Error("No Balance")
+#     return True
 
 
 # 冻结账号
@@ -301,12 +306,6 @@ def re_freeze(card_no):
     virtual_card = VirtualCard.get(card_no=card_no)
     virtual_card.situation = "正常"
     return virtual_card.save()
-
-
-# def normal(card_no):
-#     virtual_card = VirtualCard.get(card_no=card_no)
-#     virtual_card.situation = "正常"
-#     return virtual_card.save()
 
 
 # ***************************** for test ***************************** #

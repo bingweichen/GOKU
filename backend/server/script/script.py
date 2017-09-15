@@ -46,6 +46,8 @@ def check_battery_record():
     """
     实现还电池后2h未借电池, 冻结账户
 
+    todo 实现租用电池超过 一个月，冻结账户
+
 
     :return:
     :rtype:
@@ -53,8 +55,9 @@ def check_battery_record():
     # 获取所有用户
     users = user_service.get_all()
     for user in users:
-        # 用户最近一条记录
+        # 2h未借电池
         try:
+            # 用户最近一条记录
             battery_record = battery_record_service.get(
                 user=user
             )
@@ -68,6 +71,22 @@ def check_battery_record():
 
         except DoesNotExist:
             # print(DoesNotExist)
+            pass
+
+        # 租用电池超过一个月
+        try:
+            # 用户最近一条记录
+            battery_record = battery_record_service.get(
+                user=user
+            )
+            if battery_record.situation == '借用中':
+                now = datetime.utcnow()
+                delta = now - battery_record.rent_date
+                if delta > timedelta(days=30):
+                    # 冻结账户
+                    result = virtual_card_service.freeze(user)
+                    print("result", result)
+        except DoesNotExist:
             pass
 
 
