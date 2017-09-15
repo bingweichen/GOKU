@@ -221,6 +221,10 @@ def consume_virtual_card(**kwargs):
     if virtual_card.balance <= 0:
         raise Error("Low Balance")
     balance = virtual_card.balance - amount
+    # 检查用户 余额 负数冻结账户
+    if balance < 0:
+        virtual_card.situation = "冻结"
+
     virtual_card.balance = balance
     result = virtual_card.save()
     record = ConsumeRecord.create(
@@ -271,6 +275,23 @@ def check_deposit(username):
             raise Error("没有足够的押金")
     else:
         raise Error("未开通虚拟卡")
+
+
+def check_status(username):
+    """
+    检查账户状态是否异常
+
+    :param username:
+    :type username:
+    :return:
+    :rtype:
+    """
+    virtual_card = VirtualCard.get(VirtualCard.card_no == username)
+    if virtual_card.balance < 0:
+        raise Error("余额不足")
+    if virtual_card.situation != "正常":
+        raise Error("账户异常")
+    return True
 
 
 def check_value(card_no):

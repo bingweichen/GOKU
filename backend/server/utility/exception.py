@@ -12,3 +12,8 @@ class NoStorageError(Exception):
 
 class WrongSerialsNumber(Exception):
     pass
+
+
+class ErrorMessage(Exception):
+    # no_
+    pass

@@ -73,6 +73,10 @@ def rent_battery(**kwargs):
         raise Error("还未归还电池")
     if not virtual_card_service.check_deposit(username):
         raise Error("没有足够的押金")
+    # 检查余额 检查账户状态
+    if not virtual_card_service.check_deposit(username):
+        raise Error("账户异常")
+
     battery = Battery.get(serial_number=serial_number)
     if battery.on_loan:
         raise Error("电池已被租用")

@@ -143,8 +143,14 @@ def return_battery():
         return jsonify({
             'response': model_to_dict(batter_record, recurse=False)}), 200
     except Error as e:
-        return jsonify({
-            'response': '%s: %s' % (str(Error), e.args)}), 400
+        return jsonify(
+            {'response': {
+                'error': '%s' % e.args,
+                'message': '%s' % e.args
+            }}), 400
+        #
+        # return jsonify({
+        #     'response': '%s: %s' % (str(Error), e.args)}), 400
 
 
 # 报修电池
