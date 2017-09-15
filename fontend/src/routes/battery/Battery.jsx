@@ -3,10 +3,11 @@ import { NoticeBar, Icon, Modal, ActivityIndicator, Toast, Button } from 'antd-m
 import moment from 'moment';
 import { connect } from 'dva';
 import { hashHistory } from 'dva/router';
+import axios from '../../utils/axios.js';
 import { getVirtualCard, openVirtualCardService, batteryReport } from '../../services/battery.js';
 import styles from './index.less';
 
-const { alert, prompt } = Modal;
+const { alert, prompt, operation } = Modal;
 class Battery extends Component {
 
   state = {
@@ -37,7 +38,10 @@ class Battery extends Component {
     }
   }
 
-  scan() {
+  scan = () => {
+    if (this.props.useDate) { // 正在使用闪充,停止扫描
+      Toast.fail('你现在不能再次使用闪充');
+    }
     wx.scanQRCode({
       needResult: 1,
       scanType: ['qrCode', 'barCode'],
@@ -54,8 +58,21 @@ class Battery extends Component {
       <div>
         <NoticeBar
           mode="link"
-          style={{ display: isNaN(restTime) ? 'none' : 'flex' }}
-          onClick={() => { }}
+          style={{ display: this.props.useDate ? 'flex' : 'none' }}
+          onClick={ // 归还闪充
+            () => operation([
+              {
+                text: '确定归还',
+                onPress: () => {
+                  axios.post('battery_rent/return', {
+                    serial_number: this.props.number,
+                  }).then(() => { Toast.success('还车成功'); window.location.reload(); })
+                    .catch((error) => { Toast.fail(error.message.message); });
+                },
+              },
+              { text: '取消' },
+            ])
+          }
         >你正在使用闪充，还有{restTime}天剩余时间，点击归还！
         </NoticeBar>
         <div className={styles.functions}>
@@ -94,35 +111,22 @@ class Battery extends Component {
             <p>闪充保修</p>
           </div>
         </div>
-        <Button onClick={this.wxpay}>付款</Button>
         <ActivityIndicator
           toast
           text="加载中..."
           animating={this.state.isloading}
         />
-      </div>
+      </div >
     );
   }
 
-  wxpay() {
-    wx.chooseWXPay({
-      timestamp: '1505192699', // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-      nonceStr: '3n6jal5rsl05i2yhgxfssm34rk5nmkib', // 支付签名随机串，不长于 32 位
-      package: 'prepay_id=wx20170912210459124d1850920376751626', // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-      signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-      paySign: '91C319ED4BAEB9B08DA35182D259C35E', // 支付签名
-      success: function (res) {
-        // 支付成功后的回调函数
-        alert('suceess' + res);
-      }
-    });
-  }
 }
 
 const mapStateToProps = (state) => {
   const { battery } = state;
   return {
-    useDate: battery.inuseBattery && battery.inuseBattery.useDate,
+    useDate: battery.inuseBattery && battery.inuseBattery.useDate, // 正在使用的电动车
+    number: battery.inuseBattery && battery.inuseBattery.number,
   };
 };
 
