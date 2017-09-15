@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal } from 'antd-mobile';
+import { Modal, Toast } from 'antd-mobile';
+import { hashHistory } from 'dva/router';
 import { rentBattery } from '../../services/battery.js';
 import Button from '../../components/Button';
 import styles from './index.less';
@@ -8,13 +9,15 @@ class UseBattery extends Component {
 
   state = {
     errorModal: false,
+    errorMessage: '你现在暂时不能使用闪充',
   }
 
   async useBattery(number) {
     try {
       await rentBattery(number);
+      Toast.success('借车成功', 1, () => hashHistory.replace('/?tab=flash'));
     } catch (error) {
-      this.setState({ errorModal: true });
+      this.setState({ errorModal: true, errorMessage: error.message.message });
     }
   }
 
@@ -42,7 +45,7 @@ class UseBattery extends Component {
           visible={this.state.errorModal}
           footer={[{ text: '确定', onPress: () => { this.setState({ errorModal: false }); } }]}
         >
-          你现在暂时不能使用闪充
+          {this.state.errorMessage}
         </Modal>
       </div>
     );
