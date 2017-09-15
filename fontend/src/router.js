@@ -20,6 +20,7 @@ import {
   Coupons,
   Signup,
   Signin,
+  UserInfo,
 } from './routes/center';
 
 function RouterConfig({ history }) {
@@ -41,6 +42,7 @@ function RouterConfig({ history }) {
       <Route path="/pickupsuccess" component={PickUpSuccess} />
       <Route path="/watchorder" component={WatchOrder} />
       <Route path="/repairs" component={Reparis} />
+      <Route path="/userinfo" component={UserInfo} />
     </Router>
   );
 }
