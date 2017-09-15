@@ -166,7 +166,7 @@ export const SerialNumber = {
 export const RefundTable = {
   id: '编号',
   user: '用户',
-  out_trade_no: "商户付款订单号",
+  out_trade_no: '商户付款订单号',
   type: '退款类型',
   value: '退款金额',
   date: '日期',
