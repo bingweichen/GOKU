@@ -37,6 +37,7 @@ from server.utility.constant.custom_constant import get_custom_const
 from server.database.model import WxPayment
 from peewee import DoesNotExist
 
+
 # from server.utility.json_utility import models_to_json
 
 
@@ -193,7 +194,6 @@ def expired_appointment(appointment_id):
 
 # 退还预约金, 押金
 def return_fee(username, appointment, fee_type, **kwargs):
-
     if fee_type == "appointment_fee":
         fee = appointment.appointment_fee
         code = WxPaymentAttach.APPOINTMENT_PRE_FEE
@@ -369,7 +369,13 @@ def return_e_bike(appointment_id, serial_number, **kwargs):
 
     appointment.status = RENT_APPOINTMENT_STATUS["3"]
     result = appointment.save()
-    terminate_appointment(appointment_id, appointment, **kwargs)
+
+    terminate_appointment(
+        appointment_id=appointment_id,
+        appointment=appointment,
+        status="return",
+        **kwargs)
+
     return result
 
 
@@ -497,7 +503,7 @@ def count():
     return Appointment.select().count()
 
 
-def terminate_appointment(appointment_id, appointment, **kwargs):
+def terminate_appointment(appointment_id, appointment, status="stop", **kwargs):
     # 增加库存
     increment_storage(appointment_id)
     # 更改 serial number
@@ -506,21 +512,23 @@ def terminate_appointment(appointment_id, appointment, **kwargs):
         available=True,
         appointment=None
     )
-    # 退还预约金
     username = appointment.user
-    return_fee(
-        username=username,
-        appointment=appointment,
-        fee_type="appointment_fee",
-        **kwargs
-    )
-    # 退还押金
-    return_fee(
-        username=username,
-        appointment=appointment,
-        fee_type="rent_deposit",
-        **kwargs
-    )
+    if status == "stop":
+        # 退还预约金
+        return_fee(
+            username=username,
+            appointment=appointment,
+            fee_type="appointment_fee",
+            **kwargs
+        )
+    else:
+        # 退还押金
+        return_fee(
+            username=username,
+            appointment=appointment,
+            fee_type="rent_deposit",
+            **kwargs
+        )
 
 
 # ***************************** unit test ***************************** #

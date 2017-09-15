@@ -19,6 +19,11 @@ def get_all_coupon_template():
     return coupon_template
 
 
+def get_all_coupon():
+    coupon = Coupon.select()
+    return coupon
+
+
 def add_coupon(**kwargs):
     """
     add a coupon to a user

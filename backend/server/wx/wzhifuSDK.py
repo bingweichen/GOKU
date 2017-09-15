@@ -39,13 +39,15 @@ import random
 # import urllib2
 
 from urllib.request import urlopen
-import urllib
+# import urllib
 from urllib.parse import quote
 from datetime import datetime
 
 import hashlib
 import threading
 import xml.etree.ElementTree as ET
+
+from server.wx.configure import *
 
 try:
     import pycurl
@@ -59,13 +61,13 @@ class WxPayConf_pub(object):
 
     # =======【基本信息设置】=====================================
     # 微信公众号身份的唯一标识。审核通过后，在微信发送的邮件中查看
-    APPID = "wx79012d734b31d795"
+    APPID = APPID
     # JSAPI接口中获取openid，审核后在公众平台开启开发模式后可查看
-    APPSECRET = "1de216b8d2b6f543c6b4778fb040100e"
+    APPSECRET = APPSECRET
     # 受理商ID，身份标识
-    MCHID = "1485893242"
+    MCHID = MCHID
     # 商户支付密钥Key。审核通过后，在微信发送的邮件中查看
-    KEY = "schooltripscomcnschooltripscomcn"
+    KEY = KEY
 
     # =======【异步通知url设置】===================================
     # 异步通知url，商户根据实际开发过程设定

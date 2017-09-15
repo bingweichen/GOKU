@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib.request import urlopen
 import time
 import json
@@ -16,14 +17,12 @@ class Basic:
         self.__leftTime_ticket = 0
 
     def __real_get_access_token(self):
-        # appId = "wx0350234b8e970c00"
-        # appSecret = "97dfd4483fd75d568da28d3ea9508632"
-
         # 获取 access_token
         postUrl = ("https://api.weixin.qq.com/cgi-bin/token?grant_type="
                    "client_credential&appid=%s&secret=%s" % (appId, appSecret))
         urlResp = urlopen(postUrl)
         urlResp = json.loads(urlResp.read())
+        print("urlResp", urlResp)
         self.__accessToken = urlResp['access_token']
         self.__leftTime = urlResp['expires_in']
 
@@ -37,9 +36,13 @@ class Basic:
 
         accessToken = WxInfo.get(key='accessToken')
         accessToken.value = self.__accessToken
+        accessToken.date = datetime.utcnow()
+        accessToken.expires_in = self.__leftTime
         accessToken.save()
         jsapi_ticket = WxInfo.get(key='jsapi_ticket')
         jsapi_ticket.value = self.__jsapi_ticket
+        jsapi_ticket.date = datetime.utcnow()
+        jsapi_ticket.expires_in = self.__leftTime_ticket
         jsapi_ticket.save()
 
         print(self.__accessToken)

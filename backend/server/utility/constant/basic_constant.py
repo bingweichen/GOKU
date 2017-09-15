@@ -52,6 +52,12 @@ RENT_TIME_PERIOD = {
 }
 
 
+class BasicConstant(object):
+    notify_url = 'schooltrips.com.cn:5000/wx_notify'
+    # 电池归还最短时间限制
+    battery_return_min_minutes = 30
+
+
 class WxPaymentBody(object):
     DEPOSIT = "用户押金充值"
     BALANCE = "用户余额充值"
@@ -66,10 +72,6 @@ class WxPaymentAttach(object):
     APPOINTMENT_FEE = "appointment_fee"
 
 
-class BasicConstant(object):
-    notify_url = 'schooltrips.com.cn:5000/wx_notify'
-
-
 class WxPaymentStatus(object):
     DEFAULT = "NOTPAY"
     SUCCESS = "支付完成"
@@ -78,6 +80,3 @@ class WxPaymentStatus(object):
 class ReturnFeeType(object):
     appointment_fee = "退预约金"
     rent_deposit = "退押金"
-
-
-

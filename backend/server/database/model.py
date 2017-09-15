@@ -290,12 +290,16 @@ class ReportTable(BaseModel):
 class WxInfo(BaseModel):
     key = CharField()
     value = CharField()
+    date = DateTimeField(null=True)
+    expires_in = IntegerField(null=True)
 
 
 class WxUser(BaseModel):
     open_id = CharField()
     access_token = CharField(default=None, null=True)
     refresh_token = CharField(default=None, null=True)
+    date = DateTimeField(null=True)
+    expires_in = IntegerField(null=True)
 
 
 # 后续开具体栏位

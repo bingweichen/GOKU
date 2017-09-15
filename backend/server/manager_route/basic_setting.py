@@ -153,7 +153,7 @@ def add_e_bike_model():
     data = request.get_json()
     try:
         e_bike_model = e_bike_model_service.add(**data)
-        e_bike_model = model_to_dict(e_bike_model)
+        e_bike_model = model_to_dict(e_bike_model, recurse=False)
         return jsonify({'response': e_bike_model}), 200
     except Error as e:
         return jsonify({'response': {
@@ -202,7 +202,7 @@ def get_storage():
     model = request.args.get("model")
     color = request.args.get("color")
     storage = storage_service.get_by_model_color(model, color)
-    return jsonify({'response': model_to_dict(storage)}), 200
+    return jsonify({'response': model_to_dict(storage, recurse=False)}), 200
 
 
 # 3. 更改库存 (数量...)
@@ -265,7 +265,7 @@ def get():
     const = const_service.get_all()
     return jsonify({
         'response': {
-            "const": models_to_json(const)
+            "const": models_to_json(const, recurse=False)
         }}), 200
 
 
@@ -319,7 +319,7 @@ def add_coupon_template():
         value=data.pop("value"),
         **data
     )
-    coupon_template = model_to_dict(coupon_template)
+    coupon_template = model_to_dict(coupon_template, recurse=False)
     return jsonify({'response': coupon_template}), 200
 
 
@@ -329,8 +329,18 @@ def add_coupon_template():
 @auth_decorator.check_admin_auth
 def get_coupon_template():
     coupon_template = coupon_service.get_all_coupon_template()
-    coupon_template = models_to_json(coupon_template)
+    coupon_template = models_to_json(coupon_template, recurse=False)
     return jsonify({'response': coupon_template}), 200
+
+
+# 获取所有用户的优惠劵
+@basic_setting.route('/coupon/all', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
+def get_coupon():
+    coupon = coupon_service.get_all_coupon()
+    coupon = models_to_json(coupon, recurse=False)
+    return jsonify({'response': coupon}), 200
 
 
 # 3. 为所有用户添加优惠劵
@@ -355,7 +365,7 @@ def add_coupon_template_to_all_user():
             "result": result,
             "message": "添加优惠劵成功"
         }}), 200
-    except Exception as e:
+    except Error as e:
         return jsonify({'response': {
             "message": "错误",
             "error": e.args[1],

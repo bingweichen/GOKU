@@ -121,13 +121,12 @@ def rent_battery():
             }}), 400
 
 
-# 4. 归还电池 （还没想清楚如何归还，用户点击归还就还了吗？）
+# 4. 归还电池
 @battery_rent.route('/return', methods=['POST'])
 @jwt_required
 def return_battery():
     """
     eg = {
-    # "username": "bingwei",
     "serial_number": "A00001"
     }
 

@@ -1,6 +1,6 @@
 from urllib.request import urlopen
 import json
-
+from datetime import datetime
 from server.database.model import WxUser
 from server.utility.exception import *
 
@@ -27,6 +27,8 @@ def add_or_modify_wx_user(code):
     wx_user, created = WxUser.get_or_create(open_id=open_id)
     wx_user.access_token = user_info["access_token"]
     wx_user.refresh_token = user_info["refresh_token"]
+    wx_user.date = datetime.utcnow()
+    wx_user.expires_in = user_info["expires_in"]
     wx_user.save()
     return open_id
 

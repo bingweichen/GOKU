@@ -26,5 +26,5 @@ def get_all(user):
 
 
 def manager_get_all():
-    report_table = ReportTable.select().order_by(RefundTable.date.desc())
+    report_table = ReportTable.select().order_by(ReportTable.date.desc())
     return report_table

@@ -7,15 +7,17 @@ migrator = MySQLMigrator(my_db)
 
 def migrate_script():
     with my_db.transaction():
-        out_trade_no = CharField(default=None, null=True)
+        # out_trade_no = CharField(default=None, null=True)
 
+        date = DateTimeField(null=True)
+        expires_in = IntegerField(null=True)
         # appointment = ForeignKeyField(Appointment,related_name="wx_payment",
         #                               null=True, to_field=Appointment.id)
-        code = CharField(null=True)
+        # code = CharField(null=True)
 
         migrate(
             # migrator.drop_column('consumerecord', 'out_trade_no')
-            migrator.add_column('wxpayment', 'code', code),
+            migrator.add_column('wxuser', 'date', date),
         )
 
 if __name__ == '__main__':
