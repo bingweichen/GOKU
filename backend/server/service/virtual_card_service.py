@@ -214,16 +214,8 @@ def consume_virtual_card(**kwargs):
     """
     card_no = kwargs["card_no"]
     amount = float(kwargs["amount"])
-
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
-    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
-        raise Error("No enough deposit")
-    if virtual_card.balance <= 0:
-        raise Error("Low Balance")
     balance = virtual_card.balance - amount
-    # 检查用户 余额 负数冻结账户
-    if balance < 0:
-        virtual_card.situation = "冻结"
 
     virtual_card.balance = balance
     result = virtual_card.save()
@@ -234,20 +226,6 @@ def consume_virtual_card(**kwargs):
         consume_fee=-amount,
         balance=balance)
     return result, record
-
-    # deposit = get_deposit(card_no)
-    # if not deposit:
-    #     return "No deposit"
-    # balance = get_card_balance(card_no)
-    # if balance <= 0:
-    #     return "Low Balance"
-    # card = VirtualCard.update(balance=VirtualCard.balance-amount
-    #                           ).where(VirtualCard.card_no == card_no)
-    # card.execute()
-    # ConsumeRecord.create(card=card_no, consume_event="consume",
-    #                      consume_date_time=datetime.utcnow(),
-    #                      consume_fee=-amount, balance=balance-amount)
-    # return "Consume " + str(amount) + " succeed"
 
 
 def get_virtual_card(card_no):
@@ -269,14 +247,13 @@ def check_deposit(username):
     virtual_card = VirtualCard.get(VirtualCard.card_no == username)
     if virtual_card:
         deposit = virtual_card.deposit
-        if deposit >= get_custom_const("DEFAULT_DEPOSIT"):
-            return True
-        else:
+        if deposit < get_custom_const("DEFAULT_DEPOSIT"):
             raise Error("没有足够的押金")
     else:
         raise Error("未开通虚拟卡")
 
 
+# 检查账户状态
 def check_status(username):
     """
     检查账户状态是否异常
@@ -287,11 +264,15 @@ def check_status(username):
     :rtype:
     """
     virtual_card = VirtualCard.get(VirtualCard.card_no == username)
-    if virtual_card.balance < 0:
-        raise Error("余额不足")
+    # 1. 检查状态
     if virtual_card.situation != "正常":
-        raise Error("账户异常")
-    return True
+        raise Error(VirtualCardErrorMessage.abnormal_situation)
+    # 2. 检查押金
+    if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
+        raise Error(VirtualCardErrorMessage.no_enough_deposit)
+    # 3. 检查余额
+    if virtual_card.balance < 0:
+        raise Error(VirtualCardErrorMessage.no_enough_balance)
 
 
 def check_value(card_no):

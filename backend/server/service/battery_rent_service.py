@@ -56,6 +56,8 @@ def get_user_battery(username):
     return battery, battery_record
 
 
+#
+
 def rent_battery(**kwargs):
     """
     modify using status
@@ -68,18 +70,16 @@ def rent_battery(**kwargs):
     serial_number = kwargs["serial_number"]
     username = kwargs["username"]
 
+    battery = Battery.get(serial_number=serial_number)
     # 检查是否已经租用电池
     if check_user_on_load(username):
         raise Error("还未归还电池")
-    if not virtual_card_service.check_deposit(username):
-        raise Error("没有足够的押金")
-    # 检查余额 检查账户状态
-    if not virtual_card_service.check_deposit(username):
-        raise Error("账户异常")
-
-    battery = Battery.get(serial_number=serial_number)
+    # 检查电池状态
     if battery.on_loan:
         raise Error("电池已被租用")
+
+    # 检查账户状态
+    virtual_card_service.check_status(username)
 
     battery.on_loan = True
     battery.user = username
@@ -91,7 +91,7 @@ def rent_battery(**kwargs):
 def return_battery(username, serial_number):
     battery = Battery.get(serial_number=serial_number)
 
-    # 通过电池，找到借用中电池记录，更改状态
+    # 通过电池，找到借用中电池记录
     battery_records = battery.battery_records
     battery_record = get_using_record(battery_records)
     battery_record.return_date = datetime.utcnow()

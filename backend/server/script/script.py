@@ -39,12 +39,12 @@ def check_battery_record_script():
     while 1:
         print("check time", datetime.utcnow())
         check_battery_record()
-        time.sleep(60)
+        time.sleep(600)
 
 
 def check_battery_record():
     """
-    实现还车后2h未借车, 冻结账户
+    实现还电池后2h未借电池, 冻结账户
 
 
     :return:
