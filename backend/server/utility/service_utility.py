@@ -11,12 +11,6 @@
 @desc:
 
 """
-# def check_existed(id):
-#     '''
-#     判断用户是否已存在
-#     :param id:
-#     :return:
-#     '''
 
 
 def filter_number(price):
@@ -31,6 +25,6 @@ def count_total_page(count, paginate_by):
         total_page = int(count / paginate_by) + 1
     return total_page
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     pass

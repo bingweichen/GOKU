@@ -134,6 +134,7 @@ export const BatteryReport = {
 };
 
 export const CouponTemplate = {
+  id: "模板编号",
   desc: '描述',
   situation: '使用条件',
   value: '减免价格',
@@ -165,13 +166,14 @@ export const SerialNumber = {
 export const RefundTable = {
   id: '编号',
   user: '用户',
-  account: '退款账号',
-  account_type: '账号类型',
+  out_trade_no: "商户付款订单号",
   type: '退款类型',
   value: '退款金额',
   date: '日期',
   comment: '备注',
   status: '状态',
+  // account: '退款账号',
+  // account_type: '账号类型',
 };
 // 电动车报修
 export const ReportTable = {

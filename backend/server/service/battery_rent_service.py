@@ -21,6 +21,7 @@ from server.database.model import User
 
 from server.utility.exception import *
 from server.utility.constant.custom_constant import get_custom_const
+from server.utility.constant.basic_constant import BasicConstant
 
 
 # ***************************** service ***************************** #
@@ -86,24 +87,26 @@ def rent_battery(**kwargs):
 def return_battery(username, serial_number):
     battery = Battery.get(serial_number=serial_number)
 
-    # 更改电池
-    battery.on_loan = False
-    battery.user = None
-
     # 通过电池，找到借用中电池记录，更改状态
     battery_records = battery.battery_records
     battery_record = get_using_record(battery_records)
     battery_record.return_date = datetime.utcnow()
+
+    # 30分钟内不允许归还
+    if convert_timedelta(
+                    battery_record.return_date - battery_record.rent_date)\
+            < BasicConstant.battery_return_min_minutes:
+        raise Error("%s分钟内无法归还" % BasicConstant.battery_return_min_minutes)
+
     # 扣款计算
     price = calculate_price(battery_record.rent_date,
                             battery_record.return_date)
     battery_record.price = price
     battery_record.situation = "已归还"
 
-    # 30分钟内不允许归还
-    if convert_timedelta(
-                    battery_record.return_date - battery_record.rent_date) < 30:
-        raise Error("30分钟内无法归还")
+    # 更改电池状态
+    battery.on_loan = False
+    battery.user = None
 
     battery.save()
     battery_record.save()
@@ -281,13 +284,4 @@ def check_user_on_load(username):
 
 if __name__ == "__main__":
     pass
-    add_script()
-    # print(check_on_load("Bingwei"))
-
-    # print(calculate_price(datetime(2017, 8, 1, 6), datetime(2017, 8, 16, 5)))
-    # rent_battery(username="bingwei", serial_number="A00001")
-    # return_battery("bingwei", "A00001")
-    # add(on_loan=True, desc="test", user="Shuo_Ren")
-    # print("hello world!")
-    # print(get_battery_rent_info(1))
-    # print(convert_timedelta(timedelta(0, 3600*24*100+30)))
+    # add_script()
