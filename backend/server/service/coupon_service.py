@@ -72,9 +72,9 @@ def use_coupon(user, c_id, before_price):
     if coupon.situation > before_price:
         raise Error("situation not suitable")
     coupon.status = "已使用"
-    after_price = before_price - coupon.value
+    # after_price = before_price - coupon.value
     coupon.save()
-    return after_price
+    return coupon.value
 
 
 def add_coupon_template_to_all_user(template_id):

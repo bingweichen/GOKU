@@ -78,5 +78,5 @@ class WxPaymentStatus(object):
 
 
 class ReturnFeeType(object):
-    appointment_fee = "退预约金"
-    rent_deposit = "退押金"
+    appointment_fee = "退订单预约金"
+    rent_deposit = "退租车押金"
