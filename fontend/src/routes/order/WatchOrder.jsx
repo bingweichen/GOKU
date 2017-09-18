@@ -69,22 +69,50 @@ class WatchOrder extends Component {
           >
             <span >商品总额:</span>
             <span style={{ float: 'right' }}>
-              ￥{price}
+              {price}
             </span>
           </p>
           <p
             style={{
               color: '#333333',
               fontSize: '0.25rem',
-              display: order.reduced_price === null ? 'none' : 'block',
             }}
           >
-            <span >使用优惠卷:</span>
-            <span style={{ float: 'right' }}>-￥{order.reduced_price}</span>
+            <span >优惠券折扣:</span>
+            <span style={{ float: 'right' }}>{order.reduced_price ? order.reduced_price : 0}</span>
+          </p>
+          <p
+            style={{
+              color: '#333333',
+              fontSize: '0.25rem',
+            }}
+          >
+            <span >需付预约款:</span>
+            <span style={{ float: 'right' }}>{order.appointment_fee_needed}</span>
+          </p>
+          <p
+            style={{
+              color: '#333333',
+              fontSize: '0.25rem',
+            }}
+          >
+            <span >已付预约款:</span>
+            <span style={{ float: 'right' }}>{order.appointment_fee ? order.appointment_fee : 0}</span>
+          </p>
+          <p
+            style={{
+              color: '#333333',
+              fontSize: '0.25rem',
+            }}
+          >
+            <span >需缴纳押金:</span>
+            <span style={{ float: 'right' }}>{order.type === '买车' ? 0 : order.rent_deposit_needed}</span>
           </p>
           <p style={{ overflow: 'hidden' }}>
             <span className={styles.payprice}>
-              实付款:￥{order.price}
+              需付款:￥{order.type === '买车' ? order.price - order.appointment_fee :
+                order.price - order.appointment_fee - order.rent_deposit + order.rent_deposit_needed
+              }
             </span>
           </p>
         </div>

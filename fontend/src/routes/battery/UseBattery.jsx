@@ -15,7 +15,7 @@ class UseBattery extends Component {
   async useBattery(number) {
     try {
       await rentBattery(number);
-      Toast.success('借车成功', 1, () => hashHistory.replace('/?tab=flash'));
+      Toast.success('租用电池成功', 1, () => hashHistory.replace('/?tab=flash'));
     } catch (error) {
       this.setState({ errorModal: true, errorMessage: error.message.message });
     }

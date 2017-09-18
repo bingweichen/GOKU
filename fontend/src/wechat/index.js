@@ -10,7 +10,7 @@ export const setWxConfig = () => {
         nonceStr: sign.nonceStr,
         signature: sign.signature,
         appId,
-        debug: true,
+        // debug: true,
         jsApiList: [
           'onMenuShareTimeline',
           'chooseImage',
