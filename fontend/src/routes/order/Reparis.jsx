@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { InputItem, Button, Toast } from 'antd-mobile';
+import { hashHistory } from 'dva/router';
 import { repariCar } from '../../services/order.js';
 
 class Reparis extends Component {
@@ -22,7 +23,9 @@ class Reparis extends Component {
     };
     repariCar(reason)
       .then(() => {
-        Toast.info('报修成功');
+        Toast.info('报修成功', 1, () => {
+          hashHistory.push('/?tab=order');
+        });
       })
       .catch(() => {
         Toast.fail('报修失败');
