@@ -151,6 +151,13 @@ class CarModal extends Component {
               value={this.state.image_urls}
             />
           </div>
+          <div style={{ display: 'flex', height: 80 }}>
+            {
+              this.state.image_urls.map(url => (
+                <img src={url} alt="轮播图片" style={{ height: '100%' }} />
+              ))
+            }
+          </div>
           <div>
             <span>产品介绍</span>
             <Select
@@ -160,6 +167,13 @@ class CarModal extends Component {
               onChange={(value) => { this.setState({ introduction_image_urls: value }); }}
               value={this.state.introduction_image_urls}
             />
+          </div>
+          <div style={{ display: 'flex', height: 80 }}>
+            {
+              this.state.introduction_image_urls.map(url => (
+                <img src={url} alt="产品详情" style={{ height: '100%' }} />
+              ))
+            }
           </div>
         </div>
       </Modal >

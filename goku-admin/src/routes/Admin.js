@@ -40,6 +40,7 @@ class Admin extends Component {
       { icon: 'user', key: 'person', title: '个人中心' },
       { icon: 'user', key: 'usercoupon', title: '用户优惠券' },
       { icon: 'user', key: 'virtualcard', title: '虚拟消费卡' },
+      { icon: 'user', key: 'logs', title: '操作记录' },
     ];
     return (
       <div>
