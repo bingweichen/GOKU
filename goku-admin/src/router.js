@@ -187,6 +187,14 @@ function RouterConfig({ history, app }) {
             });
           },
         },
+        {
+          path: 'logs',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/log/Logs.jsx'));
+            });
+          },
+        },
       ],
     },
   ];
