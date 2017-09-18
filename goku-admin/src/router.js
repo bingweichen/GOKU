@@ -179,6 +179,14 @@ function RouterConfig({ history, app }) {
             });
           },
         },
+        {
+          path: 'virtualcard',
+          getComponent(nextState, cb) {
+            require.ensure([], (require) => {
+              cb(null, require('./routes/user/VirtualCard.jsx'));
+            });
+          },
+        },
       ],
     },
   ];

@@ -12,3 +12,4 @@ export const refundCol = constructionDS(constant.RefundTable);
 export const reportCol = constructionDS(constant.ReportTable);
 export const storeCol = constructionDS(constant.Store);
 export const UserCouponCol = constructionDS(constant.Coupon);
+export const VirtualCardCol = constructionDS(constant.VirtualCard);

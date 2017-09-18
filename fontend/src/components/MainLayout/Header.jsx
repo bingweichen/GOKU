@@ -55,7 +55,10 @@ class Header extends Component {
             </div>
           </Popover>
         </FlexItem>
-        <FlexItem>
+        <FlexItem style={{ marginLeft: '1.16rem' }}>
+          GOKU·出行
+        </FlexItem>
+        {/* <FlexItem>
           <SearchBar
             onFocus={() => { this.setState({ inSearch: true }); }}
             onBlur={() => { this.setState({ inSearch: false }); }}
@@ -64,7 +67,7 @@ class Header extends Component {
         </FlexItem>
         <FlexItem style={{ flex: 'none', margin: '0 0.1rem 0 0', display: this.state.inSearch ? 'none' : 'flex' }}>
           <Icon type={require('../../assets/image/message.svg')} />
-        </FlexItem>
+        </FlexItem> */}
       </Flex >
     );
   }

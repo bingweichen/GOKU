@@ -89,9 +89,9 @@ class WatchOrder extends Component {
           </p>
         </div>
 
-        <div className={styles.iteminfo} style={{ height: 'auto' }}>
+        {/* <div className={styles.iteminfo} style={{ height: 'auto' }}>
           <Button type="warning" inline size="small">维修</Button>
-        </div>
+        </div> */}
       </div>
     );
   }

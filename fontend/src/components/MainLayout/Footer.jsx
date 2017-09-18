@@ -28,19 +28,19 @@ class Footer extends React.Component {
         <TabBar.Item
           title="商城"
           key="shop"
-          icon={<div
+          icon={<Icon
+            type={require('../../assets/image/shop.svg')}
             style={{
               width: '0.44rem',
               height: '0.44rem',
-              background: 'url(https://zos.alipayobjects.com/rmsportal/sifuoDUQdAFKAVcFGROC.svg) center center /  0.42rem 0.42rem no-repeat',
             }}
           />
           }
-          selectedIcon={<div
+          selectedIcon={<Icon
+            type={require('../../assets/image/shopSelect.svg')}
             style={{
               width: '0.44rem',
               height: '0.44rem',
-              background: 'url(https://zos.alipayobjects.com/rmsportal/iSrlOTqrKddqbOmlvUfq.svg) center center /  0.42rem 0.42rem no-repeat',
             }}
           />
           }
@@ -67,20 +67,20 @@ class Footer extends React.Component {
         </TabBar.Item>
         <TabBar.Item
           icon={
-            <div
+            <Icon
+              type={require('../../assets/image/order.svg')}
               style={{
                 width: '0.44rem',
                 height: '0.44rem',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/psUFoAMjkCcjqtUCNPxB.svg) center center /  0.42rem 0.42rem no-repeat'
               }}
             />
           }
           selectedIcon={
-            <div
+            <Icon
+              type={require('../../assets/image/orderSelect.svg')}
               style={{
                 width: '0.44rem',
                 height: '0.44rem',
-                background: 'url(https://zos.alipayobjects.com/rmsportal/IIRLrXXrFAhXVdhMWgUI.svg) center center /  0.42rem 0.42rem no-repeat'
               }}
             />
           }
@@ -94,8 +94,8 @@ class Footer extends React.Component {
           <Order getData={this.props.getOrder} />
         </TabBar.Item>
         <TabBar.Item
-          icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg' }}
-          selectedIcon={{ uri: 'https://zos.alipayobjects.com/rmsportal/gjpzzcrPMkhfEqgbYvmN.svg' }}
+          icon={{ uri: 'https://zos.alipayobjects.com/rmsportal/psUFoAMjkCcjqtUCNPxB.svg' }}
+          selectedIcon={{ uri: 'https://zos.alipayobjects.com/rmsportal/IIRLrXXrFAhXVdhMWgUI.svg' }}
           title="我的"
           key="我的"
           selected={this.props.tab === 'center'}
@@ -105,7 +105,7 @@ class Footer extends React.Component {
         >
           <Center />
         </TabBar.Item>
-      </TabBar>
+      </TabBar >
     );
   }
 }
