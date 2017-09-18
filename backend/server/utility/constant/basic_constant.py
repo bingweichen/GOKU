@@ -58,7 +58,10 @@ class BasicConstant(object):
     battery_return_min_minutes = 30
     # 最长租用电池时间
     maximum_rent_days = 30
-    # 租用
+    # 租用价格溢价时间
+    maximum_normal_rent_price_days = 14
+    # 租用溢价价格 每天
+    abnormal_rent_price_per_day = 2
 
 
 class WxPaymentBody(object):

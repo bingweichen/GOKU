@@ -9,5 +9,5 @@ from server.database.model import Logs
 
 
 def get_all():
-    logs = Logs.select()
+    logs = Logs.select().order_by(Logs.id.desc())
     return logs

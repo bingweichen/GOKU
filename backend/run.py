@@ -148,7 +148,7 @@ def before_request():
         dur = end - start
         request_log = get_request_log()
         category = request_log['route'].split('/')[1]
-        if category != "virtual_card":
+        if category not in ["virtual_card", "appointment"]:
             return response
 
         response_log = get_response_log(response)

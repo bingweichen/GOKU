@@ -38,6 +38,7 @@ def get_all_paginate(page, paginate_by, period,  **kwargs):
         )
 
     total = battery_record.count()
+    battery_record = battery_record.order_by(BatteryRecord.id.desc())
     battery_record = battery_record.paginate(page=page, paginate_by=paginate_by)
     return battery_record, total
 
@@ -52,6 +53,9 @@ def add_record(username, battery):
 
 def get(*query, **kwargs):
     battery_record = BatteryRecord.get(*query, **kwargs)
+    # battery_record = BatteryRecord.select().where(*query, **kwargs)\
+    #     .order_by(BatteryRecord.id).get()
+
     return battery_record
 
 

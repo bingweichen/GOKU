@@ -38,12 +38,8 @@ return_para = {
 @wx_notify_app.route('', methods=['POST'])
 def wx_notify():
     data = request.get_data()
-    print("xml", data)
     c = Wxpay_server_pub()
     c.saveData(data)
-
-    print("json", c.data)
-
     c.setReturnParameter("return_code", "SUCCESS")
     # 检查签名
     if c.checkSign():
@@ -68,32 +64,25 @@ def wx_notify():
     attach = json.loads(c.data["attach"])
     openid = c.data["openid"]
 
-    # 为用户进行充值
     user = User.get(we_chat_id=openid)
-
-    print("code", attach["code"])
-
     if attach["code"] == WxPaymentAttach.BALANCE:
-        print("top_up")
+        # 为用户进行充值
         top_up(
             card_no=user.username,
             top_up_fee=int(total_fee) / 100
         )
     if attach["code"] == WxPaymentAttach.DEPOSIT:
-        print("pay_deposit")
         pay_deposit(
             card_no=user.username,
             deposit_fee=int(total_fee) / 100,
             out_trade_no=c.data["out_trade_no"]
         )
     if attach["code"] == WxPaymentAttach.APPOINTMENT_PRE_FEE:
-        print(WxPaymentAttach.APPOINTMENT_PRE_FEE)
         appointment_payment_success(
             user=user,
             appointment_id=attach["appointment_id"]
         )
     if attach["code"] == WxPaymentAttach.APPOINTMENT_FEE:
-        print(WxPaymentAttach.APPOINTMENT_FEE)
         total_payment_success(
             username=user.username,
             appointment_id=attach["appointment_id"]
@@ -102,5 +91,4 @@ def wx_notify():
     # 更新wx_payment
     wx_payment.status = WxPaymentStatus.SUCCESS
     wx_payment.save()
-
     return c.returnXml()
