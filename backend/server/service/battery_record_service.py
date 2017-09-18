@@ -52,6 +52,9 @@ def add_record(username, battery):
 
 def get(*query, **kwargs):
     battery_record = BatteryRecord.get(*query, **kwargs)
+    # battery_record = BatteryRecord.select().where(*query, **kwargs)\
+    #     .order_by(BatteryRecord.id).get()
+
     return battery_record
 
 
