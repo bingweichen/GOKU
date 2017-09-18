@@ -38,6 +38,7 @@ class Admin extends Component {
       { icon: 'user', key: 'report', title: '保修' },
       { icon: 'user', key: 'refund', title: '退款' },
       { icon: 'user', key: 'person', title: '个人中心' },
+      { icon: 'user', key: 'usercoupon', title: '用户优惠券' },
     ];
     return (
       <div>

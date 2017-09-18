@@ -1,7 +1,7 @@
 import request from '../utils/request';
 
 export function getAllRefund() {
-  return request('refund_table');
+  return request('manager/support/refund_table/all');
 }
 
 export function setRefundStatus(id) {
