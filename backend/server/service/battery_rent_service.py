@@ -121,31 +121,31 @@ def return_battery(username, serial_number):
 
     # 当超出一个月归还，冻结账户
     delta = battery_record.return_date - battery_record.rent_date
-    if delta > timedelta(days=30):
+    if delta > timedelta(days=BasicConstant.maximum_rent_days):
         result = virtual_card_service.freeze(battery_record.user)
         print("result", result)
 
     return battery_record
 
 
-def check_on_load_batter_rent_date(username):
-    """
-
-    :param username:
-    :type username:
-    :return: False 超出租用限制
-    :rtype:
-    """
-    battery = Battery.get(user=username)
-
-    # battery = Battery.get(serial_number=serial_number)
-    battery_records = battery.battery_records
-    battery_record = get_using_record(battery_records)
-    rent_date = battery_record.rent_date
-    now = datetime.utcnow()
-    if (now - rent_date).days > 31:
-        return False
-    return True
+# def check_on_load_batter_rent_date(username):
+#     """
+#
+#     :param username:
+#     :type username:
+#     :return: False 超出租用限制
+#     :rtype:
+#     """
+#     battery = Battery.get(user=username)
+#
+#     # battery = Battery.get(serial_number=serial_number)
+#     battery_records = battery.battery_records
+#     battery_record = get_using_record(battery_records)
+#     rent_date = battery_record.rent_date
+#     now = datetime.utcnow()
+#     if (now - rent_date).days > 31:
+#         return False
+#     return True
 
 
 def get_using_record(records):
@@ -234,8 +234,9 @@ def calculate_price(rent_date, return_date):
     duration = return_date - rent_date
     days, seconds = duration.days, duration.seconds
     price = get_custom_const("BATTERY_RENT_PRICE")
-    if days >= 14:
-        price = price + (days - 14) * 2
+    if days >= BasicConstant.maximum_normal_rent_price_days:
+        price = price + (days - BasicConstant.maximum_normal_rent_price_days) \
+                        * BasicConstant.abnormal_rent_price_per_day
     return price
 
 
