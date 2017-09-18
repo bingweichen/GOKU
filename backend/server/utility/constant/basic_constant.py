@@ -64,8 +64,6 @@ class BasicConstant(object):
     abnormal_rent_price_per_day = 2
 
 
-
-
 class WxPaymentBody(object):
     DEPOSIT = "用户押金充值"
     BALANCE = "用户余额充值"

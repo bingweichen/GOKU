@@ -38,6 +38,7 @@ def get_all_paginate(page, paginate_by, period,  **kwargs):
         )
 
     total = battery_record.count()
+    battery_record = battery_record.order_by(BatteryRecord.id.desc())
     battery_record = battery_record.paginate(page=page, paginate_by=paginate_by)
     return battery_record, total
 

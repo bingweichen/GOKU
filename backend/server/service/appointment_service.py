@@ -457,6 +457,7 @@ def get_all_paginate(page, paginate_by, period, **kwargs):
             Appointment.id.regexp(kwargs["keyword"]))
 
     total = appointments.count()
+    appointments = appointments.order_by(Appointment.id.desc())
     appointments = appointments.paginate(page, paginate_by)
     return appointments, total
 
