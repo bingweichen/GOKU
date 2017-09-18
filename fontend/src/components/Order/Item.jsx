@@ -53,7 +53,7 @@ export default function Item({ order }) {
           <span style={{ display: order.status === orderStatus.cancel ? 'inline' : 'none' }}>订单已取消</span>
           <span
             onClick={() => {
-              alert('你需要去店里进行还车', [
+              alert('你需要去店里进行还车', '请前往店内还车', [
                 { text: '确定' },
               ]);
             }}
