@@ -298,6 +298,12 @@ def check_status(username):
 def freeze(card_no):
     virtual_card = VirtualCard.get(card_no=card_no)
     virtual_card.situation = "冻结"
+    ConsumeRecord.create(
+        card=card_no,
+        consume_event="冻结账户",
+        consume_date_time=datetime.utcnow(),
+        consume_fee=0,
+        balance=virtual_card.balance)
     return virtual_card.save()
 
 
@@ -305,6 +311,12 @@ def freeze(card_no):
 def re_freeze(card_no):
     virtual_card = VirtualCard.get(card_no=card_no)
     virtual_card.situation = "正常"
+    ConsumeRecord.create(
+        card=card_no,
+        consume_event="解冻账号",
+        consume_date_time=datetime.utcnow(),
+        consume_fee=0,
+        balance=virtual_card.balance)
     return virtual_card.save()
 
 
