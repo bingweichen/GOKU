@@ -5,8 +5,7 @@ export default function wxpay(info, callback) {
     package: info.package,
     signType: info.signType,
     paySign: info.paySign,
-    success(res) {
-      alert(res.err_msg);
+    success() {
       callback();
     },
   });
