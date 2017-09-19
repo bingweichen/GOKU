@@ -70,7 +70,7 @@ def check_battery_record():
                 delta = now - battery_record.return_date
                 if delta > timedelta(hours=2):
                     # 冻结账户
-                    result = virtual_card_service.freeze(user)
+                    result = virtual_card_service.freeze(user, "2h未借电池")
                     print("result", result)
 
         except DoesNotExist:
@@ -89,7 +89,7 @@ def check_battery_record():
                 delta = now - battery_record.rent_date
                 if delta > timedelta(days=30):
                     # 冻结账户
-                    result = virtual_card_service.freeze(user)
+                    result = virtual_card_service.freeze(user, "电池租用超一月")
                     print("result", result)
         except DoesNotExist:
             pass
