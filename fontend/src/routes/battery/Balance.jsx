@@ -1,17 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { hashHistory } from 'dva/router';
-import { Modal, Toast } from 'antd-mobile';
+import { Modal, Toast, InputItem } from 'antd-mobile';
 import { payDeposit, ercharge } from '../../services/battery.js';
 import axios from '../../utils/axios.js';
 import Button from '../../components/Button';
 import { wxpay } from '../../wechat';
 import styles from './index.less';
 
-const { alert } = Modal;
+const { alert, prompt } = Modal;
 class Balance extends Component {
+  state = {
+    chargeMoney: '',
+  }
 
+  setChargeMoney = (value) => {
+    if (value && (value.charAt(0) === '0' || value.indexOf('.') >= 0)) {
+      this.setState({
+        chargeMoney: value.replace(/^0*(\d*).*$/, '$1'),
+      });
+    } else {
+      this.setState({ chargeMoney: value });
+    }
+  }
   handleRecharge = () => {
+    const { chargeMoney } = this.state;
     if (this.props.deposit === 0 || this.props.deposit < 199) {
       alert('还未完成押金充值', '确认充值押金吗？', [
         { text: '取消' },
@@ -28,8 +41,13 @@ class Balance extends Component {
       ]);
       return;
     }
-    // wechat pay recharge
-    ercharge(0.01)
+    //  wechat pay recharge
+
+    if (chargeMoney <= 0 || chargeMoney.length <= 0) {
+      Toast.fail('请输入正确的金额');
+      return;
+    }
+    ercharge(chargeMoney)
       .then((info) => {
         wx.chooseWXPay({
           timestamp: info.timeStamp,
@@ -47,6 +65,7 @@ class Balance extends Component {
       });
   }
 
+
   render() {
     const { balance, deposit } = this.props;
     return (
@@ -55,6 +74,13 @@ class Balance extends Component {
           <p style={{ fontSize: '.28rem' }}>账户余额(元)</p>
           <p style={{ fontSize: '1.2rem', margin: 0 }}>{balance}</p>
         </div>
+        <InputItem
+          onChange={this.setChargeMoney}
+          value={this.state.chargeMoney}
+          placeholder="输入你要充值的金额"
+          type="number"
+          style={{ margin: '10px 0' }}
+        >充值</InputItem>
         <Button style={{ width: '100%' }} onClick={this.handleRecharge}>充值</Button>
         <Button
           style={{ width: '100%', marginTop: '.5rem' }}
