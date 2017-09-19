@@ -28,6 +28,8 @@ from server.service import coupon_service
 from server.service import refund_table_service
 from server.service import e_bike_model_service
 
+from server.utility.constant import custom_constant
+
 from server.utility.exception import WrongSerialsNumber, Error
 
 from server.utility.constant.basic_constant import *
@@ -78,6 +80,10 @@ def add_appointment(**kwargs):
         price = price - reduced_price
         kwargs["reduced_price"] = reduced_price
     kwargs["price"] = price
+
+    kwargs["appointment_fee_needed"] = \
+        custom_constant.get_custom_const("DEFAULT_APPOINTMENT_FEE")
+
     appointment = add(**kwargs)
 
     # 获取有效的 serial_number
