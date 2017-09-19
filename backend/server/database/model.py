@@ -136,7 +136,6 @@ class Storage(BaseModel):
         primary_key = CompositeKey('model', 'color', )
 
 
-# TODO 思考完模式决定一下
 # 1. 车不进行录入，当生成订单时生成
 # 2. 录入车辆
 class EBike(BaseModel):
