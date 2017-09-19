@@ -25,7 +25,7 @@ class Balance extends Component {
   }
   handleRecharge = () => {
     const chargeMoney = parseInt(this.state.chargeMoney, 10);
-    if (this.props.deposit === 0 || this.props.deposit < 199) {
+    if (this.props.deposit === 0) {
       alert('还未完成押金充值', '确认充值押金吗？', [
         { text: '取消' },
         {
