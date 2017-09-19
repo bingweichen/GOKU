@@ -324,7 +324,6 @@ class WxPayment(BaseModel):
     code = CharField()
 
 
-
 table_list = [Const, Store, School, User, VirtualCard, EBikeModel,
               Storage, EBike, Appointment, Battery, BatteryRecord,
               BatteryReport, CouponTemplate, Coupon, SerialNumber,

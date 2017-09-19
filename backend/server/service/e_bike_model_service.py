@@ -90,6 +90,12 @@ def num_view_increment(name):
     return query.execute()
 
 
+def num_sold_increment(name):
+    query = EBikeModel.update(num_view=EBikeModel.num_sold + 1) \
+        .where(EBikeModel.name == name)
+    return query.execute()
+
+
 def remove_by_name(name):
     query = EBikeModel.delete().where(EBikeModel.name == name)
     return query.execute()
