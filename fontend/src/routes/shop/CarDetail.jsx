@@ -54,7 +54,7 @@ class CarDetail extends Component {
         <div>
           {
             introduction_image_urls.map(img => (
-              <img src={img} alt="" style={{ width: '100%' }} key={img} />
+              <img src={img} alt="" style={{ width: '100%', minHeight: '1rem' }} key={img} />
             ))
           }
         </div>
