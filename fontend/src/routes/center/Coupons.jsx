@@ -14,7 +14,7 @@ function Coupons({ coupons }) {
           lineHeight: '6rem',
         }}
       >
-        <span>暂无优惠卷!</span>
+        <span>暂无优惠券!</span>
       </div>
     );
   }

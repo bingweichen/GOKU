@@ -30,7 +30,7 @@ class Order extends Component {
               <WaitExtract type="0" orders={orders} />
             </div>
           </TabPane>
-          <TabPane tab="待收货" key="1">
+          <TabPane tab="待提货" key="1">
             <div style={{ alignItems: 'center', backgroundColor: '#fff' }}>
               <WaitExtract type="1" orders={orders.filter(order => order.status === orderStatus.waitPickUp)} />
             </div>
