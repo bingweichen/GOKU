@@ -55,6 +55,31 @@ def get_user():
         }}), 200
 
 
+# 更改用户密码
+@user_setting.route('/user/change_password', methods=['POST'])
+@jwt_required
+@auth_decorator.check_admin_auth
+def change_password():
+    """
+
+    eg = {
+    "username": "",
+    "password": ""
+    }
+    :return:
+    :rtype:
+    """
+    data = request.get_json()
+    result = user_service.change_password(
+        username=data.pop("username"),
+        password=data.pop("password")
+    )
+    return jsonify({
+        'response': {
+            "result": result
+        }}), 200
+
+
 # 获取所有虚拟消费卡
 @user_setting.route('/virtual_cards/all', methods=['GET'])
 @jwt_required

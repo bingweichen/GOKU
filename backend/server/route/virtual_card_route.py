@@ -103,7 +103,6 @@ def pay_deposit():
         deposit_fee = virtual_card_service.pre_pay_deposit(
             card_no=username,
         )
-        deposit_fee = 0.01
 
         # 生成预付订单
         result = wx_payment_service.get_prepay_id_json(
@@ -236,7 +235,16 @@ def pre_top_up():
 
     openid = data.get("openid")
     # 如果没有openid传入，则从用户信息中获取
-    top_up_fee = float(data["top_up_fee"])
+    try:
+        top_up_fee = float(data["top_up_fee"])
+    except ValueError as e:
+        return jsonify({
+            'response': {
+                'error': e.args,
+                'message': "金额不是数字"
+            }
+        }), 400
+
     if not openid:
         user = User.get(username=username)
         openid = user.we_chat_id

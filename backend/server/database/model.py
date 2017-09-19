@@ -71,6 +71,9 @@ class User(BaseModel):
     identify_number = CharField(unique=True)  # 身份证号
 
     we_chat_id = CharField(verbose_name='微信号', null=True, default=None)  # 微信号
+    # we_chat_id = CharField(unique=True, verbose_name='微信号',
+    #                        null=True, default=None)  # 微信号
+
     account = CharField(verbose_name='账号', null=True, default=None)  # 退款账号
     account_type = CharField(verbose_name='账号类型', null=True,
                              default=None)  # 账号类型
