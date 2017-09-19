@@ -141,17 +141,11 @@ def return_deposit():
     :return:
     """
     username = get_jwt_identity()
-    data = request.get_json()
-
-    # # 获取支付押金订单号
-    # out_trade_no = VirtualCard.get(card_no=username).out_trade_no
 
     try:
         result, record, refund_record = \
             virtual_card_service.return_deposit(
-                card_no=username,
-                # out_trade_no=out_trade_no,
-                # # comment=data.get("comment"),
+                card_no=username
             )
         return jsonify({
             'response': {
@@ -242,6 +236,7 @@ def pre_top_up():
 
     openid = data.get("openid")
     # 如果没有openid传入，则从用户信息中获取
+    top_up_fee = float(data["top_up_fee"])
     if not openid:
         user = User.get(username=username)
         openid = user.we_chat_id
@@ -255,7 +250,7 @@ def pre_top_up():
         result = wx_payment_service.get_prepay_id_json(
             openid=openid,
             body=WxPaymentBody.BALANCE,
-            total_fee=data.pop("top_up_fee") * 100,
+            total_fee=top_up_fee * 100,
             attach={
                 "code": WxPaymentAttach.BALANCE
             }
@@ -272,28 +267,6 @@ def pre_top_up():
                 'message': '%s' % e.args
             }
         }), 400
-
-
-# def top_up():
-#     """
-#     top up virtual card
-#
-#     eg = {
-#     "username": "bingwei",
-#     "top_up_fee": 120
-#     }
-#     :return:
-#     """
-#     username = get_jwt_identity()
-#     data = request.get_json()
-#     result, record = virtual_card_service.top_up(
-#         card_no=username,
-#         top_up_fee=data["top_up_fee"],
-#     )
-#     return jsonify({'response': {
-#         "result": result,
-#         "record": model_to_dict(record, max_depth=1)
-#     }}), 200
 
 
 # ***************************** 消费记录 ***************************** #
