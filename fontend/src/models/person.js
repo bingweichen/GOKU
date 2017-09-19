@@ -66,6 +66,7 @@ export default {
         });
         Toast.hide();
         hashHistory.replace('/');
+        location.reload();
       } catch (error) {
         Toast.info(error.message.message);
       }

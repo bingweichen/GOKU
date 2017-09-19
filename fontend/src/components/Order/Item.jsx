@@ -78,10 +78,12 @@ export default function Item({ order }) {
                 onPress: () => {
                   axios.post('appointment/status/cancel', {
                     appointment_id: order.id,
-                  }).then(() => Toast.success('取消成功'));
+                  }).then(() => {
+                    Toast.success('取消成功', 0.5, () => { location.reload(); });
+                  });
                 },
               },
-            ])
+            ]);
           }}
           style={{
             display: (status === orderStatus.waitPayAppointment ||

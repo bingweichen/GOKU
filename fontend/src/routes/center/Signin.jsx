@@ -9,7 +9,6 @@ class Signin extends Component {
 
   submit = () => {
     this.props.form.validateFields((error, value) => {
-      console.log(value)
       if (error) {
         Toast.fail('用户名或密码不能为空');
       } else {
