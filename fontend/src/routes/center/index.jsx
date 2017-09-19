@@ -12,7 +12,7 @@ import UserInfo from './UserInfo';
 const Item = List.Item;
 
 const logout = () => {
-  // localStorage.clear();
+  localStorage.removeItem('token');
   hashHistory.push('/signin');
 };
 
