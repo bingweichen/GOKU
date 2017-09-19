@@ -99,7 +99,8 @@ def get_virtual_card():
 def freeze():
     card_no = request.args.get("card_no")
     result = virtual_card_service.freeze(
-        card_no=card_no
+        card_no=card_no,
+        consume_event="后台手动冻结"
     )
     return jsonify({'response': result}), 200
 
