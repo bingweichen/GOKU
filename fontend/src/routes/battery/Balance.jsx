@@ -8,7 +8,7 @@ import Button from '../../components/Button';
 import { wxpay } from '../../wechat';
 import styles from './index.less';
 
-const { alert, prompt } = Modal;
+const { alert } = Modal;
 class Balance extends Component {
   state = {
     chargeMoney: '',
@@ -20,7 +20,7 @@ class Balance extends Component {
         chargeMoney: value.replace(/^0*(\d*).*$/, '$1'),
       });
     } else {
-      this.setState({ chargeMoney: value });
+      this.setState({ chargeMoney: parseInt(value, 10) });
     }
   }
   handleRecharge = () => {
