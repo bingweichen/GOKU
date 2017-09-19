@@ -2,11 +2,11 @@ import axios from '../axios';
 import getUrlParam from '../getUrlParam';
 
 export default async function () {
-  if (!localStorage.getItem('openid')) {
-    const code = getUrlParam('code', location.href);
-    const { open_id } = await axios.post(`wx/code_to_openid?code=${code}`);
-    localStorage.setItem('openid', open_id);
-  }
+  // if (!localStorage.getItem('openid')) {
+  const code = getUrlParam('code', location.href);
+  const { open_id } = await axios.post(`wx/code_to_openid?code=${code}`);
+  localStorage.setItem('openid', open_id);
+  // }
   try {
     // if (!sessionStorage.getItem('head') || !localStorage.getItem('token')) {
     const data = await axios.get(`user/openid_login?openid=${localStorage.getItem('openid')}`);

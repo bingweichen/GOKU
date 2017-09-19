@@ -22,7 +22,7 @@ class Header extends Component {
     const carTypes = ['小龟', '酷车', 'MINI租', '闪租'];
     return (
       <Flex className={styles.header}>
-        <FlexItem style={{ width: '1.5rem', flex: 'none', display: this.state.inSearch ? 'none' : 'flex' }}>
+        <FlexItem style={{ width: '2rem', flex: 'none', display: this.state.inSearch ? 'none' : 'flex' }}>
           <Popover
             mask
             overlayStyle={{ color: 'currentColor' }}

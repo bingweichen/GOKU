@@ -20,11 +20,11 @@ class Balance extends Component {
         chargeMoney: value.replace(/^0*(\d*).*$/, '$1'),
       });
     } else {
-      this.setState({ chargeMoney: parseInt(value, 10) });
+      this.setState({ chargeMoney: value });
     }
   }
   handleRecharge = () => {
-    const { chargeMoney } = this.state;
+    const chargeMoney = parseInt(this.state.chargeMoney, 10);
     if (this.props.deposit === 0 || this.props.deposit < 199) {
       alert('还未完成押金充值', '确认充值押金吗？', [
         { text: '取消' },
