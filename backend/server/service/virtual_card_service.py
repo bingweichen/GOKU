@@ -172,7 +172,7 @@ def return_deposit(**kwargs):
 
     on_loan = Battery.select().where(Battery.user == card_no)
     if on_loan:
-        raise Error("Battery in use")
+        raise Error("电池使用中")
 
     virtual_card = VirtualCard.get(VirtualCard.card_no == card_no)
     deposit = virtual_card.deposit
