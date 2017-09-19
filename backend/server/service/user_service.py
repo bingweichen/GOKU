@@ -38,6 +38,13 @@ def add(username, password, **kwargs):
     return user
 
 
+def change_password(username, password):
+    hashed_password = generate_password_hash(password)
+    user = User.get(username=username)
+    user.password = hashed_password
+    return user.save()
+
+
 def get(*query, **kwargs):
     user = User.get(*query, **kwargs)
     return user
@@ -63,6 +70,11 @@ def create_virtual_card(**kwargs):
     virtual_card = virtual_card_service.add(**kwargs)
     return virtual_card
 
+
+def remove_user(username):
+    user = User.get(username=username)
+    result = user.delete_instance(recursive=True)
+    return result
 
 # def get_battery_records(username):
 #     user = User.get(username=username)
@@ -118,4 +130,4 @@ def add_template():
 if __name__ == '__main__':
     pass
     # add_template()
-    print(get_all())
+    print(remove_user("aaa"))

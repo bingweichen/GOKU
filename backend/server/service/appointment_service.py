@@ -26,8 +26,7 @@ from server.service import serial_number_service
 from server.service import virtual_card_service
 from server.service import coupon_service
 from server.service import refund_table_service
-
-# from server.service import e_bike_model_service
+from server.service import e_bike_model_service
 
 from server.utility.exception import WrongSerialsNumber, Error
 
@@ -153,12 +152,22 @@ def total_payment_success(appointment_id, username=None):
         appointment.rent_deposit = get_custom_const("RENT_DEPOSIT")
         status = RENT_APPOINTMENT_STATUS["2"]
         appointment.status = status
+        # 增加销售量
+        e_bike_model_service.num_sold_increment(
+            name=appointment.e_bike_model.name
+        )
         return appointment.save()
 
     else:
         status = APPOINTMENT_STATUS["3"]
         appointment.status = status
+        e_bike_model_service.num_sold_increment(
+            name=appointment.e_bike_model.name
+        )
         return appointment.save()
+
+
+# 增加销售量
 
 
 # 取消订单
