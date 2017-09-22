@@ -142,6 +142,18 @@ def re_freeze():
     return jsonify({'response': result}), 200
 
 
+# 虚拟消费卡实名认证
+@user_setting.route('/virtual_card/real_name_authentication', methods=['GET'])
+@jwt_required
+@auth_decorator.check_admin_auth
+def real_name_authentication():
+    card_no = request.args.get("card_no")
+    result = virtual_card_service.real_name_authentication(
+        card_no=card_no
+    )
+    return jsonify({'response': result}), 200
+
+
 # ***************************** 个人订单 ***************************** #
 # 获取用户的订单情况
 @user_setting.route('/user/appointment', methods=['GET'])

@@ -432,10 +432,6 @@ class UnifiedOrder_pub(Wxpay_client_pub):
 
     def getPrepayIdJson(self):
         """获取prepay_id"""
-        # self.postXml()
-        # self.result = self.xmlToArray(self.response)
-        # prepay_id = self.result["prepay_id"]
-
         temp_parameter = {
             "appId": self.parameters["appid"],
             "timeStamp": int(datetime.utcnow().timestamp()),

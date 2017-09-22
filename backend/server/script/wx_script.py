@@ -3,6 +3,7 @@ from urllib.request import urlopen
 import time
 import json
 import sys
+
 sys.path.append("../../")
 
 from server.database.model import WxInfo
@@ -22,7 +23,6 @@ class Basic:
                    "client_credential&appid=%s&secret=%s" % (appId, appSecret))
         urlResp = urlopen(postUrl)
         urlResp = json.loads(urlResp.read())
-        print("urlResp", urlResp)
         self.__accessToken = urlResp['access_token']
         self.__leftTime = urlResp['expires_in']
 
@@ -45,18 +45,13 @@ class Basic:
         jsapi_ticket.expires_in = self.__leftTime_ticket
         jsapi_ticket.save()
 
-        print(self.__accessToken)
-        print(self.__leftTime)
-        print(self.__jsapi_ticket)
-        print(self.__leftTime_ticket)
-
     def get_access_token(self):
         if self.__leftTime < 100:
             self.__real_get_access_token()
         return self.__accessToken
 
     def run(self):
-        while (True):
+        while True:
             if self.__leftTime > 100:
                 time.sleep(2)
                 self.__leftTime -= 2
@@ -67,6 +62,7 @@ class Basic:
 def wx_access_token_script():
     basic = Basic()
     basic.run()
+
 
 if __name__ == '__main__':
     wx_access_token_script()

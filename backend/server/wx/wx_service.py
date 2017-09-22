@@ -58,8 +58,6 @@ def get_prepay_id_json(out_trade_no, body, total_fee, notify_url, openid,
     # 先微信服务器获取订单
     prepay_id = c.getPrepayId()  # 不能删掉
     prepayid_json = c.getPrepayIdJson()
-    # xml = c.array_to_xml(prepayid_json)
-    # print("xml", xml)
     return prepayid_json
 
 

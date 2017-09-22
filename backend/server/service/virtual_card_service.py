@@ -320,6 +320,12 @@ def re_freeze(card_no):
     return virtual_card.save()
 
 
+def real_name_authentication(card_no):
+    virtual_card = VirtualCard.get(card_no=card_no)
+    virtual_card.real_name_authentication = "已认证"
+    return virtual_card.save()
+
+
 # ***************************** for test ***************************** #
 def add_template():
     template_json = [
