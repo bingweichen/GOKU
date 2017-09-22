@@ -99,7 +99,7 @@ class OrderDetail extends Component {
             onChange={(val) => { this.setState({ useCoupons: val }); }}
             data={this.getUserCoupons(coupons)} cols={1} value={useCoupons}
           >
-            <List.Item arrow="horizontal">可用优惠卷:</List.Item>
+            <List.Item arrow="horizontal">可用优惠券:</List.Item>
           </Picker>
         </div>
         <div className={styles.item} style={{ padding: 25 }}>
@@ -130,7 +130,7 @@ class OrderDetail extends Component {
               display: useCoupons ? 'block' : 'none',
             }}
           >
-            <span >使用优惠卷:</span>
+            <span >使用优惠券:</span>
             <span style={{ float: 'right' }}>-{useCoupons && JSON.parse(useCoupons).value}RMB</span>
           </p>
           <p style={{ overflow: 'hidden' }}>

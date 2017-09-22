@@ -1,11 +1,16 @@
 import React from 'react';
-import { Icon } from 'antd-mobile';
+import { Icon, Toast } from 'antd-mobile';
 import styles from './index.less';
 
 export default function BuyFooter({ onClick, title }) {
   return (
     <div className={styles.footer}>
-      <div className={styles.service}>
+      <div
+        className={styles.service}
+        onClick={() => {
+          Toast.info('请回公众号联系客服');
+        }}
+      >
         <p><Icon type={require('../../assets/image/service.svg')} /></p>
         <p>联系客服</p>
       </div>

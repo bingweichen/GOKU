@@ -56,7 +56,7 @@ class Center extends Component {
             thumb="https://zos.alipayobjects.com/rmsportal/UmbJMbWOejVOpxe.png"
             arrow="horizontal"
             onClick={() => { hashHistory.push('/coupons'); }}
-          >我的优惠卷</Item>
+          >我的优惠券</Item>
           <Item
             thumb="https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png"
             arrow="horizontal"
