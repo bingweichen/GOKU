@@ -269,9 +269,12 @@ def check_status(username):
     :rtype:
     """
     virtual_card = VirtualCard.get(VirtualCard.card_no == username)
+    # 0. 检查是否实名认证
+    if virtual_card.real_name_authentication != "已认证":
+        raise Error(VirtualCardErrorMessage.abnormal_situation)
     # 1. 检查状态
     if virtual_card.situation != "正常":
-        raise Error(VirtualCardErrorMessage.abnormal_situation)
+        raise Error(VirtualCardErrorMessage.no_real_name_authentication)
     # 2. 检查押金
     if virtual_card.deposit < get_custom_const("DEFAULT_DEPOSIT"):
         raise Error(VirtualCardErrorMessage.no_enough_deposit)
@@ -340,5 +343,4 @@ def add_template():
 
 if __name__ == '__main__':
     pass
-    return_deposit(card_no="bingwei", username="bingwei",
-                   account="123456", account_type="weChat")
+    real_name_authentication("bingwei")

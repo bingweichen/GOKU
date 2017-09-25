@@ -25,4 +25,5 @@ class VirtualCardErrorMessage(Exception):
     no_enough_balance = "余额不足"
     abnormal_situation = "账户异常"
     virtual_card_no_exist = "虚拟消费卡未开通"
+    no_real_name_authentication = "未实名认证"
 
