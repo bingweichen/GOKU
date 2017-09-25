@@ -8,14 +8,14 @@
 
 """
 from peewee import *
-
+import base64
 # database = MySQLDatabase('Zeus', charset='utf8',
 #                          **{'host': '122.227.52.114', 'port': 53306,
 #                             'user': 'root',
 #                             'password': '123456'})
+password = base64.decodebytes(b"Q2hlbiExMjM=").decode()
 
 database = MySQLDatabase('Zeus', charset='utf8',
                          **{'host': '115.159.215.199', 'port': 3306,
                             'user': 'root',
-                            'password': 'Chen!123'})
-
+                            'password': password})
