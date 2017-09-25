@@ -35,6 +35,10 @@ def get_all():
     return virtual_cards
 
 
+def get(*args, **kwargs):
+    virtual_card = VirtualCard.get(*args, **kwargs)
+    return virtual_card
+
 # def get_deposit(card_no):
 #     """
 #     check if the card is deposited
@@ -300,6 +304,9 @@ def check_status(username):
 # 冻结账号
 def freeze(card_no, consume_event):
     virtual_card = VirtualCard.get(card_no=card_no)
+    if virtual_card.situation == "冻结":
+        return False
+
     virtual_card.situation = "冻结"
     ConsumeRecord.create(
         card=card_no,
@@ -343,4 +350,4 @@ def add_template():
 
 if __name__ == '__main__':
     pass
-    real_name_authentication("bingwei")
+    print(get(card_no="bingwei"))

@@ -73,7 +73,8 @@ export const VirtualCard = {
   deposit: '押金',
   balance: '余额',
   situation: '冻结状态',
-  out_trade_no: '商户付款订单号'
+  out_trade_no: '商户付款订单号',
+  real_name_authentication: "实名认证"
 };
 
 export const ConsumeRecord = {
