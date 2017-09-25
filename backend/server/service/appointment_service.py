@@ -64,7 +64,8 @@ def add_appointment(**kwargs):
 
     # 租车订单 检查是否存在押金
     if e_bike_type == "租车":
-        virtual_card_service.check_deposit(username=user)
+        # virtual_card_service.check_deposit(username=user)
+        virtual_card_service.check_status(username=user)
 
     if e_bike_type == "租车":
         price = e_bike_model.price[rent_time_period]

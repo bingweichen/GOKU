@@ -92,7 +92,6 @@ class VirtualCard(BaseModel):
     balance = FloatField(default=0.0)
     situation = CharField(default="正常")  # 冻结
 
-    # # TODO 实名认证
     real_name_authentication = CharField(
         default="未认证", choices=["已认证", "未认证"])
 
