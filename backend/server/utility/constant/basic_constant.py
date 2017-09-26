@@ -86,3 +86,14 @@ class WxPaymentStatus(object):
 class ReturnFeeType(object):
     appointment_fee = "退订单预约金"
     rent_deposit = "退租车押金"
+
+
+class VirtualCardStatus(object):
+    real_name_authentication_success = "已认证"
+    real_name_authentication_failed = "未认证"
+    situation_success = "正常"
+    situation_failed = "冻结"
+    situation = {
+        "FAILED": "冻结",
+        "SUCCESS": "正常"
+    }
