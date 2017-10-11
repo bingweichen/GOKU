@@ -1,3 +1,4 @@
+// 用户注册
 import React, { Component } from 'react';
 import { Toast, InputItem, Button } from 'antd-mobile';
 import { hashHistory } from 'dva/router';

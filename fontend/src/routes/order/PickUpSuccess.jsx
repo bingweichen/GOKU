@@ -1,3 +1,4 @@
+// 提车成功提示
 import React from 'react';
 import { hashHistory } from 'dva/router';
 import Button from '../../components/Button';

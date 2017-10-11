@@ -1,3 +1,4 @@
+// 商品详情里面的轮播图
 import React from 'react';
 import { Carousel, Icon } from 'antd-mobile';
 import PropTypes from 'prop-types';

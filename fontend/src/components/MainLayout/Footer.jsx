@@ -1,3 +1,4 @@
+// 底部四大导航栏
 import React from 'react';
 import { TabBar, Icon } from 'antd-mobile';
 import { hashHistory } from 'dva/router';

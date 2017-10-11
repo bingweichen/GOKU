@@ -1,3 +1,4 @@
+// 单个车辆的信息简介展示
 import React from 'react';
 import LazyLoad from 'react-lazyload';
 import { Link } from 'dva/router';

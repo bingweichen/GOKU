@@ -1,3 +1,4 @@
+// 一步一步输入数字，类似支付宝输入6位密码过程的组件
 import React from 'react';
 
 export default function StepInput({ setValue, value, style }) {

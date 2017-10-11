@@ -1,3 +1,4 @@
+// 用户电池的消费记录
 import React, { Component } from 'react';
 import moment from 'moment';
 import { ActivityIndicator } from 'antd-mobile';

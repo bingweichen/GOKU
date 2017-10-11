@@ -1,5 +1,5 @@
+// 查看订单
 import React, { Component } from 'react';
-import { Button } from 'antd-mobile';
 import moment from 'moment';
 import styles from './OrderDetail.less';
 import { getOrder } from '../../services/order.js';

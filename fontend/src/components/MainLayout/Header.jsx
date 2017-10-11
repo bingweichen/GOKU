@@ -1,3 +1,4 @@
+// 首页上的head bar
 import React, { Component } from 'react';
 import { Icon, SearchBar, Flex, Popover } from 'antd-mobile';
 import PropTypes from 'prop-types';

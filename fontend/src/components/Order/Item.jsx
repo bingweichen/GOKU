@@ -1,3 +1,4 @@
+// 单个订单项目的显示
 import React from 'react';
 import { hashHistory } from 'dva/router';
 import { Toast, Modal } from 'antd-mobile';

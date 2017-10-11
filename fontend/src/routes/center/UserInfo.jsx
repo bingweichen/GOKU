@@ -1,3 +1,4 @@
+// 用户个人简单信息
 import React, { Component } from 'react';
 import { List } from 'antd-mobile';
 import axios from '../../utils/axios.js';

@@ -1,3 +1,4 @@
+// 扫描之后进入的闪充页面
 import React, { Component } from 'react';
 import { Modal, Toast } from 'antd-mobile';
 import { hashHistory } from 'dva/router';

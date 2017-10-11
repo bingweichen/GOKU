@@ -1,3 +1,4 @@
+// 商品预订成功页面
 import React from 'react';
 import { Link } from 'dva/router';
 import styles from './OrderSuccess.less';
