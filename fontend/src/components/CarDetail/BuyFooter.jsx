@@ -1,3 +1,4 @@
+// 底部的状态栏，联系客服之类的
 import React from 'react';
 import { Icon, Toast } from 'antd-mobile';
 import styles from './index.less';

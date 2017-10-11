@@ -1,3 +1,4 @@
+// 个人中心的首页
 import React, { Component } from 'react';
 import { hashHistory } from 'dva/router';
 import { List, Button } from 'antd-mobile';

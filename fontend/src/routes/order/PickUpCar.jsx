@@ -1,3 +1,4 @@
+// 提车输入车号的页面
 import React, { Component } from 'react';
 import { Toast } from 'antd-mobile';
 import { connect } from 'dva';

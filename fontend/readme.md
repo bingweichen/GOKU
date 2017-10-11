@@ -1,0 +1,9 @@
+## 起步
+- https://mobile.ant.design/docs/react/introduce-cn#快速上手
+- https://github.com/ant-design/ant-design-mobile/wiki/HD(了解下rem这个单位)
+## request
+- GOKU/fontend/src/utils/axios.js
+## 微信
+- 微信网页授权:https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
+- 微信jssdk:https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+- 目录：GOKU/fontend/src/wechat

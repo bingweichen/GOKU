@@ -1,3 +1,4 @@
+// 闪充电池的首页
 import React, { Component } from 'react';
 import { NoticeBar, Icon, Modal, ActivityIndicator, Toast, Button } from 'antd-mobile';
 import moment from 'moment';

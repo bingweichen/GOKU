@@ -1,3 +1,4 @@
+// 购物页面车辆详情介绍页面
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { hashHistory } from 'dva/router';

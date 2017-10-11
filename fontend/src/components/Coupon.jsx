@@ -1,3 +1,4 @@
+// 单个优惠券
 import React from 'react';
 import styles from './styles/Coupon.less';
 

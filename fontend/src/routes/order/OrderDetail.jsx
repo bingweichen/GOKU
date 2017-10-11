@@ -1,3 +1,4 @@
+// 单个订单的详情
 import React, { Component } from 'react';
 import { Picker, List, Toast } from 'antd-mobile';
 import { hashHistory } from 'dva/router';
