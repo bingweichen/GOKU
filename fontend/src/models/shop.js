@@ -31,6 +31,8 @@ export default {
     },
   },
   subscriptions: {
+
+
     // set car id
     setup({ dispatch, history }) {
       return history.listen(({ pathname }) => {
