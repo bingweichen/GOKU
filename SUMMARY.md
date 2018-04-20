@@ -1,6 +1,6 @@
 # Summary
 
-* [Introduction](README.md)
+* [Introduction1](README.md)
 * 第一部分 分类
    * [1.) 机器学习基础](docs/1.机器学习基础.md)
    * [2.) k-近邻算法](docs/2.k-近邻算法.md)
